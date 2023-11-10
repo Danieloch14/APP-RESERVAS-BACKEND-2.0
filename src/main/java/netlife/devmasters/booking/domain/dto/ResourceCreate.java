@@ -1,13 +1,9 @@
 package netlife.devmasters.booking.domain.dto;
 
-import jakarta.persistence.*;
-import netlife.devmasters.booking.domain.Location;
-import netlife.devmasters.booking.domain.TypeResource;
-
 public class ResourceCreate {
     private Integer idResource;
-    private Location idLocation;
-    private TypeResource idTypeResource;
+    private Integer idLocation;
+    private Integer idTypeResource;
     private String name;
     /*
     @Column(name = "description")
