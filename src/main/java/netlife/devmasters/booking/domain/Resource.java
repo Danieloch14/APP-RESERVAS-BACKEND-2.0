@@ -11,10 +11,12 @@ public class Resource {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_resource")
     private Integer idResource;
-    @Column(name = "id_location")
-    private Integer idLocation;
-    @Column(name = "id_type_resource")
-    private Integer idTypeResource;
+    @ManyToOne
+    @JoinColumn(name = "id_location")
+    private Location idLocation;
+    @ManyToOne
+    @JoinColumn(name = "id_type_resource")
+    private TypeResource idTypeResource;
     @Column(name = "name")
     private String name;
     /*

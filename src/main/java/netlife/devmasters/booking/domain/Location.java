@@ -11,8 +11,9 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_location")
     private Integer idLocation;
-    @Column(name = "id_region")
-    private Integer idRegion;
+    @ManyToOne
+    @JoinColumn(name = "id_region")
+    private Region idRegion;
     @Column(name = "name")
     private String name;
     @Column(name = "floor")
