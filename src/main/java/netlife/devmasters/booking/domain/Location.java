@@ -14,10 +14,10 @@ public class Location {
     @ManyToOne
     @JoinColumn(name = "id_region")
     private Region idRegion;
-    @Column(name = "name")
-    private String name;
+    @Column(name = "place")
+    private String place;
     @Column(name = "floor")
-    private String floor;
+    private Integer floor;
     @Column(name = "address")
     private String address;
 

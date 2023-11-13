@@ -12,23 +12,22 @@ public class Resource {
     @Column(name = "id_resource")
     private Integer idResource;
     @ManyToOne
+    @JoinColumn(name = "id_type_resource")
+    private TypeResource idTypeResource;
+    @ManyToOne
     @JoinColumn(name = "id_location")
     private Location idLocation;
     @ManyToOne
-    @JoinColumn(name = "id_type_resource")
-    private TypeResource idTypeResource;
-    @Column(name = "name")
-    private String name;
+    @JoinColumn(name="res_id_resource")
+    private Resource dadResource;
     /*
     @Column(name = "description")
     private String description;
      */
+    @Column(name = "cod_number")
+    private String codNumber;
     @Column(name = "capacity")
     private Integer capacity;
-    @Column(name = "cod_number")
-    private Integer codNumber;
-    @Column(name = "content")
-    private String content;
     @Column(name = "price")
     private Double price;
     @Column(name = "is_parking")

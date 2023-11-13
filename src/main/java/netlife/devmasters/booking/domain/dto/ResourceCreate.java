@@ -4,7 +4,7 @@ public class ResourceCreate {
     private Integer idResource;
     private Integer idLocation;
     private Integer idTypeResource;
-    private String name;
+    private Integer idDadResource;
     /*
     @Column(name = "description")
     private String description;
