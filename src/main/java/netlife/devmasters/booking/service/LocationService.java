@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LocationService {
-    Location save(LocationCreate obj) throws DataException;
+    Location save(Location obj) throws DataException;
 
     List<Location> getAll();
 
     Optional<Location> getById(int id);
 
-    TypeResourceCreate update(LocationCreate objActualizado) throws DataException;
+    TypeResourceCreate update(Location objActualizado) throws DataException;
 
     void delete(int id) throws DataException;
 }

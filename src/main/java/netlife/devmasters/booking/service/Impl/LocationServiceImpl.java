@@ -22,7 +22,8 @@ public class LocationServiceImpl implements LocationService {
     @Autowired
     private RegionRepository regionRepository;
     @Override
-    public Location save(LocationCreate obj) throws DataException {
+    public Location save(Location obj) throws DataException {
+        /*
         Location location = new Location();
         location.setAddress(obj.getAddress());
         location.setPlace(obj.getPlace());
@@ -30,6 +31,9 @@ public class LocationServiceImpl implements LocationService {
         Region region = regionRepository.findById(obj.getIdRegion()).get();
         location.setIdRegion(region);
         return repo.save(location);
+
+         */
+        return repo.save(obj);
     }
 
     @Override
@@ -44,7 +48,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public TypeResourceCreate update(LocationCreate objActualizado) throws DataException {
+    public TypeResourceCreate update(Location objActualizado) throws DataException {
         return null;
     }
 
