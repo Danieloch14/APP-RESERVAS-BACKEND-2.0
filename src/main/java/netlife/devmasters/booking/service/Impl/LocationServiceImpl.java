@@ -1,10 +1,6 @@
 package netlife.devmasters.booking.service.Impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import netlife.devmasters.booking.domain.Location;
-import netlife.devmasters.booking.domain.Region;
-import netlife.devmasters.booking.domain.dto.LocationCreate;
-import netlife.devmasters.booking.domain.dto.TypeResourceCreate;
 import netlife.devmasters.booking.repository.LocationRepository;
 import netlife.devmasters.booking.repository.RegionRepository;
 import netlife.devmasters.booking.service.LocationService;
@@ -21,6 +17,7 @@ public class LocationServiceImpl implements LocationService {
     private LocationRepository repo;
     @Autowired
     private RegionRepository regionRepository;
+
     @Override
     public Location save(Location obj) throws DataException {
         /*
@@ -44,16 +41,27 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public Optional<Location> getById(int id) {
-        return Optional.empty();
+        return repo.findById(id);
     }
 
     @Override
-    public TypeResourceCreate update(Location objActualizado) throws DataException {
-        return null;
+    public Location update(Location objActualizado) throws DataException {
+        return repo.save(objActualizado);
     }
 
     @Override
-    public void delete(int id) throws DataException {
+    public void delete(int id) throws Exception {
+        Optional<?> objGuardado = repo.findById(id);
+        if (objGuardado.isEmpty()) {
+            throw new Exception("No se encontro el objeto a eliminar");
+        }
+        try {
+            repo.deleteById(id);
+        } catch (Exception e) {
+            if (e.getMessage().contains("constraint")) {
+                throw new Exception("Existen datos relacionados");
+            }
+        }
 
     }
 }

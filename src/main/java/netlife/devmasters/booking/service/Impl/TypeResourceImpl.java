@@ -1,7 +1,6 @@
 package netlife.devmasters.booking.service.Impl;
 
 import netlife.devmasters.booking.domain.TypeResource;
-import netlife.devmasters.booking.domain.dto.TypeResourceCreate;
 import netlife.devmasters.booking.repository.TypeResourceRepository;
 import netlife.devmasters.booking.service.TypeResourceService;
 import org.hibernate.exception.DataException;
@@ -16,7 +15,7 @@ public class TypeResourceImpl implements TypeResourceService {
     @Autowired
     private TypeResourceRepository repo;
     @Override
-    public TypeResource save(TypeResourceCreate obj) throws DataException {
+    public TypeResource save(TypeResource obj) throws DataException {
         return repo.save(obj);
     }
 
@@ -31,12 +30,23 @@ public class TypeResourceImpl implements TypeResourceService {
     }
 
     @Override
-    public TypeResourceCreate update(TypeResourceCreate objActualizado) throws DataException {
+    public TypeResource update(TypeResource objActualizado) throws DataException {
         return repo.save(objActualizado);
     }
 
     @Override
-    public void delete(int id) throws DataException {
+    public void delete(int id) throws Exception {
+        Optional<?> objGuardado = repo.findById(id);
+        if (objGuardado.isEmpty()) {
+            throw new Exception("No se encontro el objeto a eliminar");
+        }
+        try {
+            repo.deleteById(id);
+        } catch (Exception e) {
+            if (e.getMessage().contains("constraint")) {
+                throw new Exception("Existen datos relacionados");
+            }
+        }
 
     }
 }
