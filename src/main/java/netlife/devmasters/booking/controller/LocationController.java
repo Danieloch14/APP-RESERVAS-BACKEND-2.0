@@ -15,7 +15,7 @@ public class LocationController {
     private LocationService service;
     @Autowired
     private ModelMapper modelMapper;
-    @PostMapping("/create")
+    @PostMapping("/save")
     public Location createLocation(@RequestBody LocationCreate locationDto){
         Location location = modelMapper.map(locationDto, Location.class);
         return service.save(location);
@@ -23,5 +23,13 @@ public class LocationController {
     @GetMapping("/getAll")
     public Iterable<Location> getAll(){
         return service.getAll();
+    }
+    @GetMapping("/getById/{id}")
+    public Location getById(@PathVariable("id") Integer id){
+        return service.getById(id).get();
+    }
+    @DeleteMapping("/delete/{id}")
+    public void delete(@PathVariable("id") Integer id) throws Exception {
+        service.delete(id);
     }
 }

@@ -1,6 +1,7 @@
 package netlife.devmasters.booking.service;
 
 import netlife.devmasters.booking.domain.Resource;
+import netlife.devmasters.booking.domain.TypeResource;
 import netlife.devmasters.booking.domain.dto.TypeResourceCreate;
 import org.hibernate.exception.DataException;
 
@@ -14,7 +15,7 @@ public interface ResourceService {
 
     Optional<Resource> getById(int id);
 
-    TypeResourceCreate update(Resource objActualizado) throws DataException;
+    Resource update(Resource objActualizado) throws DataException;
 
-    void delete(int id) throws DataException;
+    void delete(int id) throws Exception;
 }

@@ -1,5 +1,8 @@
 package netlife.devmasters.booking.domain.dto;
 
+import lombok.Data;
+
+@Data
 public class ResourceCreate {
     private Integer idResource;
     private Integer idLocation;
@@ -10,7 +13,7 @@ public class ResourceCreate {
     private String description;
      */
     private Integer capacity;
-    private Integer codNumber;
+    private String codNumber;
     private String content;
     private Double price;
     private Boolean isParking;
