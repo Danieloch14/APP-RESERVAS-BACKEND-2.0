@@ -17,7 +17,7 @@ public interface UserService {
 	User registrar(User usuario)
 			throws UsuarioNoEncontradoExcepcion, NombreUsuarioExisteExcepcion, EmailExisteExcepcion, MessagingException, IOException;
 
-	public Optional<User> getById(Long codigo);
+	public Optional<User> getById(Integer codigo);
 
 	List<User> getUsuarios();
 

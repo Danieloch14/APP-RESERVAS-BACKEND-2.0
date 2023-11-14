@@ -38,7 +38,7 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 @RestController
-@RequestMapping( "/user" )
+@RequestMapping( "/api/user" )
 public class UserController extends GestorExcepciones {
 	private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
@@ -79,7 +79,7 @@ public class UserController extends GestorExcepciones {
 		return new ResponseEntity<>(newUser, OK);
 	}
 	@PutMapping("activeLock/{id}")
-	public ResponseEntity<User> actualizarDatos(@PathVariable("id") Long codigo,
+	public ResponseEntity<User> actualizarDatos(@PathVariable("id") Integer codigo,
 			@RequestParam(name = "isActive", required = false) Boolean active,
 			@RequestParam(name = "isNotLocked", required = false) Boolean isNotLocked) throws DataException {
 		return usuarioService.getById(codigo).map(datosGuardados -> {

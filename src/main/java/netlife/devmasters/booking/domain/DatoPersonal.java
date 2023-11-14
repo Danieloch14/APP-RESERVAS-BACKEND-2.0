@@ -16,7 +16,6 @@ public class DatoPersonal {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-
 	@Column(name = "id_personal_data")
 	private Integer idPersonalData;
 	@Column(name = "name")
