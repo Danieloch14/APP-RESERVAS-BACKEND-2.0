@@ -119,6 +119,8 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 		// asocia datos personales con usuario
 		user.setCodDatosPersonales(datos);
 
+		//it can save user without datapersonal that is in database, so it's no necessary to save it first
+		//because the entity is inside the user entity
 		userRepository.save(user);
 
 		userRepository.flush();
