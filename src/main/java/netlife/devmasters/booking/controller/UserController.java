@@ -87,7 +87,6 @@ public class UserController extends GestorExcepciones {
 				datosActualizados = service.actualizarUsuario(datosGuardados);
 			} catch (UserNotFoundException | UsernameExistExcepcion | EmailExistExcepcion | IOException
 					 | NoEsArchivoImagenExcepcion e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return new ResponseEntity<>(datosActualizados, HttpStatus.OK);

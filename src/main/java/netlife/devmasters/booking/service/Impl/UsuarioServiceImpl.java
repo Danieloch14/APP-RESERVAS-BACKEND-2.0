@@ -134,7 +134,6 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 	@Override
 	public Optional<User> getById(Integer codigo) {
 
-		// TODO Auto-generated method stub
 		return userRepository.findById(codigo);
 
 	}
@@ -298,7 +297,6 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 				throw new UsernameExistExcepcion(NOMBRE_USUARIO_YA_EXISTE);
 			}
 
-			// TODO: confirmar si es requerida esta validación
 			// sale si ya existe ese email para un usuario registrado
 			if (currentUser.getCodDatosPersonales().getEmail().compareToIgnoreCase(newEmail) != 0) {
 				if (userByNewEmail != null /* && !currentUser.getCodUsuario().equals(userByNewEmail.getCodUsuario()) */) {

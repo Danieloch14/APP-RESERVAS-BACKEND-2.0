@@ -44,8 +44,12 @@ import java.util.stream.Collectors;
 import static netlife.devmasters.booking.constant.MensajesConst.REGISTRO_YA_EXISTE;
 import static org.springframework.http.HttpStatus.*;
 
+// indicate that this class is responsible for handling exceptions in the whole rest application
+//outside -> problems with HTTP such as invalid URL o missing parameter | request problem
+//Automatically applies the @ResponseBody annotation to all methods
 @RestControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
+//occur outside of the scope of a controller method
 public class GestorExcepciones implements ErrorController {
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 	private static final String CUENTA_BLOQUEADA = "Cuenta bloqueada - Contacte al administrador";
@@ -90,7 +94,7 @@ public class GestorExcepciones implements ErrorController {
 	}
 
  */
-
+	//indicate a method that will handle a specific exception
 	@ExceptionHandler(UsernameExistExcepcion.class)
 	public ResponseEntity<HttpResponse> usernameExistException(UsernameExistExcepcion exception) {
 		return createHttpResponse(BAD_REQUEST, exception.getMessage());

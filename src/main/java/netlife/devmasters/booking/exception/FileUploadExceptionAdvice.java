@@ -9,6 +9,9 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
+//occur inside a controller method. That methos are used to generate a ResponseEntity.
+// inside ->  invalid argument or a failure to access a database| logical problem
+//When extends I could overwrite
 public class FileUploadExceptionAdvice extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler(MaxUploadSizeExceededException.class)
