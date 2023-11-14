@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
+//to store the object in the SecurityContext, which is a context object that is available to all Spring Security-aware components.
 public class UserPrincipal implements UserDetails {
 	/**
 	 * 
