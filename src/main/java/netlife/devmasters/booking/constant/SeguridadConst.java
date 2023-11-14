@@ -13,6 +13,8 @@ public class SeguridadConst {
 	public static final String ACCESO_RESTRINGIDO = "Requiere identificarse para acceder a esta página";
 	public static final String ACCESO_DENEGADO = "No tiene permisos para acceder a esta página";
 	public static final String METOD_HTTP_OPTIONS = "OPTIONS";
+	public static final String PLATAFORMA = "Plataforma de reservas de recursos";
+	public static final String PLATAFORMA_ADMIN = "Administración de la plataforma de reservas de recursos";
 
 	public static final String[] URLS_PUBLICAS = {
 			"/usuario/login", 

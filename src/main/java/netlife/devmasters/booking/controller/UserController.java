@@ -1,13 +1,26 @@
 //TODO: revisar
 
-package epntech.cbdmq.pe.resource;
+package netlife.devmasters.booking.controller;
 
-import static epntech.cbdmq.pe.constante.ArchivoConst.CARPETA_USUARIO;
-import static epntech.cbdmq.pe.constante.ArchivoConst.FORWARD_SLASH;
-import static epntech.cbdmq.pe.constante.ArchivoConst.URL_IMAGEN_TEMPORAL;
-import static epntech.cbdmq.pe.constante.SeguridadConst.CABECERA_TOKEN_JWT;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
+import jakarta.mail.MessagingException;
+import netlife.devmasters.booking.domain.HttpResponse;
+import netlife.devmasters.booking.domain.User;
+import netlife.devmasters.booking.domain.UserPrincipal;
+import netlife.devmasters.booking.exception.GestorExcepciones;
+import netlife.devmasters.booking.exception.dominio.*;
+import netlife.devmasters.booking.service.UserService;
+import netlife.devmasters.booking.util.JWTTokenProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -19,114 +32,61 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import epntech.cbdmq.pe.dominio.admin.Paralelo;
-import epntech.cbdmq.pe.dominio.util.UsuarioDtoRead;
-import epntech.cbdmq.pe.dominio.util.UsuarioInfoDto;
-import epntech.cbdmq.pe.excepcion.dominio.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
-import epntech.cbdmq.pe.dominio.HttpResponse;
-import epntech.cbdmq.pe.dominio.UserPrincipal;
-import epntech.cbdmq.pe.dominio.Usuario;
-import epntech.cbdmq.pe.dominio.util.NombreApellido;
-import epntech.cbdmq.pe.excepcion.GestorExcepciones;
-import epntech.cbdmq.pe.servicio.UsuarioService;
-import epntech.cbdmq.pe.util.JWTTokenProvider;
-import jakarta.mail.MessagingException;
+import static netlife.devmasters.booking.constant.ArchivoConst.*;
+import static netlife.devmasters.booking.constant.SeguridadConst.CABECERA_TOKEN_JWT;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 @RestController
-@RequestMapping(path = { "/", "/usuario" })
-public class UsuarioResource extends GestorExcepciones {
+@RequestMapping( "/user" )
+public class UserController extends GestorExcepciones {
 	private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
 	public static final String EMAIL_ENVIADO = "Se envió un email con el nuevo password a: ";
 	public static final String USUARIO_ELIMINADO_EXITO = "Usuario eliminado";
 	private AuthenticationManager authenticationManager;
-	private UsuarioService usuarioService;
+	private UserService usuarioService;
 	private JWTTokenProvider jwtTokenProvider;
 
 	@Autowired
-	public UsuarioResource(AuthenticationManager authenticationManager, UsuarioService userService,
-			JWTTokenProvider jwtTokenProvider) {
+	public UserController(
+			//AuthenticationManager authenticationManager,
+			UserService userService,
+                          JWTTokenProvider jwtTokenProvider) {
 		this.authenticationManager = authenticationManager;
 		this.usuarioService = userService;
 		this.jwtTokenProvider = jwtTokenProvider;
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<Usuario> login(@RequestBody Usuario user) {
-		authenticate(user.getNombreUsuario(), user.getClave());
+	public ResponseEntity<User> login(@RequestBody User user) {
+	//authenticate(user.getUsername(), user.getPassword());
 
-		Usuario loginUser = usuarioService.findUserByUsername(user.getNombreUsuario());
+		User loginUser = usuarioService.findUserByUsername(user.getUsername());
 		UserPrincipal userPrincipal = new UserPrincipal(loginUser);
 		HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
 		return new ResponseEntity<>(loginUser, jwtHeader, OK);
 	}
 
 	@PostMapping("/registro")
-	public ResponseEntity<Usuario> register(@RequestBody Usuario user) throws UsuarioNoEncontradoExcepcion,
+	public ResponseEntity<User> register(@RequestBody User user) throws UsuarioNoEncontradoExcepcion,
 			NombreUsuarioExisteExcepcion, EmailExisteExcepcion, MessagingException, IOException {
 		// Usuario newUser =
 		// usuarioService.registrar(user.getCodDatosPersonales().getNombre(),
 		// user.getCodDatosPersonales().getApellido(), user.getNombreUsuario(),
 		// user.getCodDatosPersonales().getCorreo_personal());
-		Usuario newUser = usuarioService.registrar(user);
+		User newUser = usuarioService.registrar(user);
 		return new ResponseEntity<>(newUser, OK);
 	}
-
-	@PostMapping("/crear")
-	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<Usuario> crear(@RequestBody Usuario usuario)
-			throws NombreUsuarioExisteExcepcion, EmailExisteExcepcion, IOException, UsuarioNoEncontradoExcepcion,
-			MessagingException {
-		Usuario nuevoUsuario = usuarioService.crear(usuario);
-		return new ResponseEntity<>(nuevoUsuario, OK);
-	}
-
-//	@PostMapping("/actualizar")
-//	public ResponseEntity<Usuario> update(@RequestParam("currentUsername") String currentUsername,
-//			@RequestParam("firstName") String firstName,
-//			@RequestParam("lastName") String lastName,
-//			@RequestParam("username") String username,
-//			@RequestParam("email") String email,
-//			@RequestParam("role") String role,
-//			@RequestParam("isActive") String isActive,
-//			@RequestParam("isNonLocked") String isNonLocked,
-//			@RequestParam(value = "profileImage", required = false) MultipartFile profileImage)
-//			throws UsuarioNoEncontradoExcepcion, NombreUsuarioExisteExcepcion, EmailExisteExcepcion, IOException,
-//			NoEsArchivoImagenExcepcion {
-//		Usuario updatedUser = usuarioService.actualizarUsuario(currentUsername, firstName, lastName, username, email,
-//				role, Boolean.parseBoolean(isNonLocked), Boolean.parseBoolean(isActive), profileImage);
-//		return new ResponseEntity<>(updatedUser, OK);
-//	}
 	@PutMapping("activeLock/{id}")
-	public ResponseEntity<Usuario> actualizarDatos(@PathVariable("id") Long codigo,
+	public ResponseEntity<User> actualizarDatos(@PathVariable("id") Long codigo,
 			@RequestParam(name = "isActive", required = false) Boolean active,
 			@RequestParam(name = "isNotLocked", required = false) Boolean isNotLocked) throws DataException {
 		return usuarioService.getById(codigo).map(datosGuardados -> {
 			// datosGuardados.setCodParalelo(obj.getCodParalelo());
 			Optional.ofNullable(isNotLocked).ifPresent(datosGuardados::setNotLocked);
 			Optional.ofNullable(active).ifPresent(datosGuardados::setActive);
-			Usuario datosActualizados = null;
+			User datosActualizados = null;
 
 			try {
 				datosActualizados = usuarioService.actualizarUsuario(datosGuardados);
@@ -166,33 +126,27 @@ public class UsuarioResource extends GestorExcepciones {
 	}
 
 	@PostMapping("/actualizar")
-	public ResponseEntity<Usuario> update(@RequestBody Usuario usuario)
+	public ResponseEntity<User> update(@RequestBody User usuario)
 			throws UsuarioNoEncontradoExcepcion, NombreUsuarioExisteExcepcion, EmailExisteExcepcion, IOException,
 			NoEsArchivoImagenExcepcion {
-		Usuario updatedUser = usuarioService.actualizarUsuario(usuario);
+		User updatedUser = usuarioService.actualizarUsuario(usuario);
 		return new ResponseEntity<>(updatedUser, OK);
 	}
 
 	@GetMapping("/buscar/{nombreusuario}")
-	public ResponseEntity<Usuario> getUser(@PathVariable("nombreusuario") String username) {
-		Usuario user = usuarioService.findUserByUsername(username);
+	public ResponseEntity<User> getUser(@PathVariable("nombreusuario") String username) {
+		User user = usuarioService.findUserByUsername(username);
 		return new ResponseEntity<>(user, OK);
 	}
 
-	@PostMapping("/buscarNombreApellido")
-	public ResponseEntity<List<Usuario>> getUserNombreApellido(@RequestBody NombreApellido nombreApellido) {
-		List<Usuario> users = usuarioService.findUsuariosByNombreApellido(nombreApellido.getNombre(),
-				nombreApellido.getApellido());
-		return new ResponseEntity<>(users, OK);
-	}
 
 	// por query params
 	@PostMapping("/buscarNombresApellidos")
-	public ResponseEntity<List<Usuario>> buscarUsuarios(
+	public ResponseEntity<List<User>> buscarUsuarios(
 			@RequestParam(name = "nombres", required = false) String nombre,
 			@RequestParam(name = "apellidos", required = false) String apellido) {
 
-		List<Usuario> usuarios = new ArrayList<>();
+		List<User> usuarios = new ArrayList<>();
 
 		if (nombre != null && !nombre.trim().isEmpty() && apellido != null && !apellido.trim().isEmpty()) {
 			usuarios = usuarioService.findUsuariosByNombreApellido(nombre, apellido);
@@ -205,34 +159,27 @@ public class UsuarioResource extends GestorExcepciones {
 	}
 
 	@PostMapping("/buscarCorreo")
-	public ResponseEntity<List<Usuario>> getCorreo(@RequestParam String correo) {
-		List<Usuario> users = usuarioService.findUsuariosByCorreo(correo);
+	public ResponseEntity<List<User>> getCorreo(@RequestParam String correo) {
+		List<User> users = usuarioService.findUsuariosByCorreo(correo);
 		return new ResponseEntity<>(users, OK);
 	}
 
 	@PostMapping("/buscarUsuario")
-	public ResponseEntity<Usuario> getUserII(@RequestParam String usuario) {
-		Usuario users = usuarioService.findUserByUsername(usuario);
+	public ResponseEntity<User> getUserII(@RequestParam String usuario) {
+		User users = usuarioService.findUserByUsername(usuario);
 		return new ResponseEntity<>(users, OK);
 	}
 
 	@GetMapping("/lista")
-	public ResponseEntity<List<Usuario>> getAllUsers() {
-		List<Usuario> users = usuarioService.getUsuarios();
+	public ResponseEntity<List<User>> getAllUsers() {
+		List<User> users = usuarioService.getUsuarios();
 		return new ResponseEntity<>(users, OK);
 	}
 
 	@GetMapping("/listaPaginado")
-	public List<Usuario> getAllUsersPageable(Pageable pageable) {
+	public List<User> getAllUsersPageable(Pageable pageable) {
 
 		return usuarioService.getUsuariosPageable(pageable);
-
-	}
-
-	@GetMapping("/listaRPaginado")
-	public List<UsuarioDtoRead> getAllUsersPer(Pageable pageable) {
-
-		return usuarioService.getUsuariosPer(pageable);
 
 	}
 
@@ -248,14 +195,6 @@ public class UsuarioResource extends GestorExcepciones {
 	public ResponseEntity<HttpResponse> deleteUser(@PathVariable("username") String username) throws Exception {
 		usuarioService.eliminarUsuario(username);
 		return response(OK, USUARIO_ELIMINADO_EXITO);
-	}
-
-	@PostMapping("/actualizarImagenPerfil")
-	public ResponseEntity<Usuario> updateProfileImage(@RequestParam("username") String username,
-			@RequestParam(value = "profileImage") MultipartFile profileImage) throws UsuarioNoEncontradoExcepcion,
-			NombreUsuarioExisteExcepcion, EmailExisteExcepcion, IOException, NoEsArchivoImagenExcepcion {
-		Usuario user = usuarioService.actualizarImagenPerfil(username, profileImage);
-		return new ResponseEntity<>(user, OK);
 	}
 
 	@GetMapping(path = "/image/{username}/{fileName}", produces = IMAGE_JPEG_VALUE)
@@ -292,12 +231,12 @@ public class UsuarioResource extends GestorExcepciones {
 	}
 
 	private void authenticate(String username, String password) {
-		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+		//authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 	}
 
 	@PostMapping("/guardarArchivo")
 	public ResponseEntity<HttpResponse> guardarArchivo(@RequestParam(value = "nombreArchivo") String nombreArchivo,
-			@RequestParam(value = "archivo") MultipartFile archivo) throws Exception {
+													   @RequestParam(value = "archivo") MultipartFile archivo) throws Exception {
 
 		try {
 			usuarioService.guardarArchivo(nombreArchivo, archivo);
