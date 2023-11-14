@@ -28,7 +28,7 @@ public class ResourceController {
     public Resource update(@RequestBody Resource obj){
         return service.update(obj);
     }
-    @PostMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public void delete(@PathVariable("id") int id) throws Exception {
         service.delete(id);
     }
