@@ -88,8 +88,8 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 	// public Usuario registrar(String firstName, String lastName, String username,
 	// String email) throws UsuarioNoEncontradoExcepcion,
 	// NombreUsuarioExisteExcepcion, EmailExisteExcepcion, MessagingException {
-	public User registrar(User usuario) throws UsuarioNoEncontradoExcepcion, NombreUsuarioExisteExcepcion,
-			EmailExisteExcepcion, MessagingException, IOException {
+	public User register(User usuario) throws UserNotFoundException, UsernameExistExcepcion,
+			EmailExistExcepcion, MessagingException, IOException {
 		validateNewUsernameAndEmail(EMPTY, usuario.getUsername(), usuario.getCodDatosPersonales().getEmail());
 
 		// datos de usuario
@@ -141,8 +141,8 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 
 
 	@Override
-	public User actualizarUsuario(User usuario) throws UsuarioNoEncontradoExcepcion, NombreUsuarioExisteExcepcion,
-			EmailExisteExcepcion, IOException, NoEsArchivoImagenExcepcion {
+	public User actualizarUsuario(User usuario) throws UserNotFoundException, UsernameExistExcepcion,
+			EmailExistExcepcion, IOException, NoEsArchivoImagenExcepcion {
 		User currentUser = validateNewUsernameAndEmail(usuario.getUsername(), usuario.getUsername(),
 				usuario.getCodDatosPersonales().getEmail());
 
@@ -167,23 +167,23 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 	}
 
 	@Override
-	public int actualizarActive(Boolean active, String username) throws UsuarioNoEncontradoExcepcion,
-			NombreUsuarioExisteExcepcion, EmailExisteExcepcion, IOException, NoEsArchivoImagenExcepcion {
+	public int actualizarActive(Boolean active, String username) throws UserNotFoundException,
+			UsernameExistExcepcion, EmailExistExcepcion, IOException, NoEsArchivoImagenExcepcion {
 		return userRepository.actualizarIsActive(active, username);
 	}
 
 	@Override
-	public int actualizarNotLock(Boolean notLock, String username) throws UsuarioNoEncontradoExcepcion,
-			NombreUsuarioExisteExcepcion, EmailExisteExcepcion, IOException, NoEsArchivoImagenExcepcion {
+	public int actualizarNotLock(Boolean notLock, String username) throws UserNotFoundException,
+			UsernameExistExcepcion, EmailExistExcepcion, IOException, NoEsArchivoImagenExcepcion {
 		return userRepository.actualizarNotLocked(notLock, username);
 	}
 
 	@Override
-	public void resetPassword(String nombreUsuario) throws MessagingException, UsuarioNoEncontradoExcepcion, IOException {
+	public void resetPassword(String nombreUsuario) throws MessagingException, UserNotFoundException, IOException {
 
 		User usuario = userRepository.findUserByUsername(nombreUsuario);
 		if (usuario == null) {
-			throw new UsuarioNoEncontradoExcepcion(NO_EXISTE_USUARIO + nombreUsuario);
+			throw new UserNotFoundException(NO_EXISTE_USUARIO + nombreUsuario);
 		}
 
 		String password = generatePassword();
@@ -210,7 +210,7 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 
 
 	@Override
-	public List<User> getUsuarios() {
+	public List<User> getUsers() {
 		return userRepository.findAll();
 	}
 
@@ -279,7 +279,7 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 	}
 
 	private User validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail)
-			throws UsuarioNoEncontradoExcepcion, NombreUsuarioExisteExcepcion, EmailExisteExcepcion {
+			throws UserNotFoundException, UsernameExistExcepcion, EmailExistExcepcion {
 		User userByNewUsername = findUserByUsername(newUsername);
 		User userByNewEmail = findUserByEmail(newEmail);
 
@@ -290,12 +290,12 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 
 			// si no encuentra datos para el usuario registrado
 			if (currentUser == null) {
-				throw new UsuarioNoEncontradoExcepcion(NO_EXISTE_USUARIO + currentUsername);
+				throw new UserNotFoundException(NO_EXISTE_USUARIO + currentUsername);
 			}
 
 			// sale si ya existe ese nombre de usuario para otro usuario registrado
 			if (userByNewUsername != null && !currentUser.getIdUser().equals(userByNewUsername.getIdUser())) {
-				throw new NombreUsuarioExisteExcepcion(NOMBRE_USUARIO_YA_EXISTE);
+				throw new UsernameExistExcepcion(NOMBRE_USUARIO_YA_EXISTE);
 			}
 
 			// TODO: confirmar si es requerida esta validación
@@ -313,7 +313,7 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 		else {
 			// Si ya existe ese nombre de usuario
 			if (userByNewUsername != null) {
-				throw new NombreUsuarioExisteExcepcion(NOMBRE_USUARIO_YA_EXISTE);
+				throw new UsernameExistExcepcion(NOMBRE_USUARIO_YA_EXISTE);
 			}
 			//no puede registrar dos usuarios con un mismo correo
 			if (userByNewEmail != null) {

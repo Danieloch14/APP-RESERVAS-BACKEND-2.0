@@ -18,7 +18,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.orm.jpa.JpaSystemException;
 /*
 import org.springframework.security.access.AccessDeniedException;
@@ -37,7 +36,6 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.io.IOException;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -93,8 +91,8 @@ public class GestorExcepciones implements ErrorController {
 
  */
 
-	@ExceptionHandler(NombreUsuarioExisteExcepcion.class)
-	public ResponseEntity<HttpResponse> usernameExistException(NombreUsuarioExisteExcepcion exception) {
+	@ExceptionHandler(UsernameExistExcepcion.class)
+	public ResponseEntity<HttpResponse> usernameExistException(UsernameExistExcepcion exception) {
 		return createHttpResponse(BAD_REQUEST, exception.getMessage());
 	}
 
@@ -103,8 +101,8 @@ public class GestorExcepciones implements ErrorController {
 		return createHttpResponse(BAD_REQUEST, exception.getMessage());
 	}
 
-	@ExceptionHandler(UsuarioNoEncontradoExcepcion.class)
-	public ResponseEntity<HttpResponse> userNotFoundException(UsuarioNoEncontradoExcepcion exception) {
+	@ExceptionHandler(UserNotFoundException.class)
+	public ResponseEntity<HttpResponse> userNotFoundException(UserNotFoundException exception) {
 		return createHttpResponse(BAD_REQUEST, exception.getMessage());
 	}
 
