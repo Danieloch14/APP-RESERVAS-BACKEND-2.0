@@ -5,7 +5,8 @@ import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 import java.util.Date;
-
+//custom class
+//TODO why
 @Data
 public class HttpResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss", timezone = "America/Guayaquil")

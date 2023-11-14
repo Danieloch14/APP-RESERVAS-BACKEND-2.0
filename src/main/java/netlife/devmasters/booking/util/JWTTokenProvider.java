@@ -1,4 +1,3 @@
-//TODO revisar
 package netlife.devmasters.booking.util;
 
 import com.auth0.jwt.JWT;
@@ -36,6 +35,8 @@ public class JWTTokenProvider {
 
     public String generateJwtToken(UserPrincipal userPrincipal) {
         String[] claims = getClaimsFromUser(userPrincipal);
+        //generate token with information
+        //sign with HMAC512 algorithm and secret key
         return JWT.create().withIssuer(PLATAFORMA).withAudience(PLATAFORMA_ADMIN)
                 .withIssuedAt(new Date()).withSubject(userPrincipal.getUsername())
                 .withArrayClaim(PERMISOS, claims).withExpiresAt(new Date(System.currentTimeMillis() + jwtExpirationMs))

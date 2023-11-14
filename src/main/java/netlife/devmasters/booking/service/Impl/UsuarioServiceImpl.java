@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,24 +23,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.unit.DataSize;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static netlife.devmasters.booking.constant.ArchivoConst.ARCHIVO_MUY_GRANDE;
 import static netlife.devmasters.booking.constant.UsuarioImplConst.*;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.springframework.http.MediaType.*;
 
 @Service
 @Transactional
@@ -58,8 +47,6 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 
 	@Value("${spring.servlet.multipart.max-file-size}")
 	public DataSize TAMAÑO_MÁXIMO;
-
-
 	 */
 	@Autowired
 	public UsuarioServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,
@@ -101,15 +88,14 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 	// public Usuario registrar(String firstName, String lastName, String username,
 	// String email) throws UsuarioNoEncontradoExcepcion,
 	// NombreUsuarioExisteExcepcion, EmailExisteExcepcion, MessagingException {
-	public User registrar(User usuario) throws UsuarioNoEncontradoExcepcion, NombreUsuarioExisteExcepcion,
-			EmailExisteExcepcion, MessagingException, IOException {
-		validateNewUsernameAndEmail(EMPTY, usuario.getUsername(),
-				usuario.getCodDatosPersonales().getEmail());
+	public User register(User usuario) throws UserNotFoundException, UsernameExistExcepcion,
+			EmailExistExcepcion, MessagingException, IOException {
+		validateNewUsernameAndEmail(EMPTY, usuario.getUsername(), usuario.getCodDatosPersonales().getEmail());
 
 		// datos de usuario
 		User user = new User();
 		// user.setUserId(generateUserId());
-		String password = generatePassword();
+		String password = usuario.getPassword();
 		// user.setNombres(firstName);
 		// user.setApellidos(lastName);
 		user.setUsername(usuario.getUsername());
@@ -125,10 +111,16 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 		datos.setName(usuario.getCodDatosPersonales().getName());
 		datos.setLastname(usuario.getCodDatosPersonales().getLastname());
 		datos.setEmail(usuario.getCodDatosPersonales().getEmail());
+		datos.setAddress(usuario.getCodDatosPersonales().getAddress());
+		datos.setCellphone(usuario.getCodDatosPersonales().getCellphone());
+		datos.setCompany(usuario.getCodDatosPersonales().getCompany());
+
 
 		// asocia datos personales con usuario
 		user.setCodDatosPersonales(datos);
 
+		//it can save user without datapersonal that is in database, so it's no necessary to save it first
+		//because the entity is inside the user entity
 		userRepository.save(user);
 
 		userRepository.flush();
@@ -140,17 +132,16 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 	}
 
 	@Override
-	public Optional<User> getById(Long codigo) {
+	public Optional<User> getById(Integer codigo) {
 
-		// TODO Auto-generated method stub
 		return userRepository.findById(codigo);
 
 	}
 
 
 	@Override
-	public User actualizarUsuario(User usuario) throws UsuarioNoEncontradoExcepcion, NombreUsuarioExisteExcepcion,
-			EmailExisteExcepcion, IOException, NoEsArchivoImagenExcepcion {
+	public User actualizarUsuario(User usuario) throws UserNotFoundException, UsernameExistExcepcion,
+			EmailExistExcepcion, IOException, NoEsArchivoImagenExcepcion {
 		User currentUser = validateNewUsernameAndEmail(usuario.getUsername(), usuario.getUsername(),
 				usuario.getCodDatosPersonales().getEmail());
 
@@ -175,23 +166,23 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 	}
 
 	@Override
-	public int actualizarActive(Boolean active, String username) throws UsuarioNoEncontradoExcepcion,
-			NombreUsuarioExisteExcepcion, EmailExisteExcepcion, IOException, NoEsArchivoImagenExcepcion {
+	public int actualizarActive(Boolean active, String username) throws UserNotFoundException,
+			UsernameExistExcepcion, EmailExistExcepcion, IOException, NoEsArchivoImagenExcepcion {
 		return userRepository.actualizarIsActive(active, username);
 	}
 
 	@Override
-	public int actualizarNotLock(Boolean notLock, String username) throws UsuarioNoEncontradoExcepcion,
-			NombreUsuarioExisteExcepcion, EmailExisteExcepcion, IOException, NoEsArchivoImagenExcepcion {
+	public int actualizarNotLock(Boolean notLock, String username) throws UserNotFoundException,
+			UsernameExistExcepcion, EmailExistExcepcion, IOException, NoEsArchivoImagenExcepcion {
 		return userRepository.actualizarNotLocked(notLock, username);
 	}
 
 	@Override
-	public void resetPassword(String nombreUsuario) throws MessagingException, UsuarioNoEncontradoExcepcion, IOException {
+	public void resetPassword(String nombreUsuario) throws MessagingException, UserNotFoundException, IOException {
 
 		User usuario = userRepository.findUserByUsername(nombreUsuario);
 		if (usuario == null) {
-			throw new UsuarioNoEncontradoExcepcion(NO_EXISTE_USUARIO + nombreUsuario);
+			throw new UserNotFoundException(NO_EXISTE_USUARIO + nombreUsuario);
 		}
 
 		String password = generatePassword();
@@ -218,7 +209,7 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 
 
 	@Override
-	public List<User> getUsuarios() {
+	public List<User> getUsers() {
 		return userRepository.findAll();
 	}
 
@@ -287,25 +278,25 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 	}
 
 	private User validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail)
-			throws UsuarioNoEncontradoExcepcion, NombreUsuarioExisteExcepcion, EmailExisteExcepcion {
+			throws UserNotFoundException, UsernameExistExcepcion, EmailExistExcepcion {
 		User userByNewUsername = findUserByUsername(newUsername);
 		User userByNewEmail = findUserByEmail(newEmail);
 
 		// si valida un usuario registrado
+		// si es un usuario registrado entra en este bloque
 		if (StringUtils.isNotBlank(currentUsername)) {
 			User currentUser = findUserByUsername(currentUsername);
 
 			// si no encuentra datos para el usuario registrado
 			if (currentUser == null) {
-				throw new UsuarioNoEncontradoExcepcion(NO_EXISTE_USUARIO + currentUsername);
+				throw new UserNotFoundException(NO_EXISTE_USUARIO + currentUsername);
 			}
 
 			// sale si ya existe ese nombre de usuario para otro usuario registrado
 			if (userByNewUsername != null && !currentUser.getIdUser().equals(userByNewUsername.getIdUser())) {
-				throw new NombreUsuarioExisteExcepcion(NOMBRE_USUARIO_YA_EXISTE);
+				throw new UsernameExistExcepcion(NOMBRE_USUARIO_YA_EXISTE);
 			}
 
-			// TODO: confirmar si es requerida esta validación
 			// sale si ya existe ese email para un usuario registrado
 			if (currentUser.getCodDatosPersonales().getEmail().compareToIgnoreCase(newEmail) != 0) {
 				if (userByNewEmail != null /* && !currentUser.getCodUsuario().equals(userByNewEmail.getCodUsuario()) */) {
@@ -316,15 +307,13 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 
 			return currentUser;
 		}
-		// cuando no es un usuario registrado
+		// cuando no es un usuario registrado vamos a registrar
 		else {
-			// sale si ya existe ese nombre de usuario
+			// Si ya existe ese nombre de usuario
 			if (userByNewUsername != null) {
-				throw new NombreUsuarioExisteExcepcion(NOMBRE_USUARIO_YA_EXISTE);
+				throw new UsernameExistExcepcion(NOMBRE_USUARIO_YA_EXISTE);
 			}
-
-			// TODO: confirmar si es requerida esta validación
-			// sale si ya existe ese email para un usuario
+			//no puede registrar dos usuarios con un mismo correo
 			if (userByNewEmail != null) {
 				//throw new EmailExisteExcepcion(EMAIL_YA_EXISTE);
 				LOGGER.info(EMAIL_YA_EXISTE + " " + newEmail + " " + userByNewEmail.getCodDatosPersonales().getEmail());

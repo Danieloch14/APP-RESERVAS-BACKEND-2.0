@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Integer> {
 
     User findUserByUsername(String username);
 
-	//@Override
+	//relationships should be fetched eagerly.
 	@EntityGraph(attributePaths = "codDatosPersonales")
 	List<User> findAll();
 
@@ -45,8 +45,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	Optional<User> findByCodDatosPersonales_idPersonalData(Integer personalData);
 
-
-
-    
-    
 }

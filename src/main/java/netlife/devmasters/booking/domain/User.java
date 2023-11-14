@@ -38,19 +38,14 @@ public class User implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false, updatable = false)
-	//@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	private Long idUser;
+	private Integer idUser;
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "id_personal_data")
 	private DatoPersonal codDatosPersonales;
 
-	// private String nombres;
-	// private String apellidos;
 	private String username;
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String password;
-	// private String email;
-	// private String urlImagenPerfil;
 	@Column(name="date_entry")
 	private Date dateEntry;
 	@Column(name="date_last_login")
@@ -63,7 +58,7 @@ public class User implements Serializable {
 	public User() {
 	}
 
-	public User(Long idUser, DatoPersonal codDatosPersonales, String username, String password, Date dateEntry, Date dateLastLogin, boolean isActive, boolean isNotLocked) {
+	public User(Integer idUser, DatoPersonal codDatosPersonales, String username, String password, Date dateEntry, Date dateLastLogin, boolean isActive, boolean isNotLocked) {
 		this.idUser = idUser;
 		this.codDatosPersonales = codDatosPersonales;
 		this.username = username;

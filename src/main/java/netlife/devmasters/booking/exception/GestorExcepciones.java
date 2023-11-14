@@ -18,7 +18,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.orm.jpa.JpaSystemException;
 /*
 import org.springframework.security.access.AccessDeniedException;
@@ -37,7 +36,6 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.io.IOException;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -46,8 +44,12 @@ import java.util.stream.Collectors;
 import static netlife.devmasters.booking.constant.MensajesConst.REGISTRO_YA_EXISTE;
 import static org.springframework.http.HttpStatus.*;
 
+// indicate that this class is responsible for handling exceptions in the whole rest application
+//outside -> problems with HTTP such as invalid URL o missing parameter | request problem
+//Automatically applies the @ResponseBody annotation to all methods
 @RestControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
+//occur outside of the scope of a controller method
 public class GestorExcepciones implements ErrorController {
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 	private static final String CUENTA_BLOQUEADA = "Cuenta bloqueada - Contacte al administrador";
@@ -92,9 +94,9 @@ public class GestorExcepciones implements ErrorController {
 	}
 
  */
-
-	@ExceptionHandler(NombreUsuarioExisteExcepcion.class)
-	public ResponseEntity<HttpResponse> usernameExistException(NombreUsuarioExisteExcepcion exception) {
+	//indicate a method that will handle a specific exception
+	@ExceptionHandler(UsernameExistExcepcion.class)
+	public ResponseEntity<HttpResponse> usernameExistException(UsernameExistExcepcion exception) {
 		return createHttpResponse(BAD_REQUEST, exception.getMessage());
 	}
 
@@ -103,8 +105,8 @@ public class GestorExcepciones implements ErrorController {
 		return createHttpResponse(BAD_REQUEST, exception.getMessage());
 	}
 
-	@ExceptionHandler(UsuarioNoEncontradoExcepcion.class)
-	public ResponseEntity<HttpResponse> userNotFoundException(UsuarioNoEncontradoExcepcion exception) {
+	@ExceptionHandler(UserNotFoundException.class)
+	public ResponseEntity<HttpResponse> userNotFoundException(UserNotFoundException exception) {
 		return createHttpResponse(BAD_REQUEST, exception.getMessage());
 	}
 
