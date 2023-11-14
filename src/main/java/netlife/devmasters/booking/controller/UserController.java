@@ -238,14 +238,11 @@ public class UserController extends GestorExcepciones {
 		} catch (Exception e) {
 			HttpHeaders headers = new HttpHeaders();
 			headers.add("errorHeader", e.getMessage());
-
-			ResponseEntity<HttpResponse> response = new ResponseEntity<HttpResponse>(
+			return new ResponseEntity<HttpResponse>(
 					new HttpResponse(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST,
 							e.getMessage().toUpperCase(),
 							e.getMessage()),
 					headers, HttpStatus.BAD_REQUEST);
-
-			return response;
 		}
 	}
 
