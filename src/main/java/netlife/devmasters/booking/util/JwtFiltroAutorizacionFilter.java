@@ -27,7 +27,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class JwtFiltroAutorizacionFilter extends OncePerRequestFilter {
 	private JWTTokenProvider jwtTokenProvider;
 
-	@Value("${pecb.app.key}")
+	@Value("${netlife.app.key}")
 	private String APP_KEY;
 
 	public JwtFiltroAutorizacionFilter(JWTTokenProvider jwtTokenProvider) {
