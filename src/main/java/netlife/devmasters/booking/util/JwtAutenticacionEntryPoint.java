@@ -14,7 +14,7 @@ import java.io.OutputStream;
 import static netlife.devmasters.booking.constant.SeguridadConst.ACCESO_RESTRINGIDO;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
+/*
 @Component
 public class JwtAutenticacionEntryPoint extends Http403ForbiddenEntryPoint {
 
@@ -29,3 +29,6 @@ public class JwtAutenticacionEntryPoint extends Http403ForbiddenEntryPoint {
         outputStream.flush();
     }
 }
+
+
+ */

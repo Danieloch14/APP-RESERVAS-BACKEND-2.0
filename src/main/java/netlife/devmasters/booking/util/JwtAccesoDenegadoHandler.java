@@ -14,7 +14,7 @@ import java.io.OutputStream;
 import static netlife.devmasters.booking.constant.SeguridadConst.ACCESO_DENEGADO;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
+/*
 @Component
 public class JwtAccesoDenegadoHandler implements AccessDeniedHandler {
 
@@ -29,3 +29,5 @@ public class JwtAccesoDenegadoHandler implements AccessDeniedHandler {
         outputStream.flush();
     }
 }
+
+ */

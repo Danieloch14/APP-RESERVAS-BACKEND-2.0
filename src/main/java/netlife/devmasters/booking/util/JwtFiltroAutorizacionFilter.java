@@ -22,7 +22,7 @@ import java.util.List;
 import static netlife.devmasters.booking.constant.SeguridadConst.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.OK;
-
+/*
 @Component
 public class JwtFiltroAutorizacionFilter extends OncePerRequestFilter {
 	private JWTTokenProvider jwtTokenProvider;
@@ -87,3 +87,6 @@ public class JwtFiltroAutorizacionFilter extends OncePerRequestFilter {
 	}
 
 }
+
+
+ */
