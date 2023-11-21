@@ -15,12 +15,12 @@ public class LocationController {
     private LocationService service;
     @Autowired
     private ModelMapper modelMapper;
-    @PostMapping("/")
+    @PostMapping("")
     public Location createLocation(@RequestBody LocationCreate locationDto) throws DataException {
         Location location = modelMapper.map(locationDto, Location.class);
         return service.save(location);
     }
-    @GetMapping("/")
+    @GetMapping("")
     public Iterable<Location> getAll(){
         return service.getAll();
     }

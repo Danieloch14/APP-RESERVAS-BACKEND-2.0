@@ -16,11 +16,11 @@ public class ResourceController {
     private ResourceService service;
     @Autowired
     private ModelMapper modelMapper;
-    @GetMapping("/")
+    @GetMapping("")
     public Iterable<Resource> getAll(){
         return service.getAll();
     }
-    @PostMapping("/")
+    @PostMapping("")
     public Resource save(@RequestBody ResourceCreate obj) throws DataException {
         Resource resource = modelMapper.map(obj, Resource.class);
        return service.save(resource);

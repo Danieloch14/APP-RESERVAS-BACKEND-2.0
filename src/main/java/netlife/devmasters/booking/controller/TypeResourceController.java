@@ -13,15 +13,12 @@ import org.springframework.web.bind.annotation.*;
 public class TypeResourceController {
     @Autowired
     private TypeResourceService service;
-    @Autowired
-    private ModelMapper modelMapper;
-
-    @GetMapping("/")
+    @GetMapping("")
     public Iterable<TypeResource> getAll(){
         return service.getAll();
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public TypeResource save(@RequestBody TypeResource obj) throws DataException {
        return service.save(obj);
     }

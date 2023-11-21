@@ -166,7 +166,7 @@ public class UserController extends GestorExcepciones {
         return new ResponseEntity<>(users, OK);
     }
 
-    @GetMapping("/lista")
+    @GetMapping("/")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = service.getUsers();
         return new ResponseEntity<>(users, OK);

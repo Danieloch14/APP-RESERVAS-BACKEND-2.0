@@ -15,11 +15,11 @@ public class RegionController {
     @Autowired
     private ModelMapper modelMapper;
 
-    @GetMapping("/")
+    @GetMapping("")
     public Iterable<Region> getAll(){
         return service.getAll();
     }
-    @PostMapping("/")
+    @PostMapping("")
     public Region save(@RequestBody Region obj) throws DataException {
        return service.save(obj);
     }
