@@ -2,14 +2,14 @@ package netlife.devmasters.booking.domain.dto;
 
 import lombok.Data;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 @Data
 public class ReservationCreate {
     private Integer idReservation;
     private Integer idResource;
     private Integer idUser;
-    private Date startDate;
-    private Date endDate;
+    private Timestamp startDate;
+    private Timestamp endDate;
     private String status;
 }

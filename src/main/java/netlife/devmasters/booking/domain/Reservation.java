@@ -2,7 +2,8 @@ package netlife.devmasters.booking.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import java.util.Date;
+
+import java.sql.Timestamp;
 
 
 @Entity
@@ -19,10 +20,10 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name="id_user")
     private User idUser;
-    @Column(name="start")
-    private Date startDate;
-    @Column(name="end")
-    private Date endDate;
+    @Column(name="start_date")
+    private Timestamp startDate;
+    @Column(name="end_date")
+    private Timestamp endDate;
     @Column(name="status")
     private String status;
 }
