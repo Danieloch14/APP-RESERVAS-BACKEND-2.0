@@ -1,5 +1,6 @@
 package netlife.devmasters.booking.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,6 +20,7 @@ public class Resource {
     private Location idLocation;
     @ManyToOne
     @JoinColumn(name="res_id_resource")
+    @JsonIgnore
     private Resource parentResource;
     /*
     @Column(name = "description")
