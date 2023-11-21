@@ -19,7 +19,7 @@ public class Resource {
     private Location idLocation;
     @ManyToOne
     @JoinColumn(name="res_id_resource")
-    private Resource dadResource;
+    private Resource parentResource;
     /*
     @Column(name = "description")
     private String description;
