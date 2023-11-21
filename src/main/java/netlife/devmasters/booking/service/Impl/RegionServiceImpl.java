@@ -1,22 +1,43 @@
 package netlife.devmasters.booking.service.Impl;
 
 import netlife.devmasters.booking.domain.Region;
+import netlife.devmasters.booking.exception.dominio.DataException;
 import netlife.devmasters.booking.repository.RegionRepository;
 import netlife.devmasters.booking.service.RegionService;
-import org.hibernate.exception.DataException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+import static netlife.devmasters.booking.constant.MensajesConst.REGISTRO_VACIO;
+import static netlife.devmasters.booking.constant.MensajesConst.REGISTRO_YA_EXISTE;
+
 @Service
 public class RegionServiceImpl implements RegionService {
     @Autowired
     private RegionRepository repo;
+
     @Override
-    public Region save(Region obj) throws DataException {
-        return repo.save(obj);
+    public Region save(Region regionSave) throws DataException {
+        if (regionSave.getName().trim().isEmpty())
+            throw new DataException(REGISTRO_VACIO);
+        Optional<Region> objSave = repo.findByNameIgnoreCase(regionSave.getName());
+        if (objSave.isPresent()) {
+
+            // valida si existe eliminado
+            /*
+            Region regionDelete = objGuardado.get();
+            if (regionDelete.getEstado().compareToIgnoreCase(EstadosConst.ELIMINADO) == 0) {
+                regionDelete.setEstado(EstadosConst.ACTIVO);
+                return repo.save(regionDelete);
+            } else {
+            */
+            throw new DataException(REGISTRO_YA_EXISTE);
+        }
+
+
+        return repo.save(regionSave);
     }
 
     @Override
@@ -30,8 +51,15 @@ public class RegionServiceImpl implements RegionService {
     }
 
     @Override
-    public Region update(Region objActualizado) throws DataException {
-        return repo.save(objActualizado);
+    public Region update(Region regionUpdate, Integer idRegion) throws DataException {
+        if(regionUpdate.getName() !=null) {
+            Optional<Region> objUpdated = repo.findByNameIgnoreCase(regionUpdate.getName());
+            if (objUpdated.isPresent()&& !objUpdated.get().getIdRegion().equals(regionUpdate.getIdRegion())) {
+                throw new DataException(REGISTRO_YA_EXISTE);
+            }
+        }
+        regionUpdate.setIdRegion(idRegion);
+        return repo.save(regionUpdate);
     }
 
     @Override

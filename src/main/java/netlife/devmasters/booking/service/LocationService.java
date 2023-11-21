@@ -1,7 +1,7 @@
 package netlife.devmasters.booking.service;
 
 import netlife.devmasters.booking.domain.Location;
-import org.hibernate.exception.DataException;
+import netlife.devmasters.booking.exception.dominio.DataException;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +13,7 @@ public interface LocationService {
 
     Optional<Location> getById(int id);
 
-    Location update(Location objActualizado) throws DataException;
+    Location update(Location objActualizado,Integer idLocation) throws DataException;
 
     void delete(int id) throws Exception;
 }

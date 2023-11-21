@@ -1,10 +1,10 @@
 package netlife.devmasters.booking.service.Impl;
 
 import netlife.devmasters.booking.domain.Location;
+import netlife.devmasters.booking.exception.dominio.DataException;
 import netlife.devmasters.booking.repository.LocationRepository;
 import netlife.devmasters.booking.repository.RegionRepository;
 import netlife.devmasters.booking.service.LocationService;
-import org.hibernate.exception.DataException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +45,8 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Location update(Location objActualizado) throws DataException {
+    public Location update(Location objActualizado, Integer idLocation) throws DataException {
+        objActualizado.setIdLocation(idLocation);
         return repo.save(objActualizado);
     }
 

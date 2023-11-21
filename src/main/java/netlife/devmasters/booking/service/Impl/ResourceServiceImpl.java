@@ -2,23 +2,40 @@ package netlife.devmasters.booking.service.Impl;
 
 import netlife.devmasters.booking.domain.Resource;
 import netlife.devmasters.booking.domain.TypeResource;
-import netlife.devmasters.booking.domain.dto.TypeResourceCreate;
+import netlife.devmasters.booking.exception.dominio.DataException;
 import netlife.devmasters.booking.repository.ResourceRepository;
 import netlife.devmasters.booking.service.ResourceService;
-import org.hibernate.exception.DataException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+import static netlife.devmasters.booking.constant.MensajesConst.REGISTRO_VACIO;
+import static netlife.devmasters.booking.constant.MensajesConst.REGISTRO_YA_EXISTE;
+
 @Service
 public class ResourceServiceImpl implements ResourceService {
     @Autowired
     private ResourceRepository repo;
     @Override
-    public Resource save(Resource obj) throws DataException {
-        return repo.save(obj);
+    public Resource save(Resource objSaveII) throws DataException {
+        if (objSaveII.getCodNumber().trim().isEmpty())
+            throw new DataException(REGISTRO_VACIO);
+        Optional<Resource> objSave = repo.findByCodNumberIgnoreCase(objSaveII.getCodNumber());
+        if (objSave.isPresent()) {
+
+            // valida si existe eliminado
+            /*
+            Region regionDelete = objGuardado.get();
+            if (regionDelete.getEstado().compareToIgnoreCase(EstadosConst.ELIMINADO) == 0) {
+                regionDelete.setEstado(EstadosConst.ACTIVO);
+                return repo.save(regionDelete);
+            } else {
+            */
+            throw new DataException(REGISTRO_YA_EXISTE);
+        }
+        return repo.save(objSaveII);
     }
 
     @Override
@@ -32,7 +49,14 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public Resource update(Resource objActualizado) throws DataException {
+    public Resource update(Resource objActualizado, Integer idResource ) throws DataException {
+        if(objActualizado.getCodNumber() !=null) {
+            Optional<Resource> objUpdated = repo.findByCodNumberIgnoreCase(objActualizado.getCodNumber());
+            if (objUpdated.isPresent()&& !objUpdated.get().getIdTypeResource().equals(objActualizado.getIdTypeResource())) {
+                throw new DataException(REGISTRO_YA_EXISTE);
+            }
+        }
+        objActualizado.setIdResource(idResource);
         return repo.save(objActualizado);
     }
 

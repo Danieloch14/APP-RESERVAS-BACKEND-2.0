@@ -1,7 +1,7 @@
 package netlife.devmasters.booking.service;
 
 import netlife.devmasters.booking.domain.TypeResource;
-import org.hibernate.exception.DataException;
+import netlife.devmasters.booking.exception.dominio.DataException;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +13,7 @@ public interface TypeResourceService {
 
     Optional<TypeResource> getById(int id);
 
-    TypeResource update(TypeResource objActualizado) throws DataException;
+    TypeResource update(TypeResource objActualizado, Integer idTypeResource) throws DataException;
 
     void delete(int id) throws Exception;
 }

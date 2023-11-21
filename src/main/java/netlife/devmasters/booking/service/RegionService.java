@@ -1,7 +1,7 @@
 package netlife.devmasters.booking.service;
 
 import netlife.devmasters.booking.domain.Region;
-import org.hibernate.exception.DataException;
+import netlife.devmasters.booking.exception.dominio.DataException;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +13,7 @@ public interface RegionService {
 
     Optional<Region> getById(int id);
 
-    Region update(Region objActualizado) throws DataException;
+    Region update(Region objActualizado,Integer idRegion) throws DataException;
 
     void delete(int id) throws Exception;
 }

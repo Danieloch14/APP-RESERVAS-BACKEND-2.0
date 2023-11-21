@@ -1,14 +1,18 @@
 package netlife.devmasters.booking.service.Impl;
 
+import netlife.devmasters.booking.domain.Region;
 import netlife.devmasters.booking.domain.TypeResource;
+import netlife.devmasters.booking.exception.dominio.DataException;
 import netlife.devmasters.booking.repository.TypeResourceRepository;
 import netlife.devmasters.booking.service.TypeResourceService;
-import org.hibernate.exception.DataException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+import static netlife.devmasters.booking.constant.MensajesConst.REGISTRO_VACIO;
+import static netlife.devmasters.booking.constant.MensajesConst.REGISTRO_YA_EXISTE;
 
 @Service
 public class TypeResourceImpl implements TypeResourceService {
@@ -16,6 +20,21 @@ public class TypeResourceImpl implements TypeResourceService {
     private TypeResourceRepository repo;
     @Override
     public TypeResource save(TypeResource obj) throws DataException {
+        if (obj.getName().trim().isEmpty())
+            throw new DataException(REGISTRO_VACIO);
+        Optional<TypeResource> objSave = repo.findByNameIgnoreCase(obj.getName());
+        if (objSave.isPresent()) {
+
+            // valida si existe eliminado
+            /*
+            Region regionDelete = objGuardado.get();
+            if (regionDelete.getEstado().compareToIgnoreCase(EstadosConst.ELIMINADO) == 0) {
+                regionDelete.setEstado(EstadosConst.ACTIVO);
+                return repo.save(regionDelete);
+            } else {
+            */
+            throw new DataException(REGISTRO_YA_EXISTE);
+        }
         return repo.save(obj);
     }
 
@@ -30,8 +49,15 @@ public class TypeResourceImpl implements TypeResourceService {
     }
 
     @Override
-    public TypeResource update(TypeResource objActualizado) throws DataException {
-        return repo.save(objActualizado);
+    public TypeResource update(TypeResource typeUpdate, Integer idTypeResource) throws DataException {
+        if(typeUpdate.getName() !=null) {
+            Optional<TypeResource> objUpdated = repo.findByNameIgnoreCase(typeUpdate.getName());
+            if (objUpdated.isPresent()&& !objUpdated.get().getIdTypeResource().equals(typeUpdate.getIdTypeResource())) {
+                throw new DataException(REGISTRO_YA_EXISTE);
+            }
+        }
+        typeUpdate.setIdTypeResource(idTypeResource);
+        return repo.save(typeUpdate);
     }
 
     @Override
