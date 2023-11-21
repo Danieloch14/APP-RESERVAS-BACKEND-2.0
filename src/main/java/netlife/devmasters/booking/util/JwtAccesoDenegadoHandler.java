@@ -15,6 +15,9 @@ import static netlife.devmasters.booking.constant.SeguridadConst.ACCESO_DENEGADO
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 /*
+ se encarga de manejar las respuestas cuando se deniega el acceso a un recurso
+ debido a la falta de autorización.("permisos necesarios") pero si esta autenticado
+ */
 @Component
 public class JwtAccesoDenegadoHandler implements AccessDeniedHandler {
 
@@ -29,5 +32,3 @@ public class JwtAccesoDenegadoHandler implements AccessDeniedHandler {
         outputStream.flush();
     }
 }
-
- */

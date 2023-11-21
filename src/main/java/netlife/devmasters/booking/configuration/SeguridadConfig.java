@@ -2,12 +2,11 @@ package netlife.devmasters.booking.configuration;
 
 
 import netlife.devmasters.booking.service.UserService;
-/*
+
 import netlife.devmasters.booking.util.JwtAccesoDenegadoHandler;
+
 import netlife.devmasters.booking.util.JwtAutenticacionEntryPoint;
 import netlife.devmasters.booking.util.JwtFiltroAutorizacionFilter;
-
- */
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -31,27 +30,25 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 //roles and permissions
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class SeguridadConfig {
-    /*
     @Autowired
     private JwtFiltroAutorizacionFilter jwtAuthorizationFilter;
 
     private JwtAccesoDenegadoHandler jwtAccessDeniedHandler;
     private JwtAutenticacionEntryPoint jwtAuthenticationEntryPoint;
 
-     */
     private UserDetailsService userDetailsService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     public SeguridadConfig(
-            //JwtFiltroAutorizacionFilter jwtAuthorizationFilter,
-            //             JwtAccesoDenegadoHandler jwtAccessDeniedHandler,
-            //           JwtAutenticacionEntryPoint jwtAuthenticationEntryPoint,
+            JwtFiltroAutorizacionFilter jwtAuthorizationFilter,
+                         JwtAccesoDenegadoHandler jwtAccessDeniedHandler,
+                       JwtAutenticacionEntryPoint jwtAuthenticationEntryPoint,
             @Qualifier("userDetailsService") UserDetailsService userDetailsService,
             BCryptPasswordEncoder bCryptPasswordEncoder) {
-        //this.jwtAuthorizationFilter = jwtAuthorizationFilter;
-        //this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
-        //this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.jwtAuthorizationFilter = jwtAuthorizationFilter;
+        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.userDetailsService = userDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
@@ -70,20 +67,18 @@ public class SeguridadConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-
+        //Disable CSRF that its not necesary in api rest staeless and enable CORS from other sites. Since we are using JWT, CSRF is not needed.
         http.csrf().disable().cors()
+                //Set stateless configuration for the session, don't use http session
                 .and().sessionManagement().sessionCreationPolicy(STATELESS)
+                //filter authorization
                 .and().authorizeRequests().requestMatchers(URLS_PUBLICAS).permitAll()
-                .anyRequest().authenticated();
-		/*
-        .and()
-                .exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler)
+                .anyRequest().authenticated()
+                .and().exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler)
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
+                //its execute first
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
-
-		 */
         return http.build();
     }
 

@@ -15,6 +15,11 @@ import static netlife.devmasters.booking.constant.SeguridadConst.ACCESO_RESTRING
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 /*
+se utiliza como punto de entrada
+para las respuestas cuando se deniega la autenticación de un usuario.
+Usuario no autenticado
+Cuando un token no es valido
+ */
 @Component
 public class JwtAutenticacionEntryPoint extends Http403ForbiddenEntryPoint {
 
@@ -29,6 +34,3 @@ public class JwtAutenticacionEntryPoint extends Http403ForbiddenEntryPoint {
         outputStream.flush();
     }
 }
-
-
- */

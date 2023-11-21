@@ -22,7 +22,7 @@ import java.util.List;
 import static netlife.devmasters.booking.constant.SeguridadConst.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.OK;
-/*
+
 @Component
 public class JwtFiltroAutorizacionFilter extends OncePerRequestFilter {
 	private JWTTokenProvider jwtTokenProvider;
@@ -39,14 +39,17 @@ public class JwtFiltroAutorizacionFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 
 		try {
+            //patrons to exclude the filter
 			String requestURI = request.getRequestURI();
 			String excludedUrlPattern = "/link/\\d+";
 			String excludedUrlPattern2 = "/swagger-ui/.*";
 			String excludedUrlPattern3 = "/api-docs.*";
 			if (requestURI.matches(excludedUrlPattern)||requestURI.matches(excludedUrlPattern2)||requestURI.matches(excludedUrlPattern3)) {
-				filterChain.doFilter(request, response);
+				//allow to continue  filter chain in seguridad config normally
+                filterChain.doFilter(request, response);
 				return;
 			}
+            //OPTIONS is used in CORS preflight, dont require security management
 			else if (request.getMethod().equalsIgnoreCase(METOD_HTTP_OPTIONS)) {
 				response.setStatus(OK.value());
 			} else {
@@ -56,12 +59,16 @@ public class JwtFiltroAutorizacionFilter extends OncePerRequestFilter {
 					// request.getRequestURI()
 					RequestMatcher matcher = new RequestHeaderRequestMatcher(HEADER_APP,
 							APP_KEY);
+                    System.out.println("matcher: "+matcher);
 
 					if (!matcher.matches(request)) {
-						response.addHeader("errorHeader", "ACCESO NO AUTORIZADO");
+                        System.out.println("ACCESO NO AUTORIZADO JAIR");
+						response.addHeader("errorHeader", "ACCESO NO AUTORIZADO JAIR");
 						SecurityContextHolder.clearContext();
 						response.setStatus(HttpStatus.FORBIDDEN.value());
 						response.flushBuffer();
+                        response.sendError(HttpStatus.FORBIDDEN.value(), "ACCESO NO AUTORIZADO JAIR");
+                        response.setContentType("application/json");
 						return;
 					}
 					filterChain.doFilter(request, response);
@@ -89,4 +96,3 @@ public class JwtFiltroAutorizacionFilter extends OncePerRequestFilter {
 }
 
 
- */
