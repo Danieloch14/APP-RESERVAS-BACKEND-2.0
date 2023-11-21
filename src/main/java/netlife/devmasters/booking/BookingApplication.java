@@ -10,6 +10,8 @@ import org.springframework.web.filter.CorsFilter;
 import java.util.Arrays;
 
 @SpringBootApplication
+//TODO poner @EnableEncryptableProperties
+//@EnableAsync
 public class BookingApplication {
 
 	public static void main(String[] args) {
