@@ -38,7 +38,7 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/v1/users")
 public class UserController extends GestorExcepciones {
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 

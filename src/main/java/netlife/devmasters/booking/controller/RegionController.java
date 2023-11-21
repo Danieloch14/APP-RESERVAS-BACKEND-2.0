@@ -1,32 +1,33 @@
 package netlife.devmasters.booking.controller;
 
 import netlife.devmasters.booking.domain.Region;
+import netlife.devmasters.booking.exception.dominio.DataException;
 import netlife.devmasters.booking.service.RegionService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/region")
+@RequestMapping("/api/v1/regions")
 public class RegionController {
     @Autowired
     private RegionService service;
     @Autowired
     private ModelMapper modelMapper;
 
-    @GetMapping("/getAll")
+    @GetMapping("/")
     public Iterable<Region> getAll(){
         return service.getAll();
     }
-    @PostMapping("/save")
-    public Region save(@RequestBody Region obj){
+    @PostMapping("/")
+    public Region save(@RequestBody Region obj) throws DataException {
        return service.save(obj);
     }
-    @PutMapping("/update")
-    public Region update(@RequestBody Region obj){
-        return service.update(obj);
+    @PutMapping("/{id}")
+    public Region update(@PathVariable("id") Integer id, @RequestBody Region obj) throws DataException {
+        return service.update(obj,id);
     }
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") int id) throws Exception {
         service.delete(id);
     }
