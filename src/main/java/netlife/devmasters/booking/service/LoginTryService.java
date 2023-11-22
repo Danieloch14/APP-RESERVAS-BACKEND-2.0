@@ -10,13 +10,13 @@ import java.util.concurrent.ExecutionException;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 @Service
-public class IntentoLoginService {
+public class LoginTryService {
     private static final int TAMAÑO_CACHE = 1000;
 	private static final int MAXIMO_INTENTOS = 5;
     private static final int INCREMENTO = 1;
     private LoadingCache<String, Integer> intentoLoginCache;
 
-    public IntentoLoginService() {
+    public LoginTryService() {
         super();
         intentoLoginCache = CacheBuilder.newBuilder().expireAfterWrite(15, MINUTES)
                 .maximumSize(TAMAÑO_CACHE).build(new CacheLoader<String, Integer>() {
