@@ -1,10 +1,8 @@
 package netlife.devmasters.booking.controller;
 
 import netlife.devmasters.booking.domain.TypeResource;
-import netlife.devmasters.booking.domain.dto.TypeResourceCreate;
-import netlife.devmasters.booking.exception.dominio.DataException;
+import netlife.devmasters.booking.exception.domain.DataException;
 import netlife.devmasters.booking.service.TypeResourceService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

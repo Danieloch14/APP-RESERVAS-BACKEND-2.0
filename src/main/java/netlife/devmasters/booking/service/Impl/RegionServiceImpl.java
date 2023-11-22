@@ -1,7 +1,7 @@
 package netlife.devmasters.booking.service.Impl;
 
 import netlife.devmasters.booking.domain.Region;
-import netlife.devmasters.booking.exception.dominio.DataException;
+import netlife.devmasters.booking.exception.domain.DataException;
 import netlife.devmasters.booking.repository.RegionRepository;
 import netlife.devmasters.booking.service.RegionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static netlife.devmasters.booking.constant.MensajesConst.REGISTRO_VACIO;
-import static netlife.devmasters.booking.constant.MensajesConst.REGISTRO_YA_EXISTE;
+import static netlife.devmasters.booking.constant.MessagesConst.EMPTY_REGISTER;
+import static netlife.devmasters.booking.constant.MessagesConst.REGISTER_ALREADY_EXIST;
 
 @Service
 public class RegionServiceImpl implements RegionService {
@@ -21,7 +21,7 @@ public class RegionServiceImpl implements RegionService {
     @Override
     public Region save(Region regionSave) throws DataException {
         if (regionSave.getName().trim().isEmpty())
-            throw new DataException(REGISTRO_VACIO);
+            throw new DataException(EMPTY_REGISTER);
         Optional<Region> objSave = repo.findByNameIgnoreCase(regionSave.getName());
         if (objSave.isPresent()) {
 
@@ -33,7 +33,7 @@ public class RegionServiceImpl implements RegionService {
                 return repo.save(regionDelete);
             } else {
             */
-            throw new DataException(REGISTRO_YA_EXISTE);
+            throw new DataException(REGISTER_ALREADY_EXIST);
         }
 
 
@@ -55,7 +55,7 @@ public class RegionServiceImpl implements RegionService {
         if(regionUpdate.getName() !=null) {
             Optional<Region> objUpdated = repo.findByNameIgnoreCase(regionUpdate.getName());
             if (objUpdated.isPresent()&& !objUpdated.get().getIdRegion().equals(regionUpdate.getIdRegion())) {
-                throw new DataException(REGISTRO_YA_EXISTE);
+                throw new DataException(REGISTER_ALREADY_EXIST);
             }
         }
         regionUpdate.setIdRegion(idRegion);

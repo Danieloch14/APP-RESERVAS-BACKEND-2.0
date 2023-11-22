@@ -2,17 +2,13 @@ package netlife.devmasters.booking.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.ResultCheckStyle;
-import org.hibernate.annotations.SQLDelete;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "personal_data")
 @Data
 //@SQLDelete(sql = "UPDATE {h-schema}id_personal_data SET estado = 'ELIMINADO' WHERE cod_datos_personales = ?", check = ResultCheckStyle.COUNT)
 //@Where(clause = "estado <> 'ELIMINADO'")
-public class DatoPersonal {
+public class PersonalData {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,4 +1,4 @@
-package netlife.devmasters.booking.exception.dominio;
+package netlife.devmasters.booking.exception.domain;
 
 public class DataException extends Exception {
 

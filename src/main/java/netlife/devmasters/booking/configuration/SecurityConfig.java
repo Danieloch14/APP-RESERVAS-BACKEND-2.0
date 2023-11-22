@@ -21,7 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static netlife.devmasters.booking.constant.SeguridadConst.URLS_PUBLICAS;
+import static netlife.devmasters.booking.constant.SecurityConst.URLS_PUBLICS;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -29,7 +29,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableWebSecurity
 //roles and permissions
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
-public class SeguridadConfig {
+public class SecurityConfig {
     @Autowired
     private JwtFiltroAutorizacionFilter jwtAuthorizationFilter;
 
@@ -40,7 +40,7 @@ public class SeguridadConfig {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public SeguridadConfig(
+    public SecurityConfig(
             JwtFiltroAutorizacionFilter jwtAuthorizationFilter,
                          JwtAccesoDenegadoHandler jwtAccessDeniedHandler,
                        JwtAutenticacionEntryPoint jwtAuthenticationEntryPoint,
@@ -72,7 +72,7 @@ public class SeguridadConfig {
                 //Set stateless configuration for the session, don't use http session
                 .and().sessionManagement().sessionCreationPolicy(STATELESS)
                 //filter authorization
-                .and().authorizeRequests().requestMatchers(URLS_PUBLICAS).permitAll()
+                .and().authorizeRequests().requestMatchers(URLS_PUBLICS).permitAll()
                 .anyRequest().authenticated()
                 .and().exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler)
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)

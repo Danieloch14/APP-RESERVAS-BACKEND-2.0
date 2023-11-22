@@ -1,8 +1,7 @@
 package netlife.devmasters.booking.service.Impl;
 
-import netlife.devmasters.booking.domain.Region;
 import netlife.devmasters.booking.domain.TypeResource;
-import netlife.devmasters.booking.exception.dominio.DataException;
+import netlife.devmasters.booking.exception.domain.DataException;
 import netlife.devmasters.booking.repository.TypeResourceRepository;
 import netlife.devmasters.booking.service.TypeResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +10,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static netlife.devmasters.booking.constant.MensajesConst.REGISTRO_VACIO;
-import static netlife.devmasters.booking.constant.MensajesConst.REGISTRO_YA_EXISTE;
+import static netlife.devmasters.booking.constant.MessagesConst.EMPTY_REGISTER;
+import static netlife.devmasters.booking.constant.MessagesConst.REGISTER_ALREADY_EXIST;
 
 @Service
 public class TypeResourceImpl implements TypeResourceService {
@@ -21,7 +20,7 @@ public class TypeResourceImpl implements TypeResourceService {
     @Override
     public TypeResource save(TypeResource obj) throws DataException {
         if (obj.getName().trim().isEmpty())
-            throw new DataException(REGISTRO_VACIO);
+            throw new DataException(EMPTY_REGISTER);
         Optional<TypeResource> objSave = repo.findByNameIgnoreCase(obj.getName());
         if (objSave.isPresent()) {
 
@@ -33,7 +32,7 @@ public class TypeResourceImpl implements TypeResourceService {
                 return repo.save(regionDelete);
             } else {
             */
-            throw new DataException(REGISTRO_YA_EXISTE);
+            throw new DataException(REGISTER_ALREADY_EXIST);
         }
         return repo.save(obj);
     }
@@ -53,7 +52,7 @@ public class TypeResourceImpl implements TypeResourceService {
         if(typeUpdate.getName() !=null) {
             Optional<TypeResource> objUpdated = repo.findByNameIgnoreCase(typeUpdate.getName());
             if (objUpdated.isPresent()&& !objUpdated.get().getIdTypeResource().equals(typeUpdate.getIdTypeResource())) {
-                throw new DataException(REGISTRO_YA_EXISTE);
+                throw new DataException(REGISTER_ALREADY_EXIST);
             }
         }
         typeUpdate.setIdTypeResource(idTypeResource);

@@ -1,7 +1,7 @@
 package netlife.devmasters.booking.service;
 
 import netlife.devmasters.booking.domain.Region;
-import netlife.devmasters.booking.exception.dominio.DataException;
+import netlife.devmasters.booking.exception.domain.DataException;
 
 import java.util.List;
 import java.util.Optional;

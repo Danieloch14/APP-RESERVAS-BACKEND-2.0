@@ -1,7 +1,7 @@
 package netlife.devmasters.booking.service.Impl;
 
 import netlife.devmasters.booking.domain.Location;
-import netlife.devmasters.booking.exception.dominio.DataException;
+import netlife.devmasters.booking.exception.domain.DataException;
 import netlife.devmasters.booking.repository.LocationRepository;
 import netlife.devmasters.booking.repository.RegionRepository;
 import netlife.devmasters.booking.service.LocationService;

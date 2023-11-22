@@ -2,10 +2,10 @@ package netlife.devmasters.booking.exception;
 
 
 import jakarta.persistence.NoResultException;
-import netlife.devmasters.booking.constant.ArchivoConst;
-import netlife.devmasters.booking.constant.MensajesConst;
+import netlife.devmasters.booking.constant.FileConst;
+import netlife.devmasters.booking.constant.MessagesConst;
 import netlife.devmasters.booking.domain.HttpResponse;
-import netlife.devmasters.booking.exception.dominio.*;
+import netlife.devmasters.booking.exception.domain.*;
 import org.hibernate.exception.ConstraintViolationException;
 import org.postgresql.util.PSQLException;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static netlife.devmasters.booking.constant.MensajesConst.REGISTRO_YA_EXISTE;
+import static netlife.devmasters.booking.constant.MessagesConst.REGISTER_ALREADY_EXIST;
 import static org.springframework.http.HttpStatus.*;
 
 // indicate that this class is responsible for handling exceptions in the whole rest application
@@ -50,7 +50,7 @@ import static org.springframework.http.HttpStatus.*;
 @RestControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
 //occur outside of the scope of a controller method
-public class GestorExcepciones implements ErrorController {
+public class ExcepcionsManagment implements ErrorController {
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 	private static final String CUENTA_BLOQUEADA = "Cuenta bloqueada - Contacte al administrador";
 	private static final String METODO_NO_PERMITIDO = "Este método no está permitido en el endpoint. Enviar un request: '%s'";
@@ -100,8 +100,8 @@ public class GestorExcepciones implements ErrorController {
 		return createHttpResponse(BAD_REQUEST, exception.getMessage());
 	}
 
-	@ExceptionHandler(EmailNoEncontradoExcepcion.class)
-	public ResponseEntity<HttpResponse> emailNotFoundException(EmailNoEncontradoExcepcion exception) {
+	@ExceptionHandler(EmailNotFoundExcepcion.class)
+	public ResponseEntity<HttpResponse> emailNotFoundException(EmailNotFoundExcepcion exception) {
 		return createHttpResponse(BAD_REQUEST, exception.getMessage());
 	}
 
@@ -128,8 +128,8 @@ public class GestorExcepciones implements ErrorController {
 		return createHttpResponse(INTERNAL_SERVER_ERROR, exception.getLocalizedMessage());
 	}
 
-	@ExceptionHandler(NoEsArchivoImagenExcepcion.class)
-	public ResponseEntity<HttpResponse> notAnImageFileException(NoEsArchivoImagenExcepcion exception) {
+	@ExceptionHandler(NotFileImageExcepcion.class)
+	public ResponseEntity<HttpResponse> notAnImageFileException(NotFileImageExcepcion exception) {
 		LOGGER.error(exception.getMessage());
 		return createHttpResponse(BAD_REQUEST, exception.getMessage());
 	}
@@ -145,7 +145,7 @@ public class GestorExcepciones implements ErrorController {
 	public ResponseEntity<HttpResponse> archivoMuyGrandeException(MaxUploadSizeExceededException exception) {
 		LOGGER.error(exception.getMessage() + " - MaxUploadSize = " + exception.getMaxUploadSize());
 
-		String mensaje = ArchivoConst.ARCHIVO_MUY_GRANDE;
+		String mensaje = FileConst.BIG_FILE;
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("errorHeader", mensaje);
@@ -207,11 +207,11 @@ public class GestorExcepciones implements ErrorController {
 		
 		if (cause != null && cause instanceof ConstraintViolationException) {
 			if (constraintName.contains("_un")) {
-				return createHttpResponse(BAD_REQUEST, REGISTRO_YA_EXISTE);
+				return createHttpResponse(BAD_REQUEST, REGISTER_ALREADY_EXIST);
 			}
 			
 			if (constraintName.contains("_fk")) {
-				return createHttpResponse(BAD_REQUEST, MensajesConst.DATOS_RELACIONADOS);
+				return createHttpResponse(BAD_REQUEST, MessagesConst.RELATED_DATA);
 			}
 		} 
 			LOGGER.error(exception.getMessage());

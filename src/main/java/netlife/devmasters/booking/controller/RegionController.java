@@ -1,7 +1,7 @@
 package netlife.devmasters.booking.controller;
 
 import netlife.devmasters.booking.domain.Region;
-import netlife.devmasters.booking.exception.dominio.DataException;
+import netlife.devmasters.booking.exception.domain.DataException;
 import netlife.devmasters.booking.service.RegionService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,10 +3,10 @@ package netlife.devmasters.booking.service.Impl;
 
 
 import jakarta.mail.MessagingException;
-import netlife.devmasters.booking.domain.DatoPersonal;
+import netlife.devmasters.booking.domain.PersonalData;
 import netlife.devmasters.booking.domain.User;
 import netlife.devmasters.booking.domain.UserPrincipal;
-import netlife.devmasters.booking.exception.dominio.*;
+import netlife.devmasters.booking.exception.domain.*;
 import netlife.devmasters.booking.repository.UserRepository;
 import netlife.devmasters.booking.service.IntentoLoginService;
 import netlife.devmasters.booking.service.UserService;
@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import static netlife.devmasters.booking.constant.UsuarioImplConst.*;
+import static netlife.devmasters.booking.constant.UsersImplConst.*;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @Service
@@ -70,15 +70,15 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = userRepository.findUserByUsername(username);
 		if (user == null) {
-			LOGGER.error(NO_EXISTE_USUARIO + username);
-			throw new UsernameNotFoundException(NO_EXISTE_USUARIO + username);
+			LOGGER.error(USER_DONT_EXIST + username);
+			throw new UsernameNotFoundException(USER_DONT_EXIST + username);
 		} else {
 			validateLoginAttempt(user);
 			user.setDateLastLogin(user.getDateLastLogin());
 			user.setDateLastLogin(new Date());
 			userRepository.save(user);
 			UserPrincipal userPrincipal = new UserPrincipal(user);
-			LOGGER.info(NOMBRE_USUARIO_ENCONTRADO + username);
+			LOGGER.info(USERNAME_FOUND + username);
 			return userPrincipal;
 		}
 
@@ -107,7 +107,7 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 		// user.setUrlImagenPerfil(getTemporaryProfileImageUrl(username));
 
 		// datos personales
-		DatoPersonal datos = new DatoPersonal();
+		PersonalData datos = new PersonalData();
 		datos.setName(usuario.getCodDatosPersonales().getName());
 		datos.setLastname(usuario.getCodDatosPersonales().getLastname());
 		datos.setEmail(usuario.getCodDatosPersonales().getEmail());
@@ -141,7 +141,7 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public User actualizarUsuario(User usuario) throws UserNotFoundException, UsernameExistExcepcion,
-			EmailExistExcepcion, IOException, NoEsArchivoImagenExcepcion {
+			EmailExistExcepcion, IOException, NotFileImageExcepcion {
 		User currentUser = validateNewUsernameAndEmail(usuario.getUsername(), usuario.getUsername(),
 				usuario.getCodDatosPersonales().getEmail());
 
@@ -167,13 +167,13 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public int actualizarActive(Boolean active, String username) throws UserNotFoundException,
-			UsernameExistExcepcion, EmailExistExcepcion, IOException, NoEsArchivoImagenExcepcion {
+			UsernameExistExcepcion, EmailExistExcepcion, IOException, NotFileImageExcepcion {
 		return userRepository.actualizarIsActive(active, username);
 	}
 
 	@Override
 	public int actualizarNotLock(Boolean notLock, String username) throws UserNotFoundException,
-			UsernameExistExcepcion, EmailExistExcepcion, IOException, NoEsArchivoImagenExcepcion {
+			UsernameExistExcepcion, EmailExistExcepcion, IOException, NotFileImageExcepcion {
 		return userRepository.actualizarNotLocked(notLock, username);
 	}
 
@@ -182,7 +182,7 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 
 		User usuario = userRepository.findUserByUsername(nombreUsuario);
 		if (usuario == null) {
-			throw new UserNotFoundException(NO_EXISTE_USUARIO + nombreUsuario);
+			throw new UserNotFoundException(USER_DONT_EXIST + nombreUsuario);
 		}
 
 		String password = generatePassword();
@@ -190,7 +190,7 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 		userRepository.save(usuario);
 
 		// datos personales
-		DatoPersonal datos = usuario.getCodDatosPersonales();
+		PersonalData datos = usuario.getCodDatosPersonales();
 
 		// asocia datos personales con usuario
 		usuario.setCodDatosPersonales(datos);
@@ -289,19 +289,19 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 
 			// si no encuentra datos para el usuario registrado
 			if (currentUser == null) {
-				throw new UserNotFoundException(NO_EXISTE_USUARIO + currentUsername);
+				throw new UserNotFoundException(USER_DONT_EXIST + currentUsername);
 			}
 
 			// sale si ya existe ese nombre de usuario para otro usuario registrado
 			if (userByNewUsername != null && !currentUser.getIdUser().equals(userByNewUsername.getIdUser())) {
-				throw new UsernameExistExcepcion(NOMBRE_USUARIO_YA_EXISTE);
+				throw new UsernameExistExcepcion(USERNAME_EXIST);
 			}
 
 			// sale si ya existe ese email para un usuario registrado
 			if (currentUser.getCodDatosPersonales().getEmail().compareToIgnoreCase(newEmail) != 0) {
 				if (userByNewEmail != null /* && !currentUser.getCodUsuario().equals(userByNewEmail.getCodUsuario()) */) {
 					//throw new EmailExisteExcepcion(EMAIL_YA_EXISTE);
-					LOGGER.info(EMAIL_YA_EXISTE + " " + newEmail + " " + currentUser.getCodDatosPersonales().getEmail());
+					LOGGER.info(EMAIL_EXIST + " " + newEmail + " " + currentUser.getCodDatosPersonales().getEmail());
 				}
 			}
 
@@ -311,12 +311,12 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 		else {
 			// Si ya existe ese nombre de usuario
 			if (userByNewUsername != null) {
-				throw new UsernameExistExcepcion(NOMBRE_USUARIO_YA_EXISTE);
+				throw new UsernameExistExcepcion(USERNAME_EXIST);
 			}
 			//no puede registrar dos usuarios con un mismo correo
 			if (userByNewEmail != null) {
 				//throw new EmailExisteExcepcion(EMAIL_YA_EXISTE);
-				LOGGER.info(EMAIL_YA_EXISTE + " " + newEmail + " " + userByNewEmail.getCodDatosPersonales().getEmail());
+				LOGGER.info(EMAIL_EXIST + " " + newEmail + " " + userByNewEmail.getCodDatosPersonales().getEmail());
 			}
 
 			return null;
@@ -324,7 +324,7 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 	}
 
 	public void guardarArchivo(String nombreArchivo, MultipartFile archivo)
-			throws IOException, ArchivoMuyGrandeExcepcion {
+			throws IOException, BigFileExcepcion {
 		/*
 
 		if (archivo.getSize() > TAMAÑO_MÁXIMO.toBytes()) {

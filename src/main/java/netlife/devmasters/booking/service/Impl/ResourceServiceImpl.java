@@ -1,8 +1,7 @@
 package netlife.devmasters.booking.service.Impl;
 
 import netlife.devmasters.booking.domain.Resource;
-import netlife.devmasters.booking.domain.TypeResource;
-import netlife.devmasters.booking.exception.dominio.DataException;
+import netlife.devmasters.booking.exception.domain.DataException;
 import netlife.devmasters.booking.repository.ResourceRepository;
 import netlife.devmasters.booking.service.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +10,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static netlife.devmasters.booking.constant.MensajesConst.REGISTRO_VACIO;
-import static netlife.devmasters.booking.constant.MensajesConst.REGISTRO_YA_EXISTE;
+import static netlife.devmasters.booking.constant.MessagesConst.EMPTY_REGISTER;
+import static netlife.devmasters.booking.constant.MessagesConst.REGISTER_ALREADY_EXIST;
 
 @Service
 public class ResourceServiceImpl implements ResourceService {
@@ -21,7 +20,7 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public Resource save(Resource objSaveII) throws DataException {
         if (objSaveII.getCodNumber().trim().isEmpty())
-            throw new DataException(REGISTRO_VACIO);
+            throw new DataException(EMPTY_REGISTER);
         Optional<Resource> objSave = repo.findByCodNumberIgnoreCase(objSaveII.getCodNumber());
         if (objSave.isPresent()) {
 
@@ -33,7 +32,7 @@ public class ResourceServiceImpl implements ResourceService {
                 return repo.save(regionDelete);
             } else {
             */
-            throw new DataException(REGISTRO_YA_EXISTE);
+            throw new DataException(REGISTER_ALREADY_EXIST);
         }
         return repo.save(objSaveII);
     }
@@ -53,7 +52,7 @@ public class ResourceServiceImpl implements ResourceService {
         if(objActualizado.getCodNumber() !=null) {
             Optional<Resource> objUpdated = repo.findByCodNumberIgnoreCase(objActualizado.getCodNumber());
             if (objUpdated.isPresent()&& !objUpdated.get().getIdTypeResource().equals(objActualizado.getIdTypeResource())) {
-                throw new DataException(REGISTRO_YA_EXISTE);
+                throw new DataException(REGISTER_ALREADY_EXIST);
             }
         }
         objActualizado.setIdResource(idResource);

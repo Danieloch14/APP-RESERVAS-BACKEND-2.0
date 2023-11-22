@@ -2,7 +2,7 @@ package netlife.devmasters.booking.service;
 
 import jakarta.mail.MessagingException;
 import netlife.devmasters.booking.domain.User;
-import netlife.devmasters.booking.exception.dominio.*;
+import netlife.devmasters.booking.exception.domain.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,22 +26,22 @@ public interface UserService {
 
     User actualizarUsuario(User usuario)
             throws UserNotFoundException, UsernameExistExcepcion, EmailExistExcepcion, IOException,
-            NoEsArchivoImagenExcepcion;
+            NotFileImageExcepcion;
 
     int actualizarActive(Boolean active, String username)
             throws UserNotFoundException, UsernameExistExcepcion, EmailExistExcepcion, IOException,
-            NoEsArchivoImagenExcepcion;
+            NotFileImageExcepcion;
 
     int actualizarNotLock(Boolean notLock, String username)
             throws UserNotFoundException, UsernameExistExcepcion, EmailExistExcepcion, IOException,
-            NoEsArchivoImagenExcepcion;
+            NotFileImageExcepcion;
 
     void eliminarUsuario(String username) throws Exception;
 
     void resetPassword(String email)
-            throws MessagingException, EmailNoEncontradoExcepcion, UserNotFoundException, IOException;
+            throws MessagingException, EmailNotFoundExcepcion, UserNotFoundException, IOException;
 
-    void guardarArchivo(String nombreArchivo, MultipartFile archivo) throws IOException, ArchivoMuyGrandeExcepcion;
+    void guardarArchivo(String nombreArchivo, MultipartFile archivo) throws IOException, BigFileExcepcion;
 
     long tamañoMáximoArchivo();
 

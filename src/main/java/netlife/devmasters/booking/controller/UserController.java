@@ -6,8 +6,8 @@ import jakarta.mail.MessagingException;
 import netlife.devmasters.booking.domain.HttpResponse;
 import netlife.devmasters.booking.domain.User;
 import netlife.devmasters.booking.domain.UserPrincipal;
-import netlife.devmasters.booking.exception.GestorExcepciones;
-import netlife.devmasters.booking.exception.dominio.*;
+import netlife.devmasters.booking.exception.ExcepcionsManagment;
+import netlife.devmasters.booking.exception.domain.*;
 import netlife.devmasters.booking.service.UserService;
 import netlife.devmasters.booking.util.JWTTokenProvider;
 import org.slf4j.Logger;
@@ -32,14 +32,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static netlife.devmasters.booking.constant.ArchivoConst.*;
-import static netlife.devmasters.booking.constant.SeguridadConst.CABECERA_TOKEN_JWT;
+import static netlife.devmasters.booking.constant.FileConst.*;
+import static netlife.devmasters.booking.constant.SecurityConst.HEADER_TOKEN_JWT;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 @RestController
 @RequestMapping("/api/v1/users")
-public class UserController extends GestorExcepciones {
+public class UserController extends ExcepcionsManagment {
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     public static final String EMAIL_ENVIADO = "Se envió un email con el nuevo password a: ";
@@ -88,7 +88,7 @@ public class UserController extends GestorExcepciones {
             try {
                 datosActualizados = service.actualizarUsuario(datosGuardados);
             } catch (UserNotFoundException | UsernameExistExcepcion | EmailExistExcepcion | IOException
-                     | NoEsArchivoImagenExcepcion e) {
+                     | NotFileImageExcepcion e) {
                 e.printStackTrace();
             }
             return new ResponseEntity<>(datosActualizados, HttpStatus.OK);
@@ -99,7 +99,7 @@ public class UserController extends GestorExcepciones {
     public ResponseEntity<Void> updateActive(@RequestParam("valide") Boolean valide,
                                              @RequestParam("username") String username)
             throws UserNotFoundException, UsernameExistExcepcion, EmailExistExcepcion, IOException,
-            NoEsArchivoImagenExcepcion {
+            NotFileImageExcepcion {
         int registrosActualizados = service.actualizarActive(valide, username);
         if (registrosActualizados == 1) {
             return new ResponseEntity<>(HttpStatus.OK);
@@ -112,7 +112,7 @@ public class UserController extends GestorExcepciones {
     public ResponseEntity<Void> updateNotLocked(@RequestParam("valide") Boolean notLocked,
                                                 @RequestParam("username") String username)
             throws UserNotFoundException, UsernameExistExcepcion, EmailExistExcepcion, IOException,
-            NoEsArchivoImagenExcepcion {
+            NotFileImageExcepcion {
         int registrosActualizados = service.actualizarNotLock(notLocked, username);
         if (registrosActualizados == 1) {
             return new ResponseEntity<>(HttpStatus.OK);
@@ -124,7 +124,7 @@ public class UserController extends GestorExcepciones {
     @PostMapping("/actualizar")
     public ResponseEntity<User> update(@RequestBody User usuario)
             throws UserNotFoundException, UsernameExistExcepcion, EmailExistExcepcion, IOException,
-            NoEsArchivoImagenExcepcion {
+            NotFileImageExcepcion {
         User updatedUser = service.actualizarUsuario(usuario);
         return new ResponseEntity<>(updatedUser, OK);
     }
@@ -181,7 +181,7 @@ public class UserController extends GestorExcepciones {
 
     @PostMapping("/resetPassword/{nombreUsuario}")
     public ResponseEntity<HttpResponse> resetPassword(@PathVariable("nombreUsuario") String nombreUsuario)
-            throws MessagingException, EmailNoEncontradoExcepcion, UserNotFoundException, IOException {
+            throws MessagingException, EmailNotFoundExcepcion, UserNotFoundException, IOException {
         service.resetPassword(nombreUsuario);
         return response(OK, EMAIL_ENVIADO + " la dirección de email registrada para el usuario " + nombreUsuario);
     }
@@ -196,12 +196,12 @@ public class UserController extends GestorExcepciones {
     @GetMapping(path = "/image/{username}/{fileName}", produces = IMAGE_JPEG_VALUE)
     public byte[] getProfileImage(@PathVariable("username") String username, @PathVariable("fileName") String fileName)
             throws IOException {
-        return Files.readAllBytes(Paths.get(CARPETA_USUARIO + username + FORWARD_SLASH + fileName));
+        return Files.readAllBytes(Paths.get(USER_FILE + username + FORWARD_SLASH + fileName));
     }
 
     @GetMapping(path = "/image/profile/{username}", produces = IMAGE_JPEG_VALUE)
     public byte[] getTempProfileImage(@PathVariable("username") String username) throws IOException {
-        URL url = new URL(URL_IMAGEN_TEMPORAL + username);
+        URL url = new URL(URL_TEMPORAL_PICTURE + username);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try (InputStream inputStream = url.openStream()) {
             int bytesRead;
@@ -222,7 +222,7 @@ public class UserController extends GestorExcepciones {
 
     private HttpHeaders getJwtHeader(UserPrincipal user) {
         HttpHeaders headers = new HttpHeaders();
-        headers.add(CABECERA_TOKEN_JWT, jwtTokenProvider.generateJwtToken(user));
+        headers.add(HEADER_TOKEN_JWT, jwtTokenProvider.generateJwtToken(user));
         return headers;
     }
 

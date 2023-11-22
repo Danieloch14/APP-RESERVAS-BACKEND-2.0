@@ -1,9 +1,7 @@
 package netlife.devmasters.booking.service;
 
 import netlife.devmasters.booking.domain.Resource;
-import netlife.devmasters.booking.domain.TypeResource;
-import netlife.devmasters.booking.domain.dto.TypeResourceCreate;
-import netlife.devmasters.booking.exception.dominio.DataException;
+import netlife.devmasters.booking.exception.domain.DataException;
 
 import java.util.List;
 import java.util.Optional;

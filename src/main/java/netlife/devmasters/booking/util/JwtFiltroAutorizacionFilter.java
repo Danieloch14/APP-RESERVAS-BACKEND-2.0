@@ -4,7 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import netlife.devmasters.booking.constant.ArchivoConst;
+import netlife.devmasters.booking.constant.FileConst;
 import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
-import static netlife.devmasters.booking.constant.SeguridadConst.*;
+import static netlife.devmasters.booking.constant.SecurityConst.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -54,7 +54,7 @@ public class JwtFiltroAutorizacionFilter extends OncePerRequestFilter {
 				response.setStatus(OK.value());
 			} else {
 				String authorizationHeader = request.getHeader(AUTHORIZATION);
-				if (authorizationHeader == null || !authorizationHeader.startsWith(PREFIJO_TOKEN)) {
+				if (authorizationHeader == null || !authorizationHeader.startsWith(PREFIJ_TOKEN)) {
 
 					// request.getRequestURI()
 					RequestMatcher matcher = new RequestHeaderRequestMatcher(HEADER_APP,
@@ -75,7 +75,7 @@ public class JwtFiltroAutorizacionFilter extends OncePerRequestFilter {
 
 					return;
 				}
-				String token = authorizationHeader.substring(PREFIJO_TOKEN.length());
+				String token = authorizationHeader.substring(PREFIJ_TOKEN.length());
 				String username = jwtTokenProvider.getSubject(token);
 				if (jwtTokenProvider.isTokenValid(username, token)
 						&& SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -87,7 +87,7 @@ public class JwtFiltroAutorizacionFilter extends OncePerRequestFilter {
 				}
 			}
 		} catch (SizeLimitExceededException e) {
-			String mensaje = ArchivoConst.ARCHIVO_MUY_GRANDE;
+			String mensaje = FileConst.BIG_FILE;
 			response.addHeader("errorHeader", mensaje);
 		}
 		filterChain.doFilter(request, response);

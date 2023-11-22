@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 import static java.util.Arrays.stream;
-import static netlife.devmasters.booking.constant.SeguridadConst.*;
+import static netlife.devmasters.booking.constant.SecurityConst.*;
 
 @Component
 public class JWTTokenProvider {
@@ -37,9 +37,9 @@ public class JWTTokenProvider {
         String[] claims = getClaimsFromUser(userPrincipal);
         //generate token with information
         //sign with HMAC512 algorithm and secret key
-        return JWT.create().withIssuer(PLATAFORMA).withAudience(PLATAFORMA_ADMIN)
+        return JWT.create().withIssuer(PLATAFORM).withAudience(PLATAFORM_ADMIN)
                 .withIssuedAt(new Date()).withSubject(userPrincipal.getUsername())
-                .withArrayClaim(PERMISOS, claims).withExpiresAt(new Date(System.currentTimeMillis() + jwtExpirationMs))
+                .withArrayClaim(PERMISSIONS, claims).withExpiresAt(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .sign(HMAC512(secret.getBytes()));
     }
 
@@ -72,16 +72,16 @@ public class JWTTokenProvider {
 
     private String[] getClaimsFromToken(String token) {
         JWTVerifier verifier = getJWTVerifier();
-        return verifier.verify(token).getClaim(PERMISOS).asArray(String.class);
+        return verifier.verify(token).getClaim(PERMISSIONS).asArray(String.class);
     }
 
     private JWTVerifier getJWTVerifier() {
         JWTVerifier verifier;
         try {
             Algorithm algorithm = HMAC512(secret);
-            verifier = JWT.require(algorithm).withIssuer(PLATAFORMA).build();
+            verifier = JWT.require(algorithm).withIssuer(PLATAFORM).build();
         }catch (JWTVerificationException exception) {
-            throw new JWTVerificationException(TOKEN_NO_VERIFICADO);
+            throw new JWTVerificationException(TOKEN_NO_VERIFY);
         }
         return verifier;
     }
