@@ -3,6 +3,7 @@ package netlife.devmasters.booking.controller;
 import netlife.devmasters.booking.domain.Reservation;
 import netlife.devmasters.booking.domain.dto.ReservationCreate;
 import netlife.devmasters.booking.exception.dominio.DataException;
+import netlife.devmasters.booking.exception.dominio.ReservationException;
 import netlife.devmasters.booking.service.ReservationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +22,12 @@ public class ReservationController {
         return reservationSservice.getAll();
     }
     @PostMapping("")
-    public Reservation save(@RequestBody ReservationCreate obj) throws DataException {
-        Reservation resource = modelMapper.map(obj, Reservation.class);
-        return reservationSservice.save(resource);
-    }
-    @PostMapping("/disponibility")
-    public Reservation verifyDisponibility(@RequestBody ReservationCreate obj) throws DataException {
+    public Reservation reserve(@RequestBody ReservationCreate obj) throws DataException, ReservationException {
         return reservationSservice.reserve(obj);
+    }
+    @PostMapping("/is-available")
+    public Boolean verifyDisponibility(@RequestBody ReservationCreate obj) throws DataException {
+        return reservationSservice.isAvailable(obj);
     }
     @PostMapping("/{id}")
     public Reservation update(@PathVariable("id") Integer id,@RequestBody Reservation obj) throws DataException {

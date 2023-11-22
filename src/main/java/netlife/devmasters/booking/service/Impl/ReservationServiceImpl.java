@@ -3,8 +3,10 @@ package netlife.devmasters.booking.service.Impl;
 import netlife.devmasters.booking.domain.Reservation;
 import netlife.devmasters.booking.domain.dto.ReservationCreate;
 import netlife.devmasters.booking.exception.dominio.DataException;
+import netlife.devmasters.booking.exception.dominio.ReservationException;
 import netlife.devmasters.booking.repository.ReservationRepository;
 import netlife.devmasters.booking.service.ReservationService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,38 +20,35 @@ import java.util.TimeZone;
 public class ReservationServiceImpl implements ReservationService {
     @Autowired
     private ReservationRepository repo;
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Override
-    public Reservation save(Reservation reservationSave) throws DataException {
-            System.out.println("reservationSave: " + reservationSave);
-            /*
+    public Reservation reserve(ReservationCreate reservationSave) throws DataException, ReservationException {
+        validateReservation(reservationSave);
 
-    }
-        if (reservationSave.getName().trim().isEmpty())
-            throw new DataException(REGISTRO_VACIO);
-        Optional<Region> objSave = repo.findByNameIgnoreCase(regionSave.getName());
-        if (objSave.isPresent()) {
+        Reservation resource = modelMapper.map(reservationSave, Reservation.class);
 
-            // valida si existe eliminado
-            Region regionDelete = objGuardado.get();
-            if (regionDelete.getEstado().compareToIgnoreCase(EstadosConst.ELIMINADO) == 0) {
-                regionDelete.setEstado(EstadosConst.ACTIVO);
-                return repo.save(regionDelete);
-            } else {
-            throw new DataException(REGISTRO_YA_EXISTE);
+        if (this.isAvailable(reservationSave)) {
+            return repo.save(resource);
+        } else {
+            throw new ReservationException("Reserva en conflicto para el horario especificado");
         }
-            */
-
-
-        return repo.save(reservationSave);
     }
 
+    private void validateReservation(ReservationCreate reservationSave) throws ReservationException {
+        if (reservationSave.getEndDate().before(reservationSave.getStartDate())) {
+            throw new ReservationException("La fecha de fin debe ser posterior a la fecha de inicio");
+        }
+    }
     @Override
-    public Reservation reserve(ReservationCreate obj) throws DataException {
+    public Boolean isAvailable(ReservationCreate obj) throws DataException {
         Date now = new Date();
         // Crea un nuevo objeto Timestamp a partir del objeto Date
         Timestamp timestamp = new Timestamp(now.getTime());
-        Optional<Reservation> objSave = repo.findByIdResource_IdResourceAndStartDateIsLessThanEqualAndEndDateIsGreaterThanEqual(obj.getIdResource(), obj.getStartDate(), obj.getEndDate());
-        return objSave.orElse(null);
+        Optional<Reservation> objSave = repo.findByIdResource_IdResourceAndStartDateBetween(obj.getIdResource(), obj.getStartDate(), obj.getEndDate());
+
+        return objSave.isEmpty() ? true : false;
     }
 
     @Override

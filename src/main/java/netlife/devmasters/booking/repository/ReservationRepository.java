@@ -9,6 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Integer> {
-    //Optional<Reservation> findByIdResource_IdResourceAndStartDateIsLessThanOrEqualToAndEndDateIsGreaterThanOrEqualTo(Integer idResource, Timestamp startDate, Timestamp endDate);
-    Optional<Reservation> findByIdResource_IdResourceAndStartDateIsLessThanEqualAndEndDateIsGreaterThanEqual(Integer idResource, Timestamp startDate, Timestamp endDate);
+    Optional<Reservation> findByIdResource_IdResourceAndStartDateBetween(Integer idResource, Timestamp startDate, Timestamp endDate);
 }
