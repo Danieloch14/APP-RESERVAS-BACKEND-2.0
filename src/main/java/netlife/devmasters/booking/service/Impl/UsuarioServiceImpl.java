@@ -8,7 +8,7 @@ import netlife.devmasters.booking.domain.User;
 import netlife.devmasters.booking.domain.UserPrincipal;
 import netlife.devmasters.booking.exception.domain.*;
 import netlife.devmasters.booking.repository.UserRepository;
-import netlife.devmasters.booking.service.IntentoLoginService;
+import netlife.devmasters.booking.service.LoginTryService;
 import netlife.devmasters.booking.service.UserService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -39,7 +39,7 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 	private Logger LOGGER = LoggerFactory.getLogger(getClass());
 	private UserRepository userRepository;
 	private BCryptPasswordEncoder passwordEncoder;
-	private IntentoLoginService loginAttemptService;
+	private LoginTryService loginAttemptService;
 	/*
 	private EmailService emailService;
 	@Value("${pecb.archivos.ruta}")
@@ -50,7 +50,7 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 	 */
 	@Autowired
 	public UsuarioServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,
-                              IntentoLoginService loginAttemptService
+                              LoginTryService loginAttemptService
 			/*, EmailService emailService, EstudianteService estudianteService,
                               InstructorService instructorService
 			 */
