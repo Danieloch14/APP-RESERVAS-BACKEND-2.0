@@ -1,18 +1,18 @@
 package netlife.devmasters.booking.service.Impl;
 
-import netlife.devmasters.booking.domain.Region;
 import netlife.devmasters.booking.domain.Reservation;
+import netlife.devmasters.booking.domain.dto.ReservationCreate;
 import netlife.devmasters.booking.exception.dominio.DataException;
 import netlife.devmasters.booking.repository.ReservationRepository;
 import netlife.devmasters.booking.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
-import static netlife.devmasters.booking.constant.MensajesConst.REGISTRO_VACIO;
-import static netlife.devmasters.booking.constant.MensajesConst.REGISTRO_YA_EXISTE;
+import java.util.TimeZone;
 
 @Service
 public class ReservationServiceImpl implements ReservationService {
@@ -41,6 +41,15 @@ public class ReservationServiceImpl implements ReservationService {
 
 
         return repo.save(reservationSave);
+    }
+
+    @Override
+    public Reservation reserve(ReservationCreate obj) throws DataException {
+        Date now = new Date();
+        // Crea un nuevo objeto Timestamp a partir del objeto Date
+        Timestamp timestamp = new Timestamp(now.getTime());
+        Optional<Reservation> objSave = repo.findByIdResource_IdResourceAndStartDateIsLessThanEqualAndEndDateIsGreaterThanEqual(obj.getIdResource(), obj.getStartDate(), obj.getEndDate());
+        return objSave.orElse(null);
     }
 
     @Override

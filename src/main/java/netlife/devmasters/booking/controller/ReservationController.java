@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/reservation")
+@RequestMapping("/api/v1/reservations")
 public class ReservationController {
 
     @Autowired
@@ -24,6 +24,10 @@ public class ReservationController {
     public Reservation save(@RequestBody ReservationCreate obj) throws DataException {
         Reservation resource = modelMapper.map(obj, Reservation.class);
         return reservationSservice.save(resource);
+    }
+    @PostMapping("/disponibility")
+    public Reservation verifyDisponibility(@RequestBody ReservationCreate obj) throws DataException {
+        return reservationSservice.reserve(obj);
     }
     @PostMapping("/{id}")
     public Reservation update(@PathVariable("id") Integer id,@RequestBody Reservation obj) throws DataException {

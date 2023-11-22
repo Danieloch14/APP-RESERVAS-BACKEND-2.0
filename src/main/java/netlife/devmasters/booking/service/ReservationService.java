@@ -1,6 +1,7 @@
 package netlife.devmasters.booking.service;
 
 import netlife.devmasters.booking.domain.Reservation;
+import netlife.devmasters.booking.domain.dto.ReservationCreate;
 import netlife.devmasters.booking.exception.dominio.DataException;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +10,7 @@ import java.util.Optional;
 
 public interface ReservationService {
     Reservation save(Reservation obj) throws DataException;
+    Reservation reserve(ReservationCreate obj) throws DataException;
 
     List<Reservation> getAll();
 
