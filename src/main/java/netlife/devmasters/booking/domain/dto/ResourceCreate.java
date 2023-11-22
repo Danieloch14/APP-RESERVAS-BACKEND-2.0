@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class ResourceCreate {
     private Integer idResource;
-    private Integer idLocation;
+    private LocationCreate idLocation;
     private Integer idTypeResource;
     private Integer idDadResource;
     /*

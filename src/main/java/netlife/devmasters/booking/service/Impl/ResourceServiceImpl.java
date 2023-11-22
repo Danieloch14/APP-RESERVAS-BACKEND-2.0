@@ -2,7 +2,9 @@ package netlife.devmasters.booking.service.Impl;
 
 import netlife.devmasters.booking.domain.Resource;
 import netlife.devmasters.booking.exception.domain.DataException;
+import netlife.devmasters.booking.repository.LocationRepository;
 import netlife.devmasters.booking.repository.ResourceRepository;
+import netlife.devmasters.booking.service.LocationService;
 import netlife.devmasters.booking.service.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,8 @@ import static netlife.devmasters.booking.constant.MessagesConst.REGISTER_ALREADY
 public class ResourceServiceImpl implements ResourceService {
     @Autowired
     private ResourceRepository repo;
+    @Autowired
+    private LocationRepository repoLocation;
     @Override
     public Resource save(Resource objSaveII) throws DataException {
         if (objSaveII.getCodNumber().trim().isEmpty())
@@ -34,6 +38,8 @@ public class ResourceServiceImpl implements ResourceService {
             */
             throw new DataException(REGISTER_ALREADY_EXIST);
         }
+        repoLocation.save(objSaveII.getIdLocation());
+        repoLocation.flush();
         return repo.save(objSaveII);
     }
 
