@@ -43,6 +43,10 @@
 			<version>1.18.28</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
 		<!--DTO-->
 		<dependency>
 			<groupId>org.modelmapper</groupId>
