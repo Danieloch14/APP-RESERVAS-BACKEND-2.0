@@ -51,6 +51,22 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    public List<Reservation> getByYear(Integer year) throws DataException {
+        return repo.findByStartDate_Year(year);
+
+    }
+
+    @Override
+    public List<Reservation> getByMonthYear(Integer month, Integer year) throws DataException {
+        return repo.findByStartDate_Month_Year(month, year);
+    }
+
+    @Override
+    public List<Reservation> getByDayMonthYear(Integer day, Integer Month, Integer Year) throws DataException {
+        return repo.findByStartDate_Day_Month_Year(day, Month, Year);
+    }
+
+    @Override
     public List<Reservation> getAll() {
         return repo.findAll();
     }
