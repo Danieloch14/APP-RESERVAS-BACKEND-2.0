@@ -26,4 +26,6 @@ public class Reservation {
     private Timestamp endDate;
     @Column(name="status")
     private String status;
+    @Column(name="description")
+    private String description;
 }
