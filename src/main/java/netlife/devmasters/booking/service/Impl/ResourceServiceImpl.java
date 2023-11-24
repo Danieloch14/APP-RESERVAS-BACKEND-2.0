@@ -21,6 +21,7 @@ public class ResourceServiceImpl implements ResourceService {
     private ResourceRepository repo;
     @Autowired
     private LocationRepository repoLocation;
+
     @Override
     public Resource save(Resource objSaveII) throws DataException {
         if (objSaveII.getCodNumber().trim().isEmpty())
@@ -54,10 +55,20 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public Resource update(Resource objActualizado, Integer idResource ) throws DataException {
-        if(objActualizado.getCodNumber() !=null) {
+    public List<Resource> getByIdRegion(int idRegion) {
+        return repo.findByIdLocation_IdRegion_IdRegion(idRegion);
+    }
+
+    @Override
+    public List<Resource> getByNameRegion(String nameRegion) {
+        return repo.findByIdLocation_IdRegion_Name(nameRegion);
+    }
+
+    @Override
+    public Resource update(Resource objActualizado, Integer idResource) throws DataException {
+        if (objActualizado.getCodNumber() != null) {
             Optional<Resource> objUpdated = repo.findByCodNumberIgnoreCase(objActualizado.getCodNumber());
-            if (objUpdated.isPresent()&& !objUpdated.get().getIdTypeResource().equals(objActualizado.getIdTypeResource())) {
+            if (objUpdated.isPresent() && !objUpdated.get().getIdTypeResource().equals(objActualizado.getIdTypeResource())) {
                 throw new DataException(REGISTER_ALREADY_EXIST);
             }
         }

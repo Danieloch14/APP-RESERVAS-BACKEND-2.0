@@ -16,19 +16,33 @@ public class ResourceController {
     private ResourceService service;
     @Autowired
     private ModelMapper modelMapper;
+
     @GetMapping("")
-    public Iterable<Resource> getAll(){
+    public Iterable<Resource> getAll() {
         return service.getAll();
     }
+
+    @GetMapping("/by-region-name/{name}")
+    public Iterable<Resource> getByRegionName(@PathVariable("name") String name) {
+        return service.getByNameRegion(name);
+    }
+
+    @GetMapping("/by-region-id/{id}")
+    public Iterable<Resource> getByRegionId(@PathVariable("id") int id) {
+        return service.getByIdRegion(id);
+    }
+
     @PostMapping("")
     public Resource save(@RequestBody ResourceCreate obj) throws DataException {
         Resource resource = modelMapper.map(obj, Resource.class);
-       return service.save(resource);
+        return service.save(resource);
     }
+
     @PostMapping("/{id}")
-    public Resource update(@PathVariable("id") Integer id,@RequestBody Resource obj) throws DataException {
-        return service.update(obj,id);
+    public Resource update(@PathVariable("id") Integer id, @RequestBody Resource obj) throws DataException {
+        return service.update(obj, id);
     }
+
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") int id) throws Exception {
         service.delete(id);
