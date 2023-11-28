@@ -41,7 +41,7 @@ public class User implements Serializable {
 	private Integer idUser;
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "id_personal_data")
-	private PersonalData codDatosPersonales;
+	private PersonalData personalData;
 
 	private String username;
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -58,9 +58,9 @@ public class User implements Serializable {
 	public User() {
 	}
 
-	public User(Integer idUser, PersonalData codDatosPersonales, String username, String password, Date dateEntry, Date dateLastLogin, boolean isActive, boolean isNotLocked) {
+	public User(Integer idUser, PersonalData personalData, String username, String password, Date dateEntry, Date dateLastLogin, boolean isActive, boolean isNotLocked) {
 		this.idUser = idUser;
-		this.codDatosPersonales = codDatosPersonales;
+		this.personalData = personalData;
 		this.username = username;
 		this.password = password;
 		this.dateEntry = dateEntry;

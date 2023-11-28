@@ -21,16 +21,16 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	@EntityGraph(attributePaths = "codDatosPersonales")
 	List<User> findAll();
 
-	@Query(value = "select u from User u where lower(u.codDatosPersonales.lastname) like lower(concat('%%', :apellido, '%%')) or lower(u.codDatosPersonales.name) like lower(concat('%%', :nombre, '%%'))")
+	@Query(value = "select u from User u where lower(u.personalData.lastname) like lower(concat('%%', :apellido, '%%')) or lower(u.personalData.name) like lower(concat('%%', :nombre, '%%'))")
 	public List<User> findUsuariosByNombreApellido(@Param("nombre") String nombre, @Param("apellido") String apellido) ;
 	
-	@Query(value = "select u from User u where lower(u.codDatosPersonales.lastname) like lower(concat('%%', :apellido, '%%'))")
+	@Query(value = "select u from User u where lower(u.personalData.lastname) like lower(concat('%%', :apellido, '%%'))")
 	public List<User> findUsuariosByApellido(@Param("apellido") String apellido) ;
 	
-	@Query(value = "select u from User u where lower(u.codDatosPersonales.name) like  lower(concat('%%', :nombre, '%%'))")
+	@Query(value = "select u from User u where lower(u.personalData.name) like  lower(concat('%%', :nombre, '%%'))")
 	public List<User> findUsuariosByNombre(@Param("nombre") String nombre);
 
-	@Query(value = "SELECT u FROM User u WHERE u.codDatosPersonales.email like %:correo%")
+	@Query(value = "SELECT u FROM User u WHERE u.personalData.email like %:correo%")
 	public List<User> findUsuariosByCorreo(@Param("correo") String correo);
 
 	@Query(value = "SELECT u FROM User u")

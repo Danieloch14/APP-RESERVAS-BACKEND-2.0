@@ -90,7 +90,7 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 	// NombreUsuarioExisteExcepcion, EmailExisteExcepcion, MessagingException {
 	public User register(User usuario) throws UserNotFoundException, UsernameExistExcepcion,
 			EmailExistExcepcion, MessagingException, IOException {
-		validateNewUsernameAndEmail(EMPTY, usuario.getUsername(), usuario.getCodDatosPersonales().getEmail());
+		validateNewUsernameAndEmail(EMPTY, usuario.getUsername(), usuario.getPersonalData().getEmail());
 
 		// datos de usuario
 		User user = new User();
@@ -98,7 +98,7 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 		String password = usuario.getPassword();
 		// user.setNombres(firstName);
 		// user.setApellidos(lastName);
-		user.setUsername(usuario.getUsername());
+		user.setUsername(usuario.getPersonalData().getEmail());
 		// user.setEmail(email);
 		user.setDateEntry(new Date());
 		user.setPassword(encodePassword(password));
@@ -108,16 +108,16 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 
 		// datos personales
 		PersonalData datos = new PersonalData();
-		datos.setName(usuario.getCodDatosPersonales().getName());
-		datos.setLastname(usuario.getCodDatosPersonales().getLastname());
-		datos.setEmail(usuario.getCodDatosPersonales().getEmail());
-		datos.setAddress(usuario.getCodDatosPersonales().getAddress());
-		datos.setCellphone(usuario.getCodDatosPersonales().getCellphone());
-		datos.setCompany(usuario.getCodDatosPersonales().getCompany());
+		datos.setName(usuario.getPersonalData().getName());
+		datos.setLastname(usuario.getPersonalData().getLastname());
+		datos.setEmail(usuario.getPersonalData().getEmail());
+		datos.setAddress(usuario.getPersonalData().getAddress());
+		datos.setCellphone(usuario.getPersonalData().getCellphone());
+		datos.setCompany(usuario.getPersonalData().getCompany());
 
 
 		// asocia datos personales con usuario
-		user.setCodDatosPersonales(datos);
+		user.setPersonalData(datos);
 
 		//it can save user without datapersonal that is in database, so it's no necessary to save it first
 		//because the entity is inside the user entity
@@ -143,7 +143,7 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 	public User actualizarUsuario(User usuario) throws UserNotFoundException, UsernameExistExcepcion,
 			EmailExistExcepcion, IOException, NotFileImageExcepcion {
 		User currentUser = validateNewUsernameAndEmail(usuario.getUsername(), usuario.getUsername(),
-				usuario.getCodDatosPersonales().getEmail());
+				usuario.getPersonalData().getEmail());
 
 		currentUser.setActive(usuario.isActive());
 		currentUser.setNotLocked(usuario.isNotLocked());
@@ -190,10 +190,10 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 		userRepository.save(usuario);
 
 		// datos personales
-		PersonalData datos = usuario.getCodDatosPersonales();
+		PersonalData datos = usuario.getPersonalData();
 
 		// asocia datos personales con usuario
-		usuario.setCodDatosPersonales(datos);
+		usuario.setPersonalData(datos);
 
 		userRepository.save(usuario);
 
@@ -298,10 +298,10 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 			}
 
 			// sale si ya existe ese email para un usuario registrado
-			if (currentUser.getCodDatosPersonales().getEmail().compareToIgnoreCase(newEmail) != 0) {
+			if (currentUser.getPersonalData().getEmail().compareToIgnoreCase(newEmail) != 0) {
 				if (userByNewEmail != null /* && !currentUser.getCodUsuario().equals(userByNewEmail.getCodUsuario()) */) {
 					//throw new EmailExisteExcepcion(EMAIL_YA_EXISTE);
-					LOGGER.info(EMAIL_EXIST + " " + newEmail + " " + currentUser.getCodDatosPersonales().getEmail());
+					LOGGER.info(EMAIL_EXIST + " " + newEmail + " " + currentUser.getPersonalData().getEmail());
 				}
 			}
 
@@ -316,7 +316,7 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 			//no puede registrar dos usuarios con un mismo correo
 			if (userByNewEmail != null) {
 				//throw new EmailExisteExcepcion(EMAIL_YA_EXISTE);
-				LOGGER.info(EMAIL_EXIST + " " + newEmail + " " + userByNewEmail.getCodDatosPersonales().getEmail());
+				LOGGER.info(EMAIL_EXIST + " " + newEmail + " " + userByNewEmail.getPersonalData().getEmail());
 			}
 
 			return null;
