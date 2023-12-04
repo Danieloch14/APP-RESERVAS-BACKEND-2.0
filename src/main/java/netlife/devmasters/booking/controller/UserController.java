@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -179,10 +180,10 @@ public class UserController extends ExcepcionsManagment {
 
     }
 
-    @PostMapping("/resetPassword/{nombreUsuario}")
-    public ResponseEntity<HttpResponse> resetPassword(@PathVariable("nombreUsuario") String nombreUsuario)
+    @PostMapping("/resetPassword")
+    public ResponseEntity<HttpResponse> resetPassword(@RequestParam("userName") String nombreUsuario, @RequestParam("password") String password)
             throws MessagingException, EmailNotFoundExcepcion, UserNotFoundException, IOException {
-        service.resetPassword(nombreUsuario);
+        service.resetPassword(nombreUsuario, password);
         return response(OK, EMAIL_ENVIADO + " la dirección de email registrada para el usuario " + nombreUsuario);
     }
 

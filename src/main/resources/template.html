@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Plataforma de reservas - NETLIFE</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        header img {
+            max-width: 80%;
+            height: auto;
+        }
+
+        .container-content {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .container-content h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .container-content p {
+            margin-bottom: 20px;
+            color: #666;
+        }
+
+        .text-info {
+            color: #007bff;
+        }
+
+        .text-danger {
+            color: #ff4136;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        footer {
+            margin-top: 40px;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        hr {
+            background-color: rgba(0, 0, 0, .1);
+            border: 0;
+            height: 1px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <img src="https://i.ibb.co/0jZ3Q0K/logo.png" alt="logo">
+        </header>
+        <div class="container-content">
+            <h3>Plataforma de reservas - NETLIFE</h3>
+            <hr>
+
+        </div>
+        <div class="message">
+            <h2>Recuperación de contraseña</h2>
+            <p>Estimado(a) ${usuario}</p>
+            <p>Hemos recibido una solicitud para generar la contraseña de tu cuenta.</p>
+            <p>Tu nueva contraseña es: ${password}</p>
+        </div>
+        <footer class="footer">
+            <p class="text-info"> ✉️ Este correo electrónico fue generado automáticamente. Por favor, no respondas a
+                este
+                mensaje.</p>
+            <br>
+            <p class="text-center text-danger">© Todos los derechos reservados | <span>Netlife</span></p>
+        </footer>
+    </div>
+</body>
+
+</html>

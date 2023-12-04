@@ -38,7 +38,7 @@ public interface UserService {
 
     void eliminarUsuario(String username) throws Exception;
 
-    void resetPassword(String email)
+    void resetPassword(String email, String password)
             throws MessagingException, EmailNotFoundExcepcion, UserNotFoundException, IOException;
 
     void guardarArchivo(String nombreArchivo, MultipartFile archivo) throws IOException, BigFileExcepcion;

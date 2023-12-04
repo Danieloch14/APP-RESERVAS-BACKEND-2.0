@@ -10,6 +10,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,6 +49,122 @@ public class EmailService {
         return mailSender;
     }
 
+    public void sendNewPasswordEmail(String firstName, String password, String email) throws MessagingException, IOException {
+        String destinatarios[] = {email};
+        InputStream sourceFile = this.getClass().getResourceAsStream("/template.html");
+        String htmlTemplate =
+                //sourceFile.toString();
+                "<!DOCTYPE html>\n" +
+                        "<html>\n" +
+                        "\n" +
+                        "<head>\n" +
+                        "    <title>Plataforma de reservas - NETLIFE</title>\n" +
+                        "    <style>\n" +
+                        "        body {\n" +
+                        "            font-family: Arial, sans-serif;\n" +
+                        "            background-color: #f4f4f4;\n" +
+                        "            margin: 0;\n" +
+                        "            padding: 0;\n" +
+                        "        }\n" +
+                        "\n" +
+                        "        .container {\n" +
+                        "            max-width: 600px;\n" +
+                        "            margin: 0 auto;\n" +
+                        "            padding: 20px;\n" +
+                        "        }\n" +
+                        "\n" +
+                        "        header {\n" +
+                        "            text-align: center;\n" +
+                        "            margin-bottom: 20px;\n" +
+                        "        }\n" +
+                        "\n" +
+                        "        header img {\n" +
+                        "            max-width: 80%;\n" +
+                        "            height: auto;\n" +
+                        "        }\n" +
+                        "\n" +
+                        "        .container-content {\n" +
+                        "            background-color: #ffffff;\n" +
+                        "            padding: 20px;\n" +
+                        "            border-radius: 5px;\n" +
+                        "            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);\n" +
+                        "        }\n" +
+                        "\n" +
+                        "        .container-content h2 {\n" +
+                        "            margin-top: 0;\n" +
+                        "            color: #333;\n" +
+                        "        }\n" +
+                        "\n" +
+                        "        .container-content p {\n" +
+                        "            margin-bottom: 20px;\n" +
+                        "            color: #666;\n" +
+                        "        }\n" +
+                        "\n" +
+                        "        .text-info {\n" +
+                        "            color: #007bff;\n" +
+                        "        }\n" +
+                        "\n" +
+                        "        .text-danger {\n" +
+                        "            color: #ff4136;\n" +
+                        "        }\n" +
+                        "\n" +
+                        "        .text-center {\n" +
+                        "            text-align: center;\n" +
+                        "        }\n" +
+                        "\n" +
+                        "        footer {\n" +
+                        "            margin-top: 40px;\n" +
+                        "            background-color: #f9f9f9;\n" +
+                        "            padding: 20px;\n" +
+                        "            border-radius: 5px;\n" +
+                        "            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);\n" +
+                        "            text-align: center;\n" +
+                        "        }\n" +
+                        "\n" +
+                        "        hr {\n" +
+                        "            background-color: rgba(0, 0, 0, .1);\n" +
+                        "            border: 0;\n" +
+                        "            height: 1px;\n" +
+                        "        }\n" +
+                        "    </style>\n" +
+                        "</head>\n" +
+                        "\n" +
+                        "<body>\n" +
+                        "    <div class=\"container\">\n" +
+                        "        <header>\n" +
+                        "            <img src=\"https://i.ibb.co/0jZ3Q0K/logo.png\" alt=\"logo\">\n" +
+                        "        </header>\n" +
+                        "        <div class=\"container-content\">\n" +
+                        "            <h3>Plataforma de reservas - NETLIFE</h3>\n" +
+                        "            <hr>\n" +
+                        "\n" +
+                        "        </div>\n" +
+                        "        <div class=\"message\">\n" +
+                        "            <h2>Recuperación de contraseña</h2>\n" +
+                        "            <p>Estimado(a) ${usuario}</p>\n" +
+                        "            <p>Hemos recibido una solicitud para generar la contraseña de tu cuenta.</p>\n" +
+                        "            <p>Tu nueva contraseña es: ${password}</p>\n" +
+                        "        </div>\n" +
+                        "        <footer class=\"footer\">\n" +
+                        "            <p class=\"text-info\"> ✉\uFE0F Este correo electrónico fue generado automáticamente. Por favor, no respondas a\n" +
+                        "                este\n" +
+                        "                mensaje.</p>\n" +
+                        "            <br>\n" +
+                        "            <p class=\"text-center text-danger\">© Todos los derechos reservados | <span>Netlife</span></p>\n" +
+                        "        </footer>\n" +
+                        "    </div>\n" +
+                        "</body>\n" +
+                        "\n" +
+                        "</html>";
+        htmlTemplate = htmlTemplate.replace("${usuario}", firstName);
+        htmlTemplate = htmlTemplate.replace("${password}", password);
+
+        MimeMessage message = this.createEmailHtml(destinatarios, EMAIL_SUBJECT_PASSWORD, htmlTemplate);
+        JavaMailSender emailSender = getJavaMailSender();
+        emailSender.send(message);
+
+    }
+
     public void validateCodeEmail(String firstName, String codigo, String email) throws MessagingException, IOException {
         String[] destinatarios = {email};
         if (email.contains(",") || email.contains(";")) {
@@ -70,9 +187,9 @@ public class EmailService {
             if (email.contains(",") || email.contains(";")) {
                 emails = email.split("[,;]");
             }
-
-            String Path =// RUTA_PLANTILLAS +
-                    "template-pecbdmq-general.html";
+            String Path = //RUTA_PLANTILLAS +
+                    "template-pecbdmq-general-text.html";
+            //InputStream sourceFile = this.getClass().getResourceAsStream("/template.html");
             String htmlTemplate = readFile(Path);
             htmlTemplate = htmlTemplate.replace("${mensaje}", mensaje);
             MimeMessage message = this.createEmailHtml(emails, subject, htmlTemplate);

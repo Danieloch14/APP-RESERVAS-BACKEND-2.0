@@ -8,6 +8,7 @@ import netlife.devmasters.booking.domain.User;
 import netlife.devmasters.booking.domain.UserPrincipal;
 import netlife.devmasters.booking.exception.domain.*;
 import netlife.devmasters.booking.repository.UserRepository;
+import netlife.devmasters.booking.service.EmailService;
 import netlife.devmasters.booking.service.LoginTryService;
 import netlife.devmasters.booking.service.UserService;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -40,18 +41,20 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 	private UserRepository userRepository;
 	private BCryptPasswordEncoder passwordEncoder;
 	private LoginTryService loginAttemptService;
-	/*
-	private EmailService emailService;
-	@Value("${pecb.archivos.ruta}")
-	private String ARCHIVOS_RUTA;
 
-	@Value("${spring.servlet.multipart.max-file-size}")
-	public DataSize TAMAÑO_MÁXIMO;
-	 */
+	private EmailService emailService;
+	/*
+@Value("${pecb.archivos.ruta}")
+private String ARCHIVOS_RUTA;
+
+@Value("${spring.servlet.multipart.max-file-size}")
+public DataSize TAMAÑO_MÁXIMO;
+ */
 	@Autowired
 	public UsuarioServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,
                               LoginTryService loginAttemptService
-			/*, EmailService emailService, EstudianteService estudianteService,
+			, EmailService emailService
+			/*, EstudianteService estudianteService,
                               InstructorService instructorService
 			 */
 
@@ -59,8 +62,9 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.loginAttemptService = loginAttemptService;
-		/*
+
 		this.emailService = emailService;
+			/*
 		this.estudianteService = estudianteService;
 		this.instructorService = instructorService;
 		 */
@@ -124,10 +128,10 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 		userRepository.save(user);
 
 		userRepository.flush();
-		/*
-		emailService.sendNewPasswordEmail(usuario.getCodDatosPersonales().getNombre(), password,
-				usuario.getCodDatosPersonales().getCorreoPersonal());
-		 */
+
+		emailService.sendNewPasswordEmail(usuario.getPersonalData().getName(), password,
+				usuario.getPersonalData().getEmail());
+
 		return user;
 	}
 
@@ -178,14 +182,12 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 	}
 
 	@Override
-	public void resetPassword(String nombreUsuario) throws MessagingException, UserNotFoundException, IOException {
+	public void resetPassword(String nombreUsuario, String password) throws MessagingException, UserNotFoundException, IOException {
 
 		User usuario = userRepository.findUserByUsername(nombreUsuario);
 		if (usuario == null) {
 			throw new UserNotFoundException(USER_DONT_EXIST + nombreUsuario);
 		}
-
-		String password = generatePassword();
 		usuario.setPassword(encodePassword(password));
 		userRepository.save(usuario);
 
@@ -198,13 +200,13 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 		userRepository.save(usuario);
 
 		userRepository.flush();
-		/*
-
-		emailService.sendNewPasswordEmail(usuario.getCodDatosPersonales().getNombre(), password,
-				usuario.getCodDatosPersonales().getCorreoPersonal());
 
 
-		 */
+		emailService.sendNewPasswordEmail(usuario.getPersonalData().getName(), password,
+				usuario.getPersonalData().getEmail());
+
+
+
 	}
 
 
