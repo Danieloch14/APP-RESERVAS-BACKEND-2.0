@@ -17,6 +17,7 @@ public class SecurityConst {
 	public static final String[] URLS_PUBLICS = {
 			"/api/v1/users/login",
 			"/api/v1/users/register",
+			"/api/v1/regions",
 			"/api/v1/users/imagen/**",
 			"/api/v1/users/guardarArchivo",
 			"/api/v1/users/usuario/maxArchivo",
