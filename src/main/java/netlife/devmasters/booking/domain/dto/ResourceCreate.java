@@ -18,4 +18,5 @@ public class ResourceCreate {
     private Double price;
     private Boolean isParking;
     private String pathImages;
+    private String name;
 }
