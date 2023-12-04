@@ -3,6 +3,7 @@ package netlife.devmasters.booking.domain;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 
 
@@ -28,4 +29,6 @@ public class Reservation {
     private String status;
     @Column(name="description")
     private String description;
+    @Column(name="duration")
+    private Time duration;
 }

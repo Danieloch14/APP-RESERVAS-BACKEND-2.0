@@ -36,4 +36,6 @@ public class Resource {
     private Boolean isParking;
     @Column(name = "path_images")
     private String pathImages;
+    @Column(name="name")
+    private String name;
 }
