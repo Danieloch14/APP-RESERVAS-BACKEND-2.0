@@ -370,7 +370,7 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public Optional<User> getUsuarioByCodDatoPersonal(Integer codDatoPersonal) {
-		return userRepository.findByCodDatosPersonales_idPersonalData(codDatoPersonal);
+		return userRepository.findByPersonalData_IdPersonalData(codDatoPersonal);
 	}
 
 }

@@ -18,7 +18,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     User findUserByUsername(String username);
 
 	//relationships should be fetched eagerly.
-	@EntityGraph(attributePaths = "codDatosPersonales")
+	@EntityGraph(attributePaths = "personalData")
 	List<User> findAll();
 
 	@Query(value = "select u from User u where lower(u.personalData.lastname) like lower(concat('%%', :apellido, '%%')) or lower(u.personalData.name) like lower(concat('%%', :nombre, '%%'))")
@@ -43,6 +43,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	@Query("UPDATE User u SET u.isActive = ?1 WHERE u.username = ?2")
 	int actualizarNotLocked(Boolean noLock, String username);
 
-	Optional<User> findByCodDatosPersonales_idPersonalData(Integer personalData);
+	Optional<User> findByPersonalData_IdPersonalData(Integer personalData);
 
 }
