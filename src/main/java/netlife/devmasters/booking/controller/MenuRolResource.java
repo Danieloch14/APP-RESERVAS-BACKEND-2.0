@@ -16,7 +16,7 @@ import static netlife.devmasters.booking.constant.MessagesConst.REGISTRO_ELIMINA
 
 
 @RestController
-@RequestMapping("/api/v1/menu-rol")
+@RequestMapping("/api/v1/menus-roles")
 
 public class MenuRolResource {
 

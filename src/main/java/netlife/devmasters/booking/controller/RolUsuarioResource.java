@@ -16,7 +16,7 @@ import static netlife.devmasters.booking.constant.MessagesConst.REGISTRO_ELIMINA
 
 
 @RestController
-@RequestMapping("/api/v1/rol-user")
+@RequestMapping("/api/v1/roles-users")
 public class RolUsuarioResource {
 	private static final String ASIGNACION_EXITO ="" ;
 	@Autowired
