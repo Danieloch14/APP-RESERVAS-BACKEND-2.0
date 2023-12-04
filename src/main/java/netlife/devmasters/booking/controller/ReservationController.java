@@ -9,6 +9,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+
 @RestController
 @RequestMapping("/api/v1/reservations")
 public class ReservationController {
@@ -39,7 +41,7 @@ public class ReservationController {
     }
 
     @PostMapping("")
-    public Reservation reserve(@RequestBody ReservationCreate obj) throws DataException, ReservationException {
+    public Reservation reserve(@RequestBody ReservationCreate obj) throws DataException, ReservationException, ParseException {
         return reservationSservice.reserve(obj);
     }
 

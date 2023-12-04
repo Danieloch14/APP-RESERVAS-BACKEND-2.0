@@ -10,7 +10,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -24,9 +27,11 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public Reservation reserve(ReservationCreate reservationSave) throws DataException, ReservationException {
-        validateReservation(reservationSave);
 
         Reservation resource = modelMapper.map(reservationSave, Reservation.class);
+        Time time = new Time(reservationSave.getHours(),reservationSave.getMinutes(),0);
+        Timestamp endDate = new Timestamp(reservationSave.getStartDate().getTime() + time.getTime()- 18000000);
+        reservationSave.setEndDate(endDate);
 
         if (this.isAvailable(reservationSave)) {
             return repo.save(resource);
@@ -41,11 +46,11 @@ public class ReservationServiceImpl implements ReservationService {
         }
     }
     @Override
-    public Boolean isAvailable(ReservationCreate obj) throws DataException {
-        Date now = new Date();
-        // Crea un nuevo objeto Timestamp a partir del objeto Date
-        Timestamp timestamp = new Timestamp(now.getTime());
-        Optional<Reservation> objSave = repo.findByIdResource_IdResourceAndStartDateBetween(obj.getIdResource(), obj.getStartDate(), obj.getEndDate());
+    public Boolean isAvailable(ReservationCreate reservationSave) throws DataException {
+        Time time = new Time(reservationSave.getHours(),reservationSave.getMinutes(),0);
+        Timestamp endDate = new Timestamp(reservationSave.getStartDate().getTime() + time.getTime()- 18000000);
+        reservationSave.setEndDate(endDate);
+        Optional<Reservation> objSave = repo.findByIdResource_IdResourceAndStartDateBetween(reservationSave.getIdResource(), reservationSave.getStartDate(), reservationSave.getEndDate());
 
         return objSave.isEmpty() ? true : false;
     }
@@ -78,6 +83,9 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public Reservation update(Reservation objActualizado, Integer idReservation) throws DataException {
+        Time time = new Time(objActualizado.getHours(),objActualizado.getMinutes(),0);
+        Timestamp endDate = new Timestamp(objActualizado.getStartDate().getTime() + time.getTime()- 18000000);
+        objActualizado.setEndDate(endDate);
         objActualizado.setIdReservation(idReservation);
         return repo.save(objActualizado);
     }
