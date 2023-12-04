@@ -11,8 +11,7 @@ public class MenuPermisos extends Menu {
 
 	public MenuPermisos(Integer codMenu, String etiqueta, String ruta, Integer menu_padre, Integer orden, String descripcion, String permisos) {
 		super();
-
-		this.codMenu = codMenu;
+		this.idMenu = codMenu;
 		this.label = etiqueta;
 		this.path = ruta;
 		this.parentMenu = menu_padre;

@@ -6,7 +6,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "gen_rol_usuario")
+@Table(name = "r_user_rol")
 @Data
 public class RolUser {
 

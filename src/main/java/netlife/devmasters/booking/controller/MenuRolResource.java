@@ -1,0 +1,60 @@
+package netlife.devmasters.booking.controller;
+
+import netlife.devmasters.booking.domain.HttpResponse;
+import netlife.devmasters.booking.domain.MenuRol;
+import netlife.devmasters.booking.exception.domain.DataException;
+import netlife.devmasters.booking.service.MenuRolService;
+import netlife.devmasters.booking.util.ResponseEntityUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import static netlife.devmasters.booking.constant.MessagesConst.REGISTRO_ELIMINADO_EXITO;
+
+
+@RestController
+@RequestMapping("/api/v1/menu-rol")
+
+public class MenuRolResource {
+
+	private static final String ASIGNACION_EXITO = "";
+	@Autowired
+	private MenuRolService menuRolService;
+
+	@GetMapping("")
+	public List<MenuRol> listar() {
+		return this.menuRolService.getAll();
+	}
+	
+	@GetMapping("/{id}")
+	public List<MenuRol> listarPorRol(@PathVariable("id") Long codRol) {
+		return this.menuRolService.getAllByRol(codRol);
+	}
+
+	@PostMapping("")
+	@ResponseStatus(HttpStatus.CREATED)
+	public ResponseEntity<?> guardar(@RequestBody MenuRol obj) throws DataException {
+		return new ResponseEntity<>(this.menuRolService.save(obj), HttpStatus.OK);
+	}
+
+	@PutMapping("")
+	public ResponseEntity<MenuRol> actualizarDatos(@RequestBody MenuRol obj) throws DataException {
+		return new ResponseEntity<>(this.menuRolService.update(obj), HttpStatus.OK);
+	}
+
+	@DeleteMapping("")
+	public ResponseEntity<HttpResponse> eliminarDatos(@RequestBody MenuRol obj) throws DataException {
+		this.menuRolService.delete(obj);
+		return ResponseEntityUtil.response(HttpStatus.OK, REGISTRO_ELIMINADO_EXITO);
+	}
+	
+	@PostMapping("/menu")
+	public ResponseEntity<?> asignar(@RequestBody List<MenuRol> lista) throws DataException {
+		this.menuRolService.deleteAndSave(lista);
+		return ResponseEntityUtil.response(HttpStatus.OK, ASIGNACION_EXITO);
+	}
+
+}

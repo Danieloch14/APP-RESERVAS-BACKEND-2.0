@@ -6,12 +6,12 @@ import lombok.Data;
 @Data
 @Embeddable
 public class MenuRolId {
-	protected Long codMenu;
-	protected Long codRol;
+	protected Long idMenu;
+	protected Long idRol;
 	
 	public MenuRolId(Long codMenu2, Long codRol2) {
-		this.codMenu = codMenu2;
-		this.codRol = codRol2;
+		this.idMenu = codMenu2;
+		this.idRol = codRol2;
 	}
 	
 	public MenuRolId() {

@@ -7,12 +7,12 @@ import lombok.Data;
 @Embeddable
 public class RolUserId {
 	
-	protected Long codRol;
-	protected Long codUser;
+	protected Long idRol;
+	protected Long idUser;
 	
-	public RolUserId(Long codRol, Long codUser) {
-		this.codRol = codRol;
-		this.codUser = codUser;
+	public RolUserId(Long idRol, Long idUser) {
+		this.idRol = idRol;
+		this.idUser = idUser;
 	}
 	
 	public RolUserId() {
