@@ -29,6 +29,8 @@ public class Reservation {
     private String status;
     @Column(name="description")
     private String description;
-    @Column(name="duration")
-    private Time duration;
+    @Column(name="hours")
+    private Integer hours;
+    @Column(name="minutes")
+    private Integer minutes;
 }

@@ -22,10 +22,10 @@ public class Resource {
     @JoinColumn(name="res_id_resource")
     @JsonIgnore
     private Resource parentResource;
-    /*
+
     @Column(name = "description")
     private String description;
-     */
+
     @Column(name = "cod_number")
     private String codNumber;
     @Column(name = "capacity")
