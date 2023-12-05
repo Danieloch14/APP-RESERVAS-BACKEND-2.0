@@ -47,9 +47,6 @@ public class ReservationServiceImpl implements ReservationService {
     }
     @Override
     public Boolean isAvailable(ReservationCreate reservationSave) throws DataException {
-        Time time = new Time(reservationSave.getHours(),reservationSave.getMinutes(),0);
-        Timestamp endDate = new Timestamp(reservationSave.getStartDate().getTime() + time.getTime()- 18000000);
-        reservationSave.setEndDate(endDate);
         Optional<Reservation> objSave = repo.findByIdResource_IdResourceAndStartDateBetween(reservationSave.getIdResource(), reservationSave.getStartDate(), reservationSave.getEndDate());
 
         return objSave.isEmpty() ? true : false;
