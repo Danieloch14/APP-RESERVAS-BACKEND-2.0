@@ -33,7 +33,7 @@ public class ResourceController {
         return service.getByIdRegion(id);
     }
 
-    @PostMapping("/availibilty")
+    @PostMapping("/availables")
     public Iterable<Resource> getByRegionId(@RequestBody SearchResourceDto searchResourceDto) {
         return service.getAvailables(searchResourceDto);
     }
