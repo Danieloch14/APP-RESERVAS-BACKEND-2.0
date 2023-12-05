@@ -1,6 +1,8 @@
 package netlife.devmasters.booking.service;
 
 import netlife.devmasters.booking.domain.Resource;
+import netlife.devmasters.booking.domain.dto.ReservationCalendar;
+import netlife.devmasters.booking.domain.dto.SearchResourceDto;
 import netlife.devmasters.booking.exception.domain.DataException;
 
 import java.util.List;
@@ -14,6 +16,7 @@ public interface ResourceService {
     Optional<Resource> getById(int id);
     List<Resource> getByIdRegion(int idRegion);
     List<Resource> getByNameRegion(String nameRegion);
+    List<Resource> getAvailables(SearchResourceDto searchResourceDto);
 
     Resource update(Resource objActualizado, Integer idResource) throws DataException;
 

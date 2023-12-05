@@ -1,14 +1,17 @@
 package netlife.devmasters.booking.service.Impl;
 
 import netlife.devmasters.booking.domain.Resource;
+import netlife.devmasters.booking.domain.dto.SearchResourceDto;
 import netlife.devmasters.booking.exception.domain.DataException;
 import netlife.devmasters.booking.repository.LocationRepository;
+import netlife.devmasters.booking.repository.ReservationRepository;
 import netlife.devmasters.booking.repository.ResourceRepository;
-import netlife.devmasters.booking.service.LocationService;
 import netlife.devmasters.booking.service.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +24,8 @@ public class ResourceServiceImpl implements ResourceService {
     private ResourceRepository repo;
     @Autowired
     private LocationRepository repoLocation;
+    @Autowired
+    private ReservationRepository repoReservation;
 
     @Override
     public Resource save(Resource objSaveII) throws DataException {
@@ -62,6 +67,16 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public List<Resource> getByNameRegion(String nameRegion) {
         return repo.findByIdLocation_IdRegion_Name(nameRegion);
+    }
+
+    @Override
+    public List<Resource> getAvailables(SearchResourceDto searchResourceDto) {
+        Time time = new Time(searchResourceDto.getHours(),searchResourceDto.getMinutes(),0);
+        Timestamp endDate = new Timestamp(searchResourceDto.getDate().getTime() + time.getTime()- 18000000);
+        Timestamp startDate = new Timestamp(searchResourceDto.getDate().getTime() - 18000000);
+        List<Resource> lista= repo.findByIdLocation_IdRegion(searchResourceDto.getIdRegion(), searchResourceDto.getCapacity(), startDate, endDate);
+
+        return lista;
     }
 
     @Override

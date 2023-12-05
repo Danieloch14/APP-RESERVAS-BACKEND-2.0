@@ -2,6 +2,7 @@ package netlife.devmasters.booking.controller;
 
 import netlife.devmasters.booking.domain.Resource;
 import netlife.devmasters.booking.domain.dto.ResourceCreate;
+import netlife.devmasters.booking.domain.dto.SearchResourceDto;
 import netlife.devmasters.booking.exception.domain.DataException;
 import netlife.devmasters.booking.service.ResourceService;
 import org.modelmapper.ModelMapper;
@@ -30,6 +31,11 @@ public class ResourceController {
     @GetMapping("/by-region-id/{id}")
     public Iterable<Resource> getByRegionId(@PathVariable("id") int id) {
         return service.getByIdRegion(id);
+    }
+
+    @PostMapping("/availibilty")
+    public Iterable<Resource> getByRegionId(@RequestBody SearchResourceDto searchResourceDto) {
+        return service.getAvailables(searchResourceDto);
     }
 
     @PostMapping("")
