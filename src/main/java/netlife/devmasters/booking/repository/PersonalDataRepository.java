@@ -13,8 +13,7 @@ import java.util.Optional;
 
 public interface PersonalDataRepository extends JpaRepository<PersonalData, Integer> {
     Optional<PersonalData> findOneByEmail(String email);
-
-    List<PersonalData> findAllByCorreoPersonal(String correoPersonal);
+    List<PersonalData> findAllByEmail(String correoPersonal);
     @Query(value = "SELECT d FROM PersonalData d WHERE d.name LIKE %:filtro% OR d.lastname LIKE %:filtro%")
     Page<PersonalData> searchNativo(@Param("filtro") String filtro, Pageable pageable);
 }

@@ -105,7 +105,7 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     }
 
     private List<PersonalData> getByCorreoPersonal(String correoPersonal) {
-        return this.repo.findAllByCorreoPersonal(correoPersonal);
+        return this.repo.findAllByEmail(correoPersonal);
     }
 
     @Override
