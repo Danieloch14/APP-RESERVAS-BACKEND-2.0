@@ -11,7 +11,14 @@ import java.util.List;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Integer> {
-    Optional<Reservation> findByIdResource_IdResourceAndStartDateBetween(Integer idResource, Timestamp startDate, Timestamp endDate);
+    @Query(value="\tselect\n" +
+            "\tr1_0.*\n" +
+            "from\n" +
+            "\tpublic.reservation r1_0\n" +
+            "where\n" +
+            "\tr1_0.id_resource =:idResource\n" +
+            "\tand :startDate between r1_0.start_date and r1_0.end_date", nativeQuery = true)
+    List<Reservation> findByIdResource_IdResourceAndStartDateBetween(Integer idResource, Timestamp startDate);
     @Query(value="select\n" +
             "\tr.*\n" +
             "from\n" +

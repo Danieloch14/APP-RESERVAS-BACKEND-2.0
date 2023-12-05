@@ -47,7 +47,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
     @Override
     public Boolean isAvailable(ReservationCreate reservationSave) throws DataException {
-        Optional<Reservation> objSave = repo.findByIdResource_IdResourceAndStartDateBetween(reservationSave.getIdResource(), reservationSave.getStartDate(), reservationSave.getEndDate());
+        List<Reservation> objSave = repo.findByIdResource_IdResourceAndStartDateBetween(reservationSave.getIdResource(), reservationSave.getStartDate());
 
         return objSave.isEmpty() ? true : false;
     }
