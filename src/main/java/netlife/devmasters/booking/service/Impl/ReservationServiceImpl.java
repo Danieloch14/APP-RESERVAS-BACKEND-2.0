@@ -28,10 +28,10 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public Reservation reserve(ReservationCreate reservationSave) throws DataException, ReservationException {
 
-        Reservation resource = modelMapper.map(reservationSave, Reservation.class);
         Time time = new Time(reservationSave.getHours(),reservationSave.getMinutes(),0);
         Timestamp endDate = new Timestamp(reservationSave.getStartDate().getTime() + time.getTime()- 18000000);
         reservationSave.setEndDate(endDate);
+        Reservation resource = modelMapper.map(reservationSave, Reservation.class);
 
         if (this.isAvailable(reservationSave)) {
             return repo.save(resource);
