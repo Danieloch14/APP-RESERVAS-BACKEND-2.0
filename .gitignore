@@ -30,6 +30,4 @@ build/
 !**/src/test/**/build/
 
 ### VS Code ###
-.vscode/
-###flyway###
-C:\Users\Jair\Documents\Java_workspace\booking-back\src\main\resources\db\migration/*
+/src/main/resources/db/migration/
