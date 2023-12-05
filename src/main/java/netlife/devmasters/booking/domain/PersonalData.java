@@ -26,5 +26,7 @@ public class PersonalData {
 	private String email;
 	@Column(name = "company")
 	private String company;
+	@Column(name = "position")
+	private String position;
 }
 
