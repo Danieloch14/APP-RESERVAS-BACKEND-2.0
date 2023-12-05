@@ -158,13 +158,7 @@ public DataSize TAMAÑO_MÁXIMO;
 		// currentUser.setApellidos(newLastName);
 //		currentUser.setNombreUsuario(usuario);
 		// currentUser.setEmail(newEmail);
-//		currentUser.setActive(isActive);
-//		currentUser.setNotLocked(isNonLocked);
 		userRepository.save(currentUser);
-		// saveProfileImage(currentUser, profileImage);
-
-		// TODO: eliminar log
-		// LOGGER.info("Actualizar usuario ejecutado");
 
 		return currentUser;
 	}
@@ -257,14 +251,6 @@ public DataSize TAMAÑO_MÁXIMO;
 
 		String encodedPassword = passwordEncoder.encode(password);
 		return encodedPassword;
-	}
-
-	private String generatePassword() {
-		return RandomStringUtils.randomAlphanumeric(20);
-	}
-
-	private String generateUserId() {
-		return RandomStringUtils.randomNumeric(10);
 	}
 
 	private void validateLoginAttempt(User user) {

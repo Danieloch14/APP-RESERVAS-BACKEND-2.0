@@ -81,7 +81,6 @@ public class UserController extends ExcepcionsManagment {
                                                 @RequestParam(name = "isActive", required = false) Boolean active,
                                                 @RequestParam(name = "isNotLocked", required = false) Boolean isNotLocked) throws DataException {
         return service.getById(codigo).map(datosGuardados -> {
-            // datosGuardados.setCodParalelo(obj.getCodParalelo());
             Optional.ofNullable(isNotLocked).ifPresent(datosGuardados::setNotLocked);
             Optional.ofNullable(active).ifPresent(datosGuardados::setActive);
             User datosActualizados = null;
@@ -122,8 +121,8 @@ public class UserController extends ExcepcionsManagment {
         }
     }
 
-    @PostMapping("/actualizar")
-    public ResponseEntity<User> update(@RequestBody User usuario)
+    @PutMapping("/{id}")
+    public ResponseEntity<User> update(@PathVariable("id") Integer id, @RequestBody User usuario)
             throws UserNotFoundException, UsernameExistExcepcion, EmailExistExcepcion, IOException,
             NotFileImageExcepcion {
         User updatedUser = service.actualizarUsuario(usuario);
@@ -172,14 +171,6 @@ public class UserController extends ExcepcionsManagment {
         List<User> users = service.getUsers();
         return new ResponseEntity<>(users, OK);
     }
-
-    @GetMapping("/listaPaginado")
-    public List<User> getAllUsersPageable(Pageable pageable) {
-
-        return service.getUsuariosPageable(pageable);
-
-    }
-
     @PostMapping("/resetPassword")
     public ResponseEntity<HttpResponse> resetPassword(@RequestParam("userName") String nombreUsuario, @RequestParam("password") String password)
             throws MessagingException, EmailNotFoundExcepcion, UserNotFoundException, IOException {
@@ -187,12 +178,42 @@ public class UserController extends ExcepcionsManagment {
         return response(OK, EMAIL_ENVIADO + " la dirección de email registrada para el usuario " + nombreUsuario);
     }
 
-    @DeleteMapping("/eliminar/{username}")
-    // @PreAuthorize("hasAnyAuthority('user:delete')")
+    @DeleteMapping("/{username}")
     public ResponseEntity<HttpResponse> deleteUser(@PathVariable("username") String username) throws Exception {
         service.eliminarUsuario(username);
         return response(OK, USUARIO_ELIMINADO_EXITO);
     }
+    //TODO revisar estos archivos
+    @PostMapping("/guardarArchivo")
+    public ResponseEntity<HttpResponse> guardarArchivo(@RequestParam(value = "nombreArchivo") String nombreArchivo,
+                                                       @RequestParam(value = "archivo") MultipartFile archivo) throws Exception {
+
+        try {
+            service.guardarArchivo(nombreArchivo, archivo);
+            return response(HttpStatus.OK, "Archivo cargado con éxito");
+        } catch (Exception e) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("errorHeader", e.getMessage());
+            return new ResponseEntity<HttpResponse>(
+                    new HttpResponse(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST,
+                            e.getMessage().toUpperCase(),
+                            e.getMessage()),
+                    headers, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/maxArchivo")
+    public long tamañoMáximoArchivo() {
+
+        try {
+            return service.tamañoMáximoArchivo();
+        } catch (Exception e) {
+
+            this.LOGGER.error(e.getMessage());
+            return -1;
+        }
+    }
+
 
     @GetMapping(path = "/image/{username}/{fileName}", produces = IMAGE_JPEG_VALUE)
     public byte[] getProfileImage(@PathVariable("username") String username, @PathVariable("fileName") String fileName)
@@ -230,36 +251,4 @@ public class UserController extends ExcepcionsManagment {
     private void authenticate(String username, String password) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
     }
-
-    @PostMapping("/guardarArchivo")
-    public ResponseEntity<HttpResponse> guardarArchivo(@RequestParam(value = "nombreArchivo") String nombreArchivo,
-                                                       @RequestParam(value = "archivo") MultipartFile archivo) throws Exception {
-
-        try {
-            service.guardarArchivo(nombreArchivo, archivo);
-            return response(HttpStatus.OK, "Archivo cargado con éxito");
-        } catch (Exception e) {
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("errorHeader", e.getMessage());
-            return new ResponseEntity<HttpResponse>(
-                    new HttpResponse(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST,
-                            e.getMessage().toUpperCase(),
-                            e.getMessage()),
-                    headers, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping("/maxArchivo")
-    public long tamañoMáximoArchivo() {
-
-        try {
-            return service.tamañoMáximoArchivo();
-        } catch (Exception e) {
-
-            this.LOGGER.error(e.getMessage());
-            return -1;
-        }
-    }
-
-
 }
