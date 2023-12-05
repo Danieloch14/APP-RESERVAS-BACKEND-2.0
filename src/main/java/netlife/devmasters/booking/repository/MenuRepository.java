@@ -1,8 +1,7 @@
 package netlife.devmasters.booking.repository;
 
 import netlife.devmasters.booking.domain.Menu;
-import netlife.devmasters.booking.domain.MenuPermisos;
-import netlife.devmasters.booking.exception.domain.DataException;
+import netlife.devmasters.booking.domain.MenuPermissions;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.NullHandling;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,8 +17,8 @@ public interface MenuRepository extends JpaRepository<Menu, Integer> {
 	
 	Optional<Menu> getById(int id);
 	
-	@Query(nativeQuery = true)
-	List<MenuPermisos> findMenuByIdUsuario(@Param("id_usuario") String idUsuario);
+	@Query(name="MenuPermisos.findMenuByIdUsuario",nativeQuery = true)
+	List<MenuPermissions> findMenuByIdUsuario(@Param("idUser") String idUsuario, @Param("idRol") Integer idRol);
 
 	List<Menu> findByParentMenuIsNullOrderByOrder();
 	//List<Menu> findByParentMenuIsNullOrderByOrder();

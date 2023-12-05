@@ -2,7 +2,7 @@ package netlife.devmasters.booking.controller;
 
 import netlife.devmasters.booking.domain.HttpResponse;
 import netlife.devmasters.booking.domain.Menu;
-import netlife.devmasters.booking.domain.MenuPermisos;
+import netlife.devmasters.booking.domain.MenuPermissions;
 import netlife.devmasters.booking.exception.domain.DataException;
 import netlife.devmasters.booking.repository.MenuRepository;
 import netlife.devmasters.booking.service.MenuService;
@@ -31,10 +31,10 @@ public class MenuResource {
 		this.menuService = menuService;
 	}
 	
-	@GetMapping("/list/{idusuario}")
-    public ResponseEntity<List<MenuPermisos>> findMenuByIdUsuario(@PathVariable("idusuario") String idUsuario) {
-        List<MenuPermisos> listaMenu = this.menuService.findMenuByIdUsuario(idUsuario);
-        return new ResponseEntity<List<MenuPermisos>>(listaMenu, OK);
+	@GetMapping("/by-user-rol")
+    public ResponseEntity<List<MenuPermissions>> findMenuByIdUsuario(@RequestParam("codUser") String idUsuario, @RequestParam("codRol") Integer idRol) {
+        List<MenuPermissions> listaMenu = this.menuService.findMenuByIdUsuario(idUsuario, idRol);
+        return new ResponseEntity<List<MenuPermissions>>(listaMenu, OK);
     }
 	
 	@GetMapping("")

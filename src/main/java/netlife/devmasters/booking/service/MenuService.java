@@ -1,7 +1,7 @@
 package netlife.devmasters.booking.service;
 
 import netlife.devmasters.booking.domain.Menu;
-import netlife.devmasters.booking.domain.MenuPermisos;
+import netlife.devmasters.booking.domain.MenuPermissions;
 import netlife.devmasters.booking.exception.domain.DataException;
 import netlife.devmasters.booking.repository.MenuRepository;
 import org.slf4j.Logger;
@@ -30,8 +30,8 @@ public class MenuService {
 		this.menuRepository = menuRepository;
 	}
 
-	public List<MenuPermisos> findMenuByIdUsuario(@Param("idUsuario") String idUsuario) {
-		return this.menuRepository.findMenuByIdUsuario(idUsuario);
+	public List<MenuPermissions> findMenuByIdUsuario(@Param("idUsuario") String idUsuario, @Param("idRol") Integer idRol) {
+		return this.menuRepository.findMenuByIdUsuario(idUsuario, idRol);
 	}
 
 	public List<Menu> getAll() {
