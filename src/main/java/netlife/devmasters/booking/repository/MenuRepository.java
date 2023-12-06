@@ -1,7 +1,7 @@
 package netlife.devmasters.booking.repository;
 
 import netlife.devmasters.booking.domain.Menu;
-import netlife.devmasters.booking.domain.MenuPermissions;
+import netlife.devmasters.booking.domain.dto.MenuPermissions;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.NullHandling;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,6 +1,6 @@
 package netlife.devmasters.booking.exception;
 
-import netlife.devmasters.booking.domain.HttpResponse;
+import netlife.devmasters.booking.util.HttpResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

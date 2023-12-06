@@ -1,6 +1,6 @@
 package netlife.devmasters.booking.controller;
 
-import netlife.devmasters.booking.domain.HttpResponse;
+import netlife.devmasters.booking.util.HttpResponse;
 import netlife.devmasters.booking.domain.RolUser;
 import netlife.devmasters.booking.exception.domain.DataException;
 import netlife.devmasters.booking.service.RolUserService;

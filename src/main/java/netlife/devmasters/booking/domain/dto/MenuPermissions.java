@@ -1,4 +1,4 @@
-package netlife.devmasters.booking.domain;
+package netlife.devmasters.booking.domain.dto;
 
 import lombok.Data;
 

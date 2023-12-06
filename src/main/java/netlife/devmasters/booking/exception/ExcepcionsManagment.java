@@ -4,7 +4,7 @@ package netlife.devmasters.booking.exception;
 import jakarta.persistence.NoResultException;
 import netlife.devmasters.booking.constant.FileConst;
 import netlife.devmasters.booking.constant.MessagesConst;
-import netlife.devmasters.booking.domain.HttpResponse;
+import netlife.devmasters.booking.util.HttpResponse;
 import netlife.devmasters.booking.exception.domain.*;
 import org.hibernate.exception.ConstraintViolationException;
 import org.postgresql.util.PSQLException;

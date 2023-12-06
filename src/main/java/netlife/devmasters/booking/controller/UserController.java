@@ -3,9 +3,9 @@
 package netlife.devmasters.booking.controller;
 
 import jakarta.mail.MessagingException;
-import netlife.devmasters.booking.domain.HttpResponse;
+import netlife.devmasters.booking.util.HttpResponse;
 import netlife.devmasters.booking.domain.User;
-import netlife.devmasters.booking.domain.UserPrincipal;
+import netlife.devmasters.booking.domain.dto.UserPrincipal;
 import netlife.devmasters.booking.exception.ExcepcionsManagment;
 import netlife.devmasters.booking.exception.domain.*;
 import netlife.devmasters.booking.service.UserService;
@@ -13,8 +13,6 @@ import netlife.devmasters.booking.util.JWTTokenProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

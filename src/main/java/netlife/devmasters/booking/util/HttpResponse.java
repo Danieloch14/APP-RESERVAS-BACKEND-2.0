@@ -1,4 +1,4 @@
-package netlife.devmasters.booking.domain;
+package netlife.devmasters.booking.util;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;

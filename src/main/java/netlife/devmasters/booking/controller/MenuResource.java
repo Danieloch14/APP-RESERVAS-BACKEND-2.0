@@ -1,8 +1,8 @@
 package netlife.devmasters.booking.controller;
 
-import netlife.devmasters.booking.domain.HttpResponse;
+import netlife.devmasters.booking.util.HttpResponse;
 import netlife.devmasters.booking.domain.Menu;
-import netlife.devmasters.booking.domain.MenuPermissions;
+import netlife.devmasters.booking.domain.dto.MenuPermissions;
 import netlife.devmasters.booking.exception.domain.DataException;
 import netlife.devmasters.booking.repository.MenuRepository;
 import netlife.devmasters.booking.service.MenuService;

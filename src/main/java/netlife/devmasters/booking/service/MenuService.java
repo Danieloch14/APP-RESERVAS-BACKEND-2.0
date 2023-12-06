@@ -1,7 +1,7 @@
 package netlife.devmasters.booking.service;
 
 import netlife.devmasters.booking.domain.Menu;
-import netlife.devmasters.booking.domain.MenuPermissions;
+import netlife.devmasters.booking.domain.dto.MenuPermissions;
 import netlife.devmasters.booking.exception.domain.DataException;
 import netlife.devmasters.booking.repository.MenuRepository;
 import org.slf4j.Logger;

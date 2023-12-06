@@ -2,6 +2,7 @@ package netlife.devmasters.booking.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import netlife.devmasters.booking.domain.dto.MenuPermissions;
 
 import java.io.Serializable;
 

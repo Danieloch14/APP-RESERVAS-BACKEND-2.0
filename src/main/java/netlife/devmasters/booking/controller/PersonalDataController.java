@@ -1,7 +1,7 @@
 package netlife.devmasters.booking.controller;
 
 import jakarta.mail.MessagingException;
-import netlife.devmasters.booking.domain.HttpResponse;
+import netlife.devmasters.booking.util.HttpResponse;
 import netlife.devmasters.booking.domain.PersonalData;
 import netlife.devmasters.booking.exception.domain.DataException;
 import netlife.devmasters.booking.service.PersonalDataService;

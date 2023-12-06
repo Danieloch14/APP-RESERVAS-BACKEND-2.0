@@ -1,5 +1,6 @@
-package netlife.devmasters.booking.domain;
+package netlife.devmasters.booking.domain.dto;
 
+import netlife.devmasters.booking.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

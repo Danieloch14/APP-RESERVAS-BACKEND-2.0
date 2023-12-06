@@ -1,6 +1,5 @@
 package netlife.devmasters.booking.util;
 
-import netlife.devmasters.booking.domain.HttpResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
