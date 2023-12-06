@@ -122,7 +122,7 @@ public DataSize TAMAÑO_MÁXIMO;
 		// asocia datos personales con usuario
 		user.setPersonalData(datos);
 
-		//it can save user without datapersonal that is in database, so it's no necessary to save it first
+		//it can save user without datapersonal in database, so it's no necessary to save it first
 		//because the entity is inside the user entity
 		userRepository.save(user);
 
