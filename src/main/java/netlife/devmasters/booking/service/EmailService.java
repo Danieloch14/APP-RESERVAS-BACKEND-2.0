@@ -9,8 +9,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,6 +20,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import static netlife.devmasters.booking.constant.EmailConst.*;
 
@@ -52,8 +55,8 @@ public class EmailService {
     public void sendNewPasswordEmail(String firstName, String password, String email) throws MessagingException, IOException {
         String destinatarios[] = {email};
         InputStream sourceFile = this.getClass().getResourceAsStream("/template.html");
-        String htmlTemplate =
-                //sourceFile.toString();
+        String htmlTemplate = null;
+                /*sourceFile.toString();
                 "<!DOCTYPE html>\n" +
                         "<html>\n" +
                         "\n" +
@@ -132,7 +135,7 @@ public class EmailService {
                         "<body>\n" +
                         "    <div class=\"container\">\n" +
                         "        <header>\n" +
-                        "            <img src=\"https://i.ibb.co/0jZ3Q0K/logo.png\" alt=\"logo\">\n" +
+                        "            <img src=\"https://www.google.com/url?sa=i&url=https%3A%2F%2Fes.m.wikipedia.org%2Fwiki%2FArchivo%3ANetlife.png&psig=AOvVaw2qhNO8bkp6ghqRkYIt9z9S&ust=1701984300661000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCIjQreHf-4IDFQAAAAAdAAAAABAD\" alt=\"logo\">\n" +
                         "        </header>\n" +
                         "        <div class=\"container-content\">\n" +
                         "            <h3>Plataforma de reservas - NETLIFE</h3>\n" +
@@ -156,25 +159,16 @@ public class EmailService {
                         "</body>\n" +
                         "\n" +
                         "</html>";
+                 */
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(sourceFile, StandardCharsets.UTF_8))) {
+            htmlTemplate = reader.lines().collect(Collectors.joining("\n"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            htmlTemplate = null;
+        }
         htmlTemplate = htmlTemplate.replace("${usuario}", firstName);
         htmlTemplate = htmlTemplate.replace("${password}", password);
 
-        MimeMessage message = this.createEmailHtml(destinatarios, EMAIL_SUBJECT_PASSWORD, htmlTemplate);
-        JavaMailSender emailSender = getJavaMailSender();
-        emailSender.send(message);
-
-    }
-
-    public void validateCodeEmail(String firstName, String codigo, String email) throws MessagingException, IOException {
-        String[] destinatarios = {email};
-        if (email.contains(",") || email.contains(";")) {
-            destinatarios = email.split("[,;]");
-        }
-        String Path = //RUTA_PLANTILLAS +
-                "template-pecbdmq-validacion.html";
-        String htmlTemplate = readFile(Path);
-        htmlTemplate = htmlTemplate.replace("${firstName}", firstName);
-        htmlTemplate = htmlTemplate.replace("${codigo}", codigo);
         MimeMessage message = this.createEmailHtml(destinatarios, EMAIL_SUBJECT_PASSWORD, htmlTemplate);
         JavaMailSender emailSender = getJavaMailSender();
         emailSender.send(message);
@@ -187,10 +181,14 @@ public class EmailService {
             if (email.contains(",") || email.contains(";")) {
                 emails = email.split("[,;]");
             }
-            String Path = //RUTA_PLANTILLAS +
-                    "template-pecbdmq-general-text.html";
-            //InputStream sourceFile = this.getClass().getResourceAsStream("/template.html");
-            String htmlTemplate = readFile(Path);
+            InputStream sourceFile = this.getClass().getResourceAsStream("/templateGeneral.html");
+            String htmlTemplate = null;
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(sourceFile, StandardCharsets.UTF_8))) {
+                htmlTemplate = reader.lines().collect(Collectors.joining("\n"));
+            } catch (Exception e) {
+                e.printStackTrace();
+                htmlTemplate = null;
+            }
             htmlTemplate = htmlTemplate.replace("${mensaje}", mensaje);
             MimeMessage message = this.createEmailHtml(emails, subject, htmlTemplate);
             JavaMailSender emailSender = getJavaMailSender();
@@ -201,21 +199,6 @@ public class EmailService {
         }
     }
 
-    public void sendMensajeHtmlGenerico(String[] email, String subject, String mensaje) {
-        try {
-
-            String Path = //RUTA_PLANTILLAS +
-                    "template-pecbdmq-general-html.html";
-            String htmlTemplate = readFile(Path);
-            htmlTemplate = htmlTemplate.replace("${mensaje}", mensaje);
-            MimeMessage message = this.createEmailHtml(email, subject, htmlTemplate);
-            JavaMailSender emailSender = getJavaMailSender();
-            emailSender.send(message);
-
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
 
     private MimeMessage createEmailHtml(String[] destinatarios, String subject, String textoHtml)
             throws MessagingException {
