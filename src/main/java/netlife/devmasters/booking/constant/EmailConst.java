@@ -5,6 +5,7 @@ public class EmailConst {
     public static final String CC_EMAIL = "";
     public static final String EMAIL_SUBJECT_PASSWORD = "Netlife - Nuevo password";
     public static final String EMAIL_SUBJECT_CONFIRMED = "Netlife - Código de confirmación";
+    public static final String EMAIL_REGISTER_LINK = "Netlife - Enlace de registro";
     public static final String EMAIL_SEND = "Notificaciones enviadas";
     public static final String EMAIL_SMTP_SERVER = "smtp.office365.com";
     public static final int DEFAULT_PORT = 587;

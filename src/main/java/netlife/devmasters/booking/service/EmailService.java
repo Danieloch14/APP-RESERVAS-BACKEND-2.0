@@ -3,6 +3,8 @@ package netlife.devmasters.booking.service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import netlife.devmasters.booking.domain.PersonalData;
+import netlife.devmasters.booking.domain.RegisterRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -18,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -32,6 +35,7 @@ public class EmailService {
 
     @Value("${netlife.email.password}")
     private String PASSWORD;
+    private static final String host = "http://localhost:4200";
 
     @Bean
     public JavaMailSender getJavaMailSender() {
@@ -173,6 +177,18 @@ public class EmailService {
         JavaMailSender emailSender = getJavaMailSender();
         emailSender.send(message);
 
+    }
+
+    public void sendLinkRegister(RegisterRequest registerRequest) {
+        Date fechaExpiracion = new Date();
+        fechaExpiracion.setDate(fechaExpiracion.getDate() + 1);
+        String enlace = host + "?id_solicitud=" + registerRequest.getIdRegisterRequest();
+        enlace += "&exp=" + fechaExpiracion.getTime();
+
+        String mensaje = "Hola, tu proceso de registro en la plataforma de reservas de Netlife ha sido aprovado.\n\t" +
+                "Para continuar con el proceso de registro, por favor ingresa al siguiente link:\n\t" + enlace +
+                "\n\tRecuerda que tienes 24 horas para completar el proceso de registro, de lo contrario deberás iniciar nuevamente el proceso.\n\t";
+        sendMensajeTextGenerico(registerRequest.getPersonalData().getEmail(), EMAIL_REGISTER_LINK, mensaje);
     }
 
     public void sendMensajeTextGenerico(String email, String subject, String mensaje) {

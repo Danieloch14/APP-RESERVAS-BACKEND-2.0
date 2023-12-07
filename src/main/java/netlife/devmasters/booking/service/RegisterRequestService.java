@@ -16,4 +16,7 @@ public interface RegisterRequestService {
     RegisterRequest update(RegisterRequest objActualizado, Integer id) throws DataException;
 
     void delete(int id) throws Exception;
+    Boolean approve(int idRequest, Boolean approved ) throws Exception;
+    Boolean reject(int idRequest, Boolean approved, String reason ) throws Exception;
+    Boolean sendLink(int idRequest) throws Exception;
 }
