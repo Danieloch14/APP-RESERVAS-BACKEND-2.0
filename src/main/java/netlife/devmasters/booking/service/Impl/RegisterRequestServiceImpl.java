@@ -1,5 +1,6 @@
 package netlife.devmasters.booking.service.Impl;
 
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import netlife.devmasters.booking.domain.PersonalData;
 import netlife.devmasters.booking.domain.RegisterRequest;
@@ -7,10 +8,12 @@ import netlife.devmasters.booking.exception.domain.DataException;
 import netlife.devmasters.booking.repository.PersonalDataRepository;
 import netlife.devmasters.booking.repository.RegisterRequestRepository;
 import netlife.devmasters.booking.service.EmailService;
+import netlife.devmasters.booking.service.PersonalDataService;
 import netlife.devmasters.booking.service.RegisterRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -22,15 +25,15 @@ public class RegisterRequestServiceImpl implements RegisterRequestService {
     @Autowired
     private RegisterRequestRepository repo;
     @Autowired
-    private PersonalDataRepository personalDataRepository;
+    private PersonalDataService personalDataSvc;
     @Autowired
     private EmailService emailService;
 
     @Override
     @Transactional
-    public RegisterRequest save(RegisterRequest obj) {
+    public RegisterRequest save(RegisterRequest obj) throws DataException, MessagingException, IOException {
         obj.setStatus(PENDING);
-        PersonalData datos = personalDataRepository.save(obj.getPersonalData());
+        PersonalData datos = personalDataSvc.saveDatosPersonales(obj.getPersonalData());
         Date date = new Date();
         obj.setRequestDate(date);
         obj.setPersonalData(datos);
@@ -48,9 +51,20 @@ public class RegisterRequestServiceImpl implements RegisterRequestService {
     }
 
     @Override
-    public RegisterRequest update(RegisterRequest objActualizado, Integer id) throws DataException {
+    public RegisterRequest update(RegisterRequest objActualizado, Integer id) throws Exception {
         objActualizado.setIdRegisterRequest(id);
-        return repo.save(objActualizado);
+        Optional<PersonalData> datos = personalDataSvc.getDatosPersonalesById(objActualizado.getPersonalData().getIdPersonalData());
+        if (datos.isEmpty()) {
+            throw new Exception("No se encontro el dato personal a editar");
+        }
+        try {
+            personalDataSvc.updateDatosPersonales(objActualizado.getPersonalData(), objActualizado.getPersonalData().getIdPersonalData());
+            objActualizado.setPersonalData(datos.get());
+            return repo.save(objActualizado);
+
+        } catch (Exception e) {
+            throw new Exception("Existen datos relacionados");
+        }
     }
 
     @Override

@@ -26,7 +26,7 @@ public interface UserService {
 
     User actualizarUsuario(User usuario)
             throws UserNotFoundException, UsernameExistExcepcion, EmailExistExcepcion, IOException,
-            NotFileImageExcepcion;
+            NotFileImageExcepcion, DataException;
 
     int actualizarActive(Boolean active, String username)
             throws UserNotFoundException, UsernameExistExcepcion, EmailExistExcepcion, IOException,

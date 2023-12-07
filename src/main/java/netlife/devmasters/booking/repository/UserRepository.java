@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +43,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	@Modifying
 	@Query("UPDATE User u SET u.isActive = ?1 WHERE u.username = ?2")
 	int actualizarNotLocked(Boolean noLock, String username);
+	@Modifying
+	@Query("UPDATE User u SET u.username = ?1,u.password = ?2, u.dateEntry=?3, u.dateLastLogin=?4, u.isActive=?5, u.isNotLocked=?6 WHERE u.idUser = ?7")
+	int actualizarUserWithOutDP(String username, String password, Date dateEntry, Date dateLastLogin, Boolean isActive, Boolean isNotLocked, Integer idUser);
 
 	Optional<User> findByPersonalData_IdPersonalData(Integer personalData);
 

@@ -25,17 +25,8 @@ import static netlife.devmasters.booking.constant.MessagesConst.*;
 
 @Service
 public class PersonalDataServiceImpl implements PersonalDataService {
-
-    private Logger LOGGER = LoggerFactory.getLogger(getClass());
-
     @Autowired
     private PersonalDataRepository repo;
-    @Autowired
-    private EmailService emailService;
-    @Autowired
-    private UserRepository usuarioRepository;
-
-    BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
 
     @Override
     public PersonalData saveDatosPersonales(PersonalData obj) throws DataException, MessagingException, IOException {
@@ -55,24 +46,8 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     }
 
     @Override
-    public Page<PersonalData> getAllDatosPersonales(Pageable pageable) throws Exception {
-        try {
-            return repo.findAll(pageable);
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
-
-    }
-
-    @Override
     public Optional<PersonalData> getDatosPersonalesById(Integer codigo) {
         return repo.findById(codigo);
-    }
-
-
-    @Override
-    public List<PersonalData> saveAll(List<PersonalData> datosPersonales) {
-        return repo.saveAll(datosPersonales);
     }
 
     @Override
@@ -111,9 +86,6 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     @Override
     public Page<PersonalData> search(String filtro, Pageable pageable) throws Exception {
         try {
-            // Page<DatosPersonales> datos =
-            // repo.findByNombreContainingOrApellidoContaining(filtro, filtro, pageable);
-            // Page<Persona> datos = personaRepository.search(filtro, pageable);
             Page<PersonalData> datos = repo.searchNativo(filtro, pageable);
             return datos;
         } catch (Exception e) {
@@ -134,9 +106,5 @@ public class PersonalDataServiceImpl implements PersonalDataService {
                 throw new DataException(RELATED_DATA);
             }
         }
-    }
-
-    public boolean isPasswordMatches(String claveOriginal, String hashPassword) {
-        return bcrypt.matches(claveOriginal, hashPassword);
     }
 }

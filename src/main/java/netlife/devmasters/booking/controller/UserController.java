@@ -88,6 +88,8 @@ public class UserController extends ExcepcionsManagment {
             } catch (UserNotFoundException | UsernameExistExcepcion | EmailExistExcepcion | IOException
                      | NotFileImageExcepcion e) {
                 e.printStackTrace();
+            } catch (DataException e) {
+                throw new RuntimeException(e);
             }
             return new ResponseEntity<>(datosActualizados, HttpStatus.OK);
         }).orElseGet(() -> ResponseEntity.notFound().build());
@@ -122,7 +124,7 @@ public class UserController extends ExcepcionsManagment {
     @PutMapping("/{id}")
     public ResponseEntity<User> update(@PathVariable("id") Integer id, @RequestBody User usuario)
             throws UserNotFoundException, UsernameExistExcepcion, EmailExistExcepcion, IOException,
-            NotFileImageExcepcion {
+            NotFileImageExcepcion, DataException {
         User updatedUser = service.actualizarUsuario(usuario);
         return new ResponseEntity<>(updatedUser, OK);
     }
@@ -164,7 +166,7 @@ public class UserController extends ExcepcionsManagment {
         return new ResponseEntity<>(users, OK);
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = service.getUsers();
         return new ResponseEntity<>(users, OK);

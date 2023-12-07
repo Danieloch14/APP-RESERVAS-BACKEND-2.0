@@ -1,5 +1,6 @@
 package netlife.devmasters.booking.controller;
 
+import jakarta.mail.MessagingException;
 import netlife.devmasters.booking.domain.RegisterRequest;
 import netlife.devmasters.booking.exception.domain.*;
 import netlife.devmasters.booking.service.RegisterRequestService;
@@ -27,12 +28,12 @@ public class RegisterRequestController {
     }
 
     @PostMapping("")
-    RegisterRequest save(@RequestBody RegisterRequest obj) {
+    RegisterRequest save(@RequestBody RegisterRequest obj) throws DataException, MessagingException, IOException {
         return service.save(obj);
     }
 
     @PutMapping("/{id}")
-    RegisterRequest update(@PathVariable("id") Integer id, @RequestBody RegisterRequest obj) throws DataException {
+    RegisterRequest update(@PathVariable("id") Integer id, @RequestBody RegisterRequest obj) throws Exception {
         return service.update(obj, id);
     }
 
