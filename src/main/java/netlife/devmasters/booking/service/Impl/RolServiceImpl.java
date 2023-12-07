@@ -13,14 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static netlife.devmasters.booking.constant.MessagesConst.EMPTY_REGISTER;
+import static netlife.devmasters.booking.constant.MessagesConst.REGISTER_ALREADY_EXIST;
+
 
 @Service
 @Transactional
 public class RolServiceImpl implements RolService {
-
-	private static final String REGISTRO_VACIO ="" ;
-	private static final String REGISTRO_YA_EXISTE = "";
-	private Logger LOGGER = LoggerFactory.getLogger(getClass());
+	@Autowired
 	private RolRepository rolRepository;
 
 	@Autowired
@@ -35,11 +35,11 @@ public class RolServiceImpl implements RolService {
 	@Override
 	public Rol save(Rol obj) throws DataException {
 		if (obj.getNombre().trim().isEmpty())
-			throw new DataException(REGISTRO_VACIO);		
+			throw new DataException(EMPTY_REGISTER);
 		
 		Optional<Rol> objGuardado = rolRepository.findByNombreIgnoreCase(obj.getNombre());
 		if (objGuardado.isPresent() && !objGuardado.get().getIdRol().equals(obj.getIdRol())) {
-			throw new DataException(REGISTRO_YA_EXISTE);
+			throw new DataException(REGISTER_ALREADY_EXIST);
 		}
 
 		obj.setNombre(obj.getNombre().toUpperCase());

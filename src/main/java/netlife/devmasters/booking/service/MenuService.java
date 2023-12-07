@@ -14,15 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static netlife.devmasters.booking.constant.MessagesConst.EMPTY_REGISTER;
+import static netlife.devmasters.booking.constant.MessagesConst.REGISTER_ALREADY_EXIST;
 
 
 @Service
 @Transactional
 public class MenuService {
-
-	private static final String REGISTRO_YA_EXISTE = "";
-	private static final String REGISTRO_VACIO = "";
-	private Logger LOGGER = LoggerFactory.getLogger(getClass());
 	private MenuRepository menuRepository;
 
 	@Autowired
@@ -44,10 +42,10 @@ public class MenuService {
 
 	public Menu save(Menu menu) throws DataException {
 		if (menu.getLabel().trim().isEmpty())
-			throw new DataException(REGISTRO_VACIO);
+			throw new DataException(EMPTY_REGISTER);
 		Menu objGuardado = menuRepository.findMenuByLabelIgnoreCaseAndParentMenu(menu.getLabel(), menu.getParentMenu());
 		if (objGuardado != null && !objGuardado.getIdMenu().equals(menu.getIdMenu())) {
-			throw new DataException(REGISTRO_YA_EXISTE);
+			throw new DataException(REGISTER_ALREADY_EXIST);
 		}
 
 		menu.setLabel(menu.getLabel()/*.toUpperCase()*/);

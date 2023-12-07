@@ -17,7 +17,6 @@ import java.util.Optional;
 @Transactional
 public class MenuRolServiceImpl implements MenuRolService {
 
-	private Logger LOGGER = LoggerFactory.getLogger(getClass());
 	private MenuRolRepository menuRolRepository;
 
 	@Autowired

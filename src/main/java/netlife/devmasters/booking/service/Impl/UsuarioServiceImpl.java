@@ -42,13 +42,6 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 	private LoginTryService loginAttemptService;
 
 	private EmailService emailService;
-	/*
-@Value("${pecb.archivos.ruta}")
-private String ARCHIVOS_RUTA;
-
-@Value("${spring.servlet.multipart.max-file-size}")
-public DataSize TAMAÑO_MÁXIMO;
- */
 	@Autowired
 	public UsuarioServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,
                               LoginTryService loginAttemptService
