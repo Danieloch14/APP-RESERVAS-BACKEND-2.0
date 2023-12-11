@@ -25,5 +25,6 @@ public class SecurityConst {
 			"/api/v1/users/resetPassword/**",
 			"/swagger-ui/**",
 			"/api-docs/**", 
+			"/api/v1/registers-requests",
 	};
 }
