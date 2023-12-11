@@ -15,6 +15,7 @@ import java.io.Serializable;
         + "	m.parent_menu, "
         + "	m.order_menu, "
         + "	m.description, "
+        + "	m.icon, "
         + "	permisos "
         + "	from public.menu m,	 "
         + "	(select distinct id_menu, permissions from public.r_menu_rol gmr where id_rol in "
@@ -32,6 +33,7 @@ import java.io.Serializable;
         @ColumnResult(name = "parent_menu", type = Integer.class),
         @ColumnResult(name = "order_menu", type = Integer.class),
         @ColumnResult(name = "description", type = String.class),
+        @ColumnResult(name = "icon", type = String.class),
         @ColumnResult(name = "permisos", type = String.class)
 }))
 public class Menu implements Serializable {
@@ -51,6 +53,7 @@ public class Menu implements Serializable {
     @Column(name = "order_menu")
     protected Integer order;
     protected String description;
+    protected String icon;
 
     public Menu() {
     }
