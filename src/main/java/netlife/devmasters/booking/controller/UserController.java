@@ -19,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -69,29 +68,29 @@ public class UserController extends ExcepcionsManagment {
 
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody User user) throws UserNotFoundException,
-            UsernameExistExcepcion, EmailExistExcepcion, MessagingException, IOException {
+            UsernameExistExcepcion, EmailExistExcepcion, MessagingException, IOException, DataException {
         User newUser = service.register(user);
         return new ResponseEntity<>(newUser, OK);
     }
 
     @PutMapping("activeLock/{id}")
-    public ResponseEntity<User> actualizarDatos(@PathVariable("id") Integer codigo,
+    public ResponseEntity<User> actualizarDatos(@PathVariable("id") Integer code,
                                                 @RequestParam(name = "isActive", required = false) Boolean active,
                                                 @RequestParam(name = "isNotLocked", required = false) Boolean isNotLocked) throws DataException {
-        return service.getById(codigo).map(datosGuardados -> {
-            Optional.ofNullable(isNotLocked).ifPresent(datosGuardados::setNotLocked);
-            Optional.ofNullable(active).ifPresent(datosGuardados::setActive);
-            User datosActualizados = null;
+        return service.getById(code).map(SavedData -> {
+            Optional.ofNullable(isNotLocked).ifPresent(SavedData::setNotLocked);
+            Optional.ofNullable(active).ifPresent(SavedData::setActive);
+            User datasUpdated = null;
 
             try {
-                datosActualizados = service.actualizarUsuario(datosGuardados);
+                datasUpdated = service.updatedUser(SavedData);
             } catch (UserNotFoundException | UsernameExistExcepcion | EmailExistExcepcion | IOException
                      | NotFileImageExcepcion e) {
                 e.printStackTrace();
             } catch (DataException e) {
                 throw new RuntimeException(e);
             }
-            return new ResponseEntity<>(datosActualizados, HttpStatus.OK);
+            return new ResponseEntity<>(datasUpdated, HttpStatus.OK);
         }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -100,8 +99,8 @@ public class UserController extends ExcepcionsManagment {
                                              @RequestParam("username") String username)
             throws UserNotFoundException, UsernameExistExcepcion, EmailExistExcepcion, IOException,
             NotFileImageExcepcion {
-        int registrosActualizados = service.actualizarActive(valide, username);
-        if (registrosActualizados == 1) {
+        int updatedRegisters = service.UpdatedActive(valide, username);
+        if (updatedRegisters == 1) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -113,7 +112,7 @@ public class UserController extends ExcepcionsManagment {
                                                 @RequestParam("username") String username)
             throws UserNotFoundException, UsernameExistExcepcion, EmailExistExcepcion, IOException,
             NotFileImageExcepcion {
-        int registrosActualizados = service.actualizarNotLock(notLocked, username);
+        int registrosActualizados = service.UpdatedNotLock(notLocked, username);
         if (registrosActualizados == 1) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
@@ -122,15 +121,15 @@ public class UserController extends ExcepcionsManagment {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> update(@PathVariable("id") Integer id, @RequestBody User usuario)
+    public ResponseEntity<User> update(@PathVariable("id") Integer id, @RequestBody User user)
             throws UserNotFoundException, UsernameExistExcepcion, EmailExistExcepcion, IOException,
             NotFileImageExcepcion, DataException {
-        User updatedUser = service.actualizarUsuario(usuario);
+        User updatedUser = service.updatedUser(user);
         return new ResponseEntity<>(updatedUser, OK);
     }
 
-    @GetMapping("/buscar/{nombreusuario}")
-    public ResponseEntity<User> getUser(@PathVariable("nombreusuario") String username) {
+    @GetMapping("/buscar/{username}")
+    public ResponseEntity<User> getUser(@PathVariable("username") String username) {
         User user = service.findUserByUsername(username);
         return new ResponseEntity<>(user, OK);
     }
@@ -139,30 +138,30 @@ public class UserController extends ExcepcionsManagment {
     // por query params
     @PostMapping("/buscarNombresApellidos")
     public ResponseEntity<List<User>> buscarUsuarios(
-            @RequestParam(name = "nombres", required = false) String nombre,
-            @RequestParam(name = "apellidos", required = false) String apellido) {
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "lastname", required = false) String lastname) {
 
         List<User> usuarios = new ArrayList<>();
 
-        if (nombre != null && !nombre.trim().isEmpty() && apellido != null && !apellido.trim().isEmpty()) {
-            usuarios = service.findUsuariosByNombreApellido(nombre, apellido);
-        } else if (nombre != null && !nombre.trim().isEmpty()) {
-            usuarios = service.findUsuariosByNombre(nombre);
-        } else if (apellido != null && !apellido.trim().isEmpty()) {
-            usuarios = service.findUsuariosByApellido(apellido);
+        if (name != null && !name.trim().isEmpty() && lastname != null && !lastname.trim().isEmpty()) {
+            usuarios = service.findUsersByFullyName(name, lastname);
+        } else if (name != null && !name.trim().isEmpty()) {
+            usuarios = service.findUsersByName(name);
+        } else if (lastname != null && !lastname.trim().isEmpty()) {
+            usuarios = service.findUsersByLastname(lastname);
         }
         return ResponseEntity.ok(usuarios);
     }
 
     @PostMapping("/buscarCorreo")
-    public ResponseEntity<List<User>> getCorreo(@RequestParam String correo) {
-        List<User> users = service.findUsuariosByCorreo(correo);
+    public ResponseEntity<List<User>> getCorreo(@RequestParam String email) {
+        List<User> users = service.findUsersByEmail(email);
         return new ResponseEntity<>(users, OK);
     }
 
     @PostMapping("/buscarUsuario")
-    public ResponseEntity<User> getUserII(@RequestParam String usuario) {
-        User users = service.findUserByUsername(usuario);
+    public ResponseEntity<User> getUserII(@RequestParam String username) {
+        User users = service.findUserByUsername(username);
         return new ResponseEntity<>(users, OK);
     }
 
@@ -171,49 +170,19 @@ public class UserController extends ExcepcionsManagment {
         List<User> users = service.getUsers();
         return new ResponseEntity<>(users, OK);
     }
+
     @PostMapping("/resetPassword")
-    public ResponseEntity<HttpResponse> resetPassword(@RequestParam("userName") String nombreUsuario, @RequestParam("password") String password)
+    public ResponseEntity<HttpResponse> resetPassword(@RequestParam("username") String username, @RequestParam("password") String password)
             throws MessagingException, EmailNotFoundExcepcion, UserNotFoundException, IOException {
-        service.resetPassword(nombreUsuario, password);
-        return response(OK, EMAIL_ENVIADO + " la dirección de email registrada para el usuario " + nombreUsuario);
+        service.resetPassword(username, password);
+        return response(OK, EMAIL_ENVIADO + " la dirección de email registrada para el usuario " + username);
     }
 
     @DeleteMapping("/{username}")
     public ResponseEntity<HttpResponse> deleteUser(@PathVariable("username") String username) throws Exception {
-        service.eliminarUsuario(username);
+        service.deleteUser(username);
         return response(OK, USUARIO_ELIMINADO_EXITO);
     }
-    //TODO revisar estos archivos
-    @PostMapping("/guardarArchivo")
-    public ResponseEntity<HttpResponse> guardarArchivo(@RequestParam(value = "nombreArchivo") String nombreArchivo,
-                                                       @RequestParam(value = "archivo") MultipartFile archivo) throws Exception {
-
-        try {
-            service.guardarArchivo(nombreArchivo, archivo);
-            return response(HttpStatus.OK, "Archivo cargado con éxito");
-        } catch (Exception e) {
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("errorHeader", e.getMessage());
-            return new ResponseEntity<HttpResponse>(
-                    new HttpResponse(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST,
-                            e.getMessage().toUpperCase(),
-                            e.getMessage()),
-                    headers, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping("/maxArchivo")
-    public long tamañoMáximoArchivo() {
-
-        try {
-            return service.tamañoMáximoArchivo();
-        } catch (Exception e) {
-
-            this.LOGGER.error(e.getMessage());
-            return -1;
-        }
-    }
-
 
     @GetMapping(path = "/image/{username}/{fileName}", produces = IMAGE_JPEG_VALUE)
     public byte[] getProfileImage(@PathVariable("username") String username, @PathVariable("fileName") String fileName)

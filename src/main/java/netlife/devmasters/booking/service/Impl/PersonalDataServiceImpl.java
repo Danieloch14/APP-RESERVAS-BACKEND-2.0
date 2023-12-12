@@ -5,15 +5,10 @@ import jakarta.mail.MessagingException;
 import netlife.devmasters.booking.domain.PersonalData;
 import netlife.devmasters.booking.exception.domain.DataException;
 import netlife.devmasters.booking.repository.PersonalDataRepository;
-import netlife.devmasters.booking.repository.UserRepository;
-import netlife.devmasters.booking.service.EmailService;
 import netlife.devmasters.booking.service.PersonalDataService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -29,7 +24,7 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     private PersonalDataRepository repo;
 
     @Override
-    public PersonalData saveDatosPersonales(PersonalData obj) throws DataException, MessagingException, IOException {
+    public PersonalData savePersonalData(PersonalData obj) throws DataException, MessagingException, IOException {
         if (obj.getName() == null || obj.getEmail() == null || obj.getName().isEmpty()
                 || obj.getEmail().isEmpty())
             throw new DataException(EMPTY_REGISTER);
@@ -41,30 +36,30 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     }
 
     @Override
-    public List<PersonalData> getAllDatosPersonales() {
+    public List<PersonalData> getAllPersonalData() {
         return repo.findAll();
     }
 
     @Override
-    public Optional<PersonalData> getDatosPersonalesById(Integer codigo) {
+    public Optional<PersonalData> getPersonalDataById(Integer codigo) {
         return repo.findById(codigo);
     }
 
     @Override
-    public PersonalData updateDatosPersonales(PersonalData objActualizado, Integer id) throws DataException {
+    public PersonalData updatePersonalData(PersonalData objUpdated, Integer id) throws DataException {
 
         // verifica si el correo ya está registrado para otro usuario
-        String correoPersonal = objActualizado.getEmail();
+        String email = objUpdated.getEmail();
 
-        if (correoPersonal != null && !correoPersonal.isBlank()) {
-            List<PersonalData> lista = this.getByCorreoPersonal(correoPersonal);
+        if (email != null && !email.isBlank()) {
+            List<PersonalData> list = this.getByPersonalEmail(email);
 
-            if (lista != null && !lista.isEmpty()) {
+            if (list != null && !list.isEmpty()) {
 
                 Boolean usuarioActual = false;
 
-                for (PersonalData datoPersonal : lista) {
-                    if (datoPersonal.getIdPersonalData().compareTo(objActualizado.getIdPersonalData()) == 0) {
+                for (PersonalData personalData : list) {
+                    if (personalData.getIdPersonalData().compareTo(objUpdated.getIdPersonalData()) == 0) {
                         usuarioActual = true;
                     }
                 }
@@ -74,20 +69,20 @@ public class PersonalDataServiceImpl implements PersonalDataService {
                 }
             }
         }
-        objActualizado.setIdPersonalData(id);
+        objUpdated.setIdPersonalData(id);
 
-        return repo.save(objActualizado);
+        return repo.save(objUpdated);
     }
 
-    private List<PersonalData> getByCorreoPersonal(String correoPersonal) {
+    private List<PersonalData> getByPersonalEmail(String correoPersonal) {
         return this.repo.findAllByEmail(correoPersonal);
     }
 
     @Override
-    public Page<PersonalData> search(String filtro, Pageable pageable) throws Exception {
+    public Page<PersonalData> search(String filter, Pageable pageable) throws Exception {
         try {
-            Page<PersonalData> datos = repo.searchNativo(filtro, pageable);
-            return datos;
+            Page<PersonalData> data = repo.searchNativo(filter, pageable);
+            return data;
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

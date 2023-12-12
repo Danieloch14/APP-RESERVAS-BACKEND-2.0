@@ -5,7 +5,6 @@ import jakarta.transaction.Transactional;
 import netlife.devmasters.booking.domain.PersonalData;
 import netlife.devmasters.booking.domain.RegisterRequest;
 import netlife.devmasters.booking.exception.domain.DataException;
-import netlife.devmasters.booking.repository.PersonalDataRepository;
 import netlife.devmasters.booking.repository.RegisterRequestRepository;
 import netlife.devmasters.booking.service.EmailService;
 import netlife.devmasters.booking.service.PersonalDataService;
@@ -33,7 +32,7 @@ public class RegisterRequestServiceImpl implements RegisterRequestService {
     @Transactional
     public RegisterRequest save(RegisterRequest obj) throws DataException, MessagingException, IOException {
         obj.setStatus(PENDING);
-        PersonalData datos = personalDataSvc.saveDatosPersonales(obj.getPersonalData());
+        PersonalData datos = personalDataSvc.savePersonalData(obj.getPersonalData());
         Date date = new Date();
         obj.setRequestDate(date);
         obj.setPersonalData(datos);
@@ -53,12 +52,12 @@ public class RegisterRequestServiceImpl implements RegisterRequestService {
     @Override
     public RegisterRequest update(RegisterRequest objActualizado, Integer id) throws Exception {
         objActualizado.setIdRegisterRequest(id);
-        Optional<PersonalData> datos = personalDataSvc.getDatosPersonalesById(objActualizado.getPersonalData().getIdPersonalData());
+        Optional<PersonalData> datos = personalDataSvc.getPersonalDataById(objActualizado.getPersonalData().getIdPersonalData());
         if (datos.isEmpty()) {
             throw new Exception("No se encontro el dato personal a editar");
         }
         try {
-            personalDataSvc.updateDatosPersonales(objActualizado.getPersonalData(), objActualizado.getPersonalData().getIdPersonalData());
+            personalDataSvc.updatePersonalData(objActualizado.getPersonalData(), objActualizado.getPersonalData().getIdPersonalData());
             objActualizado.setPersonalData(datos.get());
             return repo.save(objActualizado);
 

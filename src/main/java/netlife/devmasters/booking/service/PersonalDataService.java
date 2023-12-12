@@ -13,13 +13,13 @@ import java.util.Optional;
 
 public interface PersonalDataService {
 
-    PersonalData saveDatosPersonales(PersonalData obj) throws DataException, MessagingException, IOException;
+    PersonalData savePersonalData(PersonalData obj) throws DataException, MessagingException, IOException;
 
-    List<PersonalData> getAllDatosPersonales();
+    List<PersonalData> getAllPersonalData();
 
-    Optional<PersonalData> getDatosPersonalesById(Integer codigo);
+    Optional<PersonalData> getPersonalDataById(Integer codigo);
 
-    PersonalData updateDatosPersonales(PersonalData objActualizado, Integer id) throws DataException;
+    PersonalData updatePersonalData(PersonalData objActualizado, Integer id) throws DataException;
 
     Page<PersonalData> search(String filtro, Pageable pageable) throws Exception;
 

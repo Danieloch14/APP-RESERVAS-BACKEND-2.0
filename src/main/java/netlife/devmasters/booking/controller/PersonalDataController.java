@@ -17,27 +17,27 @@ import java.util.List;
 import static netlife.devmasters.booking.constant.MessagesConst.REGISTRO_ELIMINADO_EXITO;
 
 @RestController
-@RequestMapping("/personals-data")
+@RequestMapping("/api/v1/personals-data")
 public class PersonalDataController {
 
     @Autowired
     private PersonalDataService objService;
 
-    @PostMapping("/crear")
+    @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> guardarDatosPersonales(@RequestBody PersonalData obj) throws DataException, MessagingException, IOException {
-        return new ResponseEntity<>(objService.saveDatosPersonales(obj), HttpStatus.OK);
+        return new ResponseEntity<>(objService.savePersonalData(obj), HttpStatus.OK);
     }
 
-    @GetMapping("/listar")
+    @GetMapping("")
     public List<PersonalData> listarDatos() {
-        return objService.getAllDatosPersonales();
+        return objService.getAllPersonalData();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> obtenerDatosPorId(@PathVariable("id") Integer codigo) {
+    public ResponseEntity<?> obtenerDatosPorId(@PathVariable("id") Integer code) {
         try {
-            return objService.getDatosPersonalesById(codigo).map(ResponseEntity::ok)
+            return objService.getPersonalDataById(code).map(ResponseEntity::ok)
                     .orElseGet(() -> ResponseEntity.notFound().build());
         } catch (Exception e) {
             return response(HttpStatus.NOT_FOUND, "Error. Por favor intente más tarde.");
@@ -45,24 +45,24 @@ public class PersonalDataController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PersonalData> actualizarDatos(@PathVariable("id") Integer codigo,
+    public ResponseEntity<PersonalData> actualizarDatos(@PathVariable("id") Integer code,
                                                         @RequestBody PersonalData obj) throws DataException {
-        PersonalData personalData = objService.updateDatosPersonales(obj, codigo);
+        PersonalData personalData = objService.updatePersonalData(obj, code);
         return new ResponseEntity<>(personalData, HttpStatus.OK);
     }
 
     @GetMapping("/buscarpaginado")
-    public ResponseEntity<?> search(@RequestParam String filtro, Pageable pageable) {
+    public ResponseEntity<?> search(@RequestParam String filter, Pageable pageable) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(objService.search(filtro, pageable));
+            return ResponseEntity.status(HttpStatus.OK).body(objService.search(filter, pageable));
         } catch (Exception e) {
             return response(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpResponse> eliminarDatos(@PathVariable("id") int codigo) throws DataException {
-        objService.deleteById(codigo);
+    public ResponseEntity<HttpResponse> eliminarDatos(@PathVariable("id") int code) throws DataException {
+        objService.deleteById(code);
         return response(HttpStatus.OK, REGISTRO_ELIMINADO_EXITO);
     }
 
