@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-import static netlife.devmasters.booking.constant.MessagesConst.REGISTRO_ELIMINADO_EXITO;
+import static netlife.devmasters.booking.constant.MessagesConst.REGISTER_DELETED;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -57,7 +57,7 @@ public class MenuResource {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<HttpResponse> eliminarDatos(@PathVariable("id") Integer codigo) throws DataException {
 		this.menuService.delete(codigo);
-		return ResponseEntityUtil.response(HttpStatus.OK, REGISTRO_ELIMINADO_EXITO);
+		return ResponseEntityUtil.response(HttpStatus.OK, REGISTER_DELETED);
 	}
 
 	private Object response(HttpStatus badRequest, String string) {

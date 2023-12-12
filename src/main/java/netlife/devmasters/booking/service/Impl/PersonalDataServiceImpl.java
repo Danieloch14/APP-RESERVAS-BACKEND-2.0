@@ -30,7 +30,7 @@ public class PersonalDataServiceImpl implements PersonalDataService {
             throw new DataException(EMPTY_REGISTER);
         Optional<PersonalData> objGuardado = repo.findOneByEmail(obj.getEmail());
         if (objGuardado.isPresent()) {
-            throw new DataException(CEDULA_YA_EXISTE);
+            throw new DataException(ID_ALREADY_EXIST);
         }
         return repo.save(obj);
     }
@@ -65,7 +65,7 @@ public class PersonalDataServiceImpl implements PersonalDataService {
                 }
 
                 if (!usuarioActual) {
-                    throw new DataException(CORREO_YA_EXISTE);
+                    throw new DataException(EMAIL_ALREADY_EXIST);
                 }
             }
         }
@@ -92,7 +92,7 @@ public class PersonalDataServiceImpl implements PersonalDataService {
     public void deleteById(int id) throws DataException {
         Optional<?> objGuardado = repo.findById(id);
         if (objGuardado.isEmpty()) {
-            throw new DataException(REGISTRO_NO_EXISTE);
+            throw new DataException(REGISTER_DONT_EXIST);
         }
         try {
             repo.deleteById(id);

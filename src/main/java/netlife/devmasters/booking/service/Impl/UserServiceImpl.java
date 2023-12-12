@@ -20,7 +20,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Date;
@@ -33,7 +32,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 @Service
 @Transactional
 @Qualifier("userDetailsService")
-public class UsuarioServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService, UserDetailsService {
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
     private UserRepository userRepository;
     private BCryptPasswordEncoder passwordEncoder;
@@ -45,12 +44,12 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
     private RolService rolService;
 
     @Autowired
-    public UsuarioServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,
-                              LoginTryService loginAttemptService,
-                              EmailService emailService,
-                              PersonalDataService personalDataService,
-                              RolUserService rolUserService,
-                              RolService rolService
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,
+                           LoginTryService loginAttemptService,
+                           EmailService emailService,
+                           PersonalDataService personalDataService,
+                           RolUserService rolUserService,
+                           RolService rolService
 
     ) {
         this.userRepository = userRepository;

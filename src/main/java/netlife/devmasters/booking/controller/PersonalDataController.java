@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-import static netlife.devmasters.booking.constant.MessagesConst.REGISTRO_ELIMINADO_EXITO;
+import static netlife.devmasters.booking.constant.MessagesConst.REGISTER_DELETED;
 
 @RestController
 @RequestMapping("/api/v1/personals-data")
@@ -63,7 +63,7 @@ public class PersonalDataController {
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpResponse> eliminarDatos(@PathVariable("id") int code) throws DataException {
         objService.deleteById(code);
-        return response(HttpStatus.OK, REGISTRO_ELIMINADO_EXITO);
+        return response(HttpStatus.OK, REGISTER_DELETED);
     }
 
     private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {

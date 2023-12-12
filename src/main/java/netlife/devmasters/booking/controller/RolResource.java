@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static netlife.devmasters.booking.constant.MessagesConst.REGISTRO_ELIMINADO_EXITO;
+import static netlife.devmasters.booking.constant.MessagesConst.REGISTER_DELETED;
 
 
 @RestController
@@ -43,7 +43,7 @@ public class RolResource {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<HttpResponse> eliminarDatos(@PathVariable("id") Long codigo) throws DataException {
 		this.rolService.delete(codigo);
-		return ResponseEntityUtil.response(HttpStatus.OK, REGISTRO_ELIMINADO_EXITO);
+		return ResponseEntityUtil.response(HttpStatus.OK, REGISTER_DELETED);
 	}
 
 
