@@ -11,7 +11,7 @@ public class MessagesConst {
 	public static final String EMPTY_REGISTER = "El registro no permite campos vacíos";
 	public static final String REGISTRO_NO_EXISTE = "No existe información con el id ingresado";
 	public static final String REGISTRO_YA_EXISTE_PARALELO = "El registro con esa información ya existe en otro nivel";
-	public static final String EXITO = "Información almacenada con éxito!";
+	public static final String SUCCESS = "Información almacenada con éxito!";
 	public static final String CEDULA_YA_EXISTE = "Cédula ya existe";
 	public static final String CEDULA_NO_EXISTE = "No existe información con la Cédula";
 	public static final String CEDULA_INCORRECTA = "La Cédula ingresada es Incorrecta";

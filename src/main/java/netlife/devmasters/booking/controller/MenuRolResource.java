@@ -13,48 +13,47 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static netlife.devmasters.booking.constant.MessagesConst.REGISTRO_ELIMINADO_EXITO;
+import static netlife.devmasters.booking.constant.MessagesConst.SUCCESS;
 
 
 @RestController
 @RequestMapping("/api/v1/menus-roles")
 
 public class MenuRolResource {
+    @Autowired
+    private MenuRolService menuRolService;
 
-	private static final String ASIGNACION_EXITO = "";
-	@Autowired
-	private MenuRolService menuRolService;
+    @GetMapping("")
+    public List<MenuRol> listar() {
+        return this.menuRolService.getAll();
+    }
 
-	@GetMapping("")
-	public List<MenuRol> listar() {
-		return this.menuRolService.getAll();
-	}
-	
-	@GetMapping("/{id}")
-	public List<MenuRol> listarPorRol(@PathVariable("id") Long codRol) {
-		return this.menuRolService.getAllByRol(codRol);
-	}
+    @GetMapping("/{id}")
+    public List<MenuRol> listarPorRol(@PathVariable("id") Long codRol) {
+        return this.menuRolService.getAllByRol(codRol);
+    }
 
-	@PostMapping("")
-	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<?> guardar(@RequestBody MenuRol obj) throws DataException {
-		return new ResponseEntity<>(this.menuRolService.save(obj), HttpStatus.OK);
-	}
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<?> guardar(@RequestBody MenuRol obj) throws DataException {
+        return new ResponseEntity<>(this.menuRolService.save(obj), HttpStatus.OK);
+    }
 
-	@PutMapping("")
-	public ResponseEntity<MenuRol> actualizarDatos(@RequestBody MenuRol obj) throws DataException {
-		return new ResponseEntity<>(this.menuRolService.update(obj), HttpStatus.OK);
-	}
+    @PutMapping("")
+    public ResponseEntity<MenuRol> actualizarDatos(@RequestBody MenuRol obj) throws DataException {
+        return new ResponseEntity<>(this.menuRolService.update(obj), HttpStatus.OK);
+    }
 
-	@DeleteMapping("")
-	public ResponseEntity<HttpResponse> eliminarDatos(@RequestBody MenuRol obj) throws DataException {
-		this.menuRolService.delete(obj);
-		return ResponseEntityUtil.response(HttpStatus.OK, REGISTRO_ELIMINADO_EXITO);
-	}
-	
-	@PostMapping("/menu")
-	public ResponseEntity<?> asignar(@RequestBody List<MenuRol> lista) throws DataException {
-		this.menuRolService.deleteAndSave(lista);
-		return ResponseEntityUtil.response(HttpStatus.OK, ASIGNACION_EXITO);
-	}
+    @DeleteMapping("")
+    public ResponseEntity<HttpResponse> eliminarDatos(@RequestBody MenuRol obj) throws DataException {
+        this.menuRolService.delete(obj);
+        return ResponseEntityUtil.response(HttpStatus.OK, REGISTRO_ELIMINADO_EXITO);
+    }
+
+    @PostMapping("/menu")
+    public ResponseEntity<?> asignar(@RequestBody List<MenuRol> lista) throws DataException {
+        this.menuRolService.deleteAndSave(lista);
+        return ResponseEntityUtil.response(HttpStatus.OK, SUCCESS);
+    }
 
 }

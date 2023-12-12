@@ -30,8 +30,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static netlife.devmasters.booking.constant.EmailConst.EMAIL_SEND;
 import static netlife.devmasters.booking.constant.FileConst.*;
 import static netlife.devmasters.booking.constant.SecurityConst.HEADER_TOKEN_JWT;
+import static netlife.devmasters.booking.constant.UsersImplConst.USER_DELETED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
@@ -40,8 +42,6 @@ import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 public class UserController extends ExcepcionsManagment {
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    public static final String EMAIL_ENVIADO = "Se envió un email con el nuevo password a: ";
-    public static final String USUARIO_ELIMINADO_EXITO = "Usuario eliminado";
     private AuthenticationManager authenticationManager;
     private UserService service;
     private JWTTokenProvider jwtTokenProvider;
@@ -175,13 +175,13 @@ public class UserController extends ExcepcionsManagment {
     public ResponseEntity<HttpResponse> resetPassword(@RequestParam("username") String username, @RequestParam("password") String password)
             throws MessagingException, EmailNotFoundExcepcion, UserNotFoundException, IOException {
         service.resetPassword(username, password);
-        return response(OK, EMAIL_ENVIADO + " la dirección de email registrada para el usuario " + username);
+        return response(OK, EMAIL_SEND + " la dirección de email registrada para el usuario " + username);
     }
 
     @DeleteMapping("/{username}")
     public ResponseEntity<HttpResponse> deleteUser(@PathVariable("username") String username) throws Exception {
         service.deleteUser(username);
-        return response(OK, USUARIO_ELIMINADO_EXITO);
+        return response(OK, USER_DELETED);
     }
 
     @GetMapping(path = "/image/{username}/{fileName}", produces = IMAGE_JPEG_VALUE)

@@ -12,13 +12,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static netlife.devmasters.booking.constant.MessagesConst.SUCCESS;
 import static netlife.devmasters.booking.constant.MessagesConst.REGISTRO_ELIMINADO_EXITO;
 
 
 @RestController
 @RequestMapping("/api/v1/roles-users")
 public class RolUsuarioResource {
-	private static final String ASIGNACION_EXITO ="" ;
+
 	@Autowired
 	private RolUserService rolUsuarioService;
 
@@ -57,6 +58,6 @@ public class RolUsuarioResource {
 	@PostMapping("/rol/{id}")
 	public ResponseEntity<?> asignar(@RequestBody List<RolUser> lista, @PathVariable("id") Long codUsuario) throws DataException {
 		this.rolUsuarioService.deleteAndSave(lista, codUsuario);
-		return ResponseEntityUtil.response(HttpStatus.OK, ASIGNACION_EXITO);
+		return ResponseEntityUtil.response(HttpStatus.OK, SUCCESS);
 	}
 }
