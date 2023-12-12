@@ -3,15 +3,11 @@ package netlife.devmasters.booking.service.Impl;
 
 
 import jakarta.mail.MessagingException;
-import netlife.devmasters.booking.domain.PersonalData;
-import netlife.devmasters.booking.domain.User;
+import netlife.devmasters.booking.domain.*;
 import netlife.devmasters.booking.domain.dto.UserPrincipal;
 import netlife.devmasters.booking.exception.domain.*;
 import netlife.devmasters.booking.repository.UserRepository;
-import netlife.devmasters.booking.service.EmailService;
-import netlife.devmasters.booking.service.LoginTryService;
-import netlife.devmasters.booking.service.PersonalDataService;
-import netlife.devmasters.booking.service.UserService;
+import netlife.devmasters.booking.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,27 +41,25 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 
     private EmailService emailService;
     private PersonalDataService personalDataService;
+    private RolUserService rolUserService;
+    private RolService rolService;
 
     @Autowired
     public UsuarioServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,
-                              LoginTryService loginAttemptService
-            , EmailService emailService,
-                                PersonalDataService personalDataService
-			/*, EstudianteService estudianteService,
-                              InstructorService instructorService
-			 */
+                              LoginTryService loginAttemptService,
+                              EmailService emailService,
+                              PersonalDataService personalDataService,
+                              RolUserService rolUserService,
+                              RolService rolService
 
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.loginAttemptService = loginAttemptService;
-
         this.emailService = emailService;
-        this.personalDataService= personalDataService;
-			/*
-		this.estudianteService = estudianteService;
-		this.instructorService = instructorService;
-		 */
+        this.personalDataService = personalDataService;
+        this.rolUserService = rolUserService;
+        this.rolService = rolService;
     }
 
     @Override
@@ -90,45 +84,50 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
     // public Usuario registrar(String firstName, String lastName, String username,
     // String email) throws UsuarioNoEncontradoExcepcion,
     // NombreUsuarioExisteExcepcion, EmailExisteExcepcion, MessagingException {
-    public User register(User usuario) throws UserNotFoundException, UsernameExistExcepcion,
-            EmailExistExcepcion, MessagingException, IOException {
-        validateNewUsernameAndEmail(EMPTY, usuario.getUsername(), usuario.getPersonalData().getEmail());
+    public User register(User entryUser) throws UserNotFoundException, UsernameExistExcepcion,
+            EmailExistExcepcion, MessagingException, IOException, DataException {
+        validateNewUsernameAndEmail(EMPTY, entryUser.getUsername(), entryUser.getPersonalData().getEmail());
 
         // datos de usuario
         User user = new User();
-        // user.setUserId(generateUserId());
-        String password = usuario.getPassword();
-        // user.setNombres(firstName);
-        // user.setApellidos(lastName);
-        user.setUsername(usuario.getPersonalData().getEmail());
-        // user.setEmail(email);
+        String password = entryUser.getPassword();
+        user.setUsername(entryUser.getPersonalData().getEmail());
         user.setDateEntry(new Date());
         user.setPassword(encodePassword(password));
         user.setActive(true);
         user.setNotLocked(true);
-        // user.setUrlImagenPerfil(getTemporaryProfileImageUrl(username));
+        if (entryUser.getPersonalData().getIdPersonalData() != null) {
+            user.setPersonalData(entryUser.getPersonalData());
+        } else {
 
-        // datos personales
-        PersonalData datos = new PersonalData();
-        datos.setName(usuario.getPersonalData().getName());
-        datos.setLastname(usuario.getPersonalData().getLastname());
-        datos.setEmail(usuario.getPersonalData().getEmail());
-        datos.setAddress(usuario.getPersonalData().getAddress());
-        datos.setCellphone(usuario.getPersonalData().getCellphone());
-        datos.setCompany(usuario.getPersonalData().getCompany());
-
-
-        // asocia datos personales con usuario
-        user.setPersonalData(datos);
+            // datos personales
+            PersonalData data = new PersonalData();
+            data.setName(entryUser.getPersonalData().getName());
+            data.setLastname(entryUser.getPersonalData().getLastname());
+            data.setEmail(entryUser.getPersonalData().getEmail());
+            data.setAddress(entryUser.getPersonalData().getAddress());
+            data.setCellphone(entryUser.getPersonalData().getCellphone());
+            data.setCompany(entryUser.getPersonalData().getCompany());
+            data = personalDataService.savePersonalData(data);
+            // asocia datos personales con usuario
+            user.setPersonalData(data);
+        }
 
         //it can save user without datapersonal in database, so it's no necessary to save it first
         //because the entity is inside the user entity
-        userRepository.save(user);
+        user = userRepository.save(user);
 
         userRepository.flush();
+        RolUser rolUser = new RolUser();
+        RolUserId rolUserId = new RolUserId();
+        Rol rol = rolService.getByName("USER");
+        rolUserId.setIdUser(Long.valueOf(user.getIdUser()));
+        rolUserId.setIdRol(rol.getIdRol());
+        rolUser.setRolUserId(rolUserId);
+        rolUserService.save(rolUser);
 
-        emailService.sendNewPasswordEmail(usuario.getPersonalData().getName(), password,
-                usuario.getPersonalData().getEmail());
+        emailService.sendNewPasswordEmail(entryUser.getPersonalData().getName(), password,
+                entryUser.getPersonalData().getEmail());
 
         return user;
     }
@@ -142,56 +141,56 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
 
 
     @Override
-    public User actualizarUsuario(User usuario) throws UserNotFoundException, UsernameExistExcepcion,
+    public User updatedUser(User userEntry) throws UserNotFoundException, UsernameExistExcepcion,
             EmailExistExcepcion, IOException, NotFileImageExcepcion, DataException {
-        User currentUser = validateNewUsernameAndEmail(usuario.getUsername(), usuario.getUsername(),
-                usuario.getPersonalData().getEmail());
+        User currentUser = validateNewUsernameAndEmail(userEntry.getUsername(), userEntry.getUsername(),
+                userEntry.getPersonalData().getEmail());
 
-        currentUser.setActive(usuario.isActive());
-        currentUser.setNotLocked(usuario.isNotLocked());
+        currentUser.setActive(userEntry.isActive());
+        currentUser.setNotLocked(userEntry.isNotLocked());
         //currentUser.setProfilePicture(usuario.getProfilePicture());
         PersonalData datos = new PersonalData();
-        datos.setIdPersonalData(usuario.getPersonalData().getIdPersonalData());
-        datos.setName(usuario.getPersonalData().getName());
-        datos.setLastname(usuario.getPersonalData().getLastname());
-        datos.setEmail(usuario.getPersonalData().getEmail());
-        datos.setAddress(usuario.getPersonalData().getAddress());
-        datos.setCellphone(usuario.getPersonalData().getCellphone());
-        datos.setCompany(usuario.getPersonalData().getCompany());
-        datos.setPosition(usuario.getPersonalData().getPosition());
-        datos=personalDataService.updateDatosPersonales(datos, usuario.getPersonalData().getIdPersonalData());
-        userRepository.actualizarUserWithOutDP(currentUser.getUsername(), currentUser.getPassword(),currentUser.getDateEntry(),currentUser.getDateLastLogin(),currentUser.isActive(), currentUser.isNotLocked(), currentUser.getIdUser());
+        datos.setIdPersonalData(userEntry.getPersonalData().getIdPersonalData());
+        datos.setName(userEntry.getPersonalData().getName());
+        datos.setLastname(userEntry.getPersonalData().getLastname());
+        datos.setEmail(userEntry.getPersonalData().getEmail());
+        datos.setAddress(userEntry.getPersonalData().getAddress());
+        datos.setCellphone(userEntry.getPersonalData().getCellphone());
+        datos.setCompany(userEntry.getPersonalData().getCompany());
+        datos.setPosition(userEntry.getPersonalData().getPosition());
+        datos = personalDataService.updatePersonalData(datos, userEntry.getPersonalData().getIdPersonalData());
+        userRepository.actualizarUserWithOutDP(currentUser.getUsername(), currentUser.getPassword(), currentUser.getDateEntry(), currentUser.getDateLastLogin(), currentUser.isActive(), currentUser.isNotLocked(), currentUser.getIdUser());
         return currentUser;
 
     }
 
     @Override
-    public int actualizarActive(Boolean active, String username) throws UserNotFoundException,
+    public int UpdatedActive(Boolean active, String username) throws UserNotFoundException,
             UsernameExistExcepcion, EmailExistExcepcion, IOException, NotFileImageExcepcion {
         return userRepository.actualizarIsActive(active, username);
     }
 
     @Override
-    public int actualizarNotLock(Boolean notLock, String username) throws UserNotFoundException,
+    public int UpdatedNotLock(Boolean notLock, String username) throws UserNotFoundException,
             UsernameExistExcepcion, EmailExistExcepcion, IOException, NotFileImageExcepcion {
         return userRepository.actualizarNotLocked(notLock, username);
     }
 
     @Override
-    public void resetPassword(String nombreUsuario, String password) throws MessagingException, UserNotFoundException, IOException {
+    public void resetPassword(String userName, String password) throws MessagingException, UserNotFoundException, IOException {
 
-        User usuario = userRepository.findUserByUsername(nombreUsuario);
+        User usuario = userRepository.findUserByUsername(userName);
         if (usuario == null) {
-            throw new UserNotFoundException(USER_DONT_EXIST + nombreUsuario);
+            throw new UserNotFoundException(USER_DONT_EXIST + userName);
         }
         usuario.setPassword(encodePassword(password));
         userRepository.save(usuario);
 
         // datos personales
-        PersonalData datos = usuario.getPersonalData();
+        PersonalData data = usuario.getPersonalData();
 
         // asocia datos personales con usuario
-        usuario.setPersonalData(datos);
+        usuario.setPersonalData(data);
 
         userRepository.save(usuario);
 
@@ -211,7 +210,7 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public List<User> getUsuariosPageable(Pageable pageable) {
+    public List<User> getUsersPageable(Pageable pageable) {
 
         return userRepository.findAllPageable(pageable);
 
@@ -235,7 +234,7 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void eliminarUsuario(String username) throws Exception {
+    public void deleteUser(String username) throws Exception {
         User user = userRepository.findUserByUsername(username);
         /*
          * try { Path userFolder = Paths.get(CARPETA_USUARIO +
@@ -314,53 +313,30 @@ public class UsuarioServiceImpl implements UserService, UserDetailsService {
         }
     }
 
-    public void guardarArchivo(String nombreArchivo, MultipartFile archivo)
-            throws IOException, BigFileExcepcion {
-		/*
 
-		if (archivo.getSize() > TAMAÑO_MÁXIMO.toBytes()) {
-			throw new ArchivoMuyGrandeExcepcion(ARCHIVO_MUY_GRANDE);
-		}
-
-		Path ruta = Paths.get(ARCHIVOS_RUTA).toAbsolutePath().normalize();
-		if (!Files.exists(ruta)) {
-			Files.createDirectories(ruta);
-		}
-
-		Files.copy(archivo.getInputStream(), ruta.resolve(nombreArchivo), StandardCopyOption.REPLACE_EXISTING);
-		LOGGER.info("Archivo guardado: " + ARCHIVOS_RUTA + nombreArchivo);
-
-		 */
-    }
-
-    public long tamañoMáximoArchivo() {
-        return 1l;
-        //TAMAÑO_MÁXIMO.toBytes();
-    }
-
-    public List<User> findUsuariosByNombreApellido(String nombre, String apellido) {
-        return this.userRepository.findUsuariosByNombreApellido(nombre, apellido);
+    public List<User> findUsersByFullyName(String name, String lastname) {
+        return this.userRepository.findUsuariosByNombreApellido(name, lastname);
     }
 
     @Override
-    public List<User> findUsuariosByApellido(String apellido) {
-        return this.userRepository.findUsuariosByApellido(apellido);
+    public List<User> findUsersByLastname(String lastname) {
+        return this.userRepository.findUsuariosByApellido(lastname);
     }
 
     @Override
-    public List<User> findUsuariosByNombre(String nombre) {
-        return this.userRepository.findUsuariosByNombre(nombre);
+    public List<User> findUsersByName(String name) {
+        return this.userRepository.findUsuariosByNombre(name);
     }
 
     @Override
-    public List<User> findUsuariosByCorreo(String correo) {
-        return this.userRepository.findUsuariosByCorreo(correo);
+    public List<User> findUsersByEmail(String email) {
+        return this.userRepository.findUsuariosByCorreo(email);
     }
 
 
     @Override
-    public Optional<User> getUsuarioByCodDatoPersonal(Integer codDatoPersonal) {
-        return userRepository.findByPersonalData_IdPersonalData(codDatoPersonal);
+    public Optional<User> getUsersByCodDatoPersonal(Integer codDataPersonal) {
+        return userRepository.findByPersonalData_IdPersonalData(codDataPersonal);
     }
 
 }

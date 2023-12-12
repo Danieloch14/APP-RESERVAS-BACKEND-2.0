@@ -47,6 +47,11 @@ public class RolServiceImpl implements RolService {
 	}
 
 	@Override
+	public Rol getByName(String name) throws DataException {
+		return rolRepository.findByNombreIgnoreCase(name).orElse(null);
+	}
+
+	@Override
 	public Optional<Rol> getById(Long id) {
 		return rolRepository.findById(id);
 	}

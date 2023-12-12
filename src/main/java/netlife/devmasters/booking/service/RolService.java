@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface RolService {
 
 	Rol save(Rol obj) throws DataException;
+	Rol getByName(String name) throws DataException;
 
 	List<Rol> getAll();
 
