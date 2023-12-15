@@ -1,6 +1,7 @@
 package netlife.devmasters.booking.service;
 
 
+import netlife.devmasters.booking.domain.Rol;
 import netlife.devmasters.booking.domain.RolUser;
 import netlife.devmasters.booking.exception.domain.DataException;
 
@@ -13,6 +14,7 @@ public interface RolUserService {
     List<RolUser> getAllByUsuario(Long codUsuario);
 
     List<RolUser> getAllByRol(Long codRol);
+    RolUser getByRolAndUsuario(Long codRol, Long codUsuario);
 
     RolUser save(RolUser obj) throws DataException;
 

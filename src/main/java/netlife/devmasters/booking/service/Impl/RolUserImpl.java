@@ -14,7 +14,7 @@ import java.util.Optional;
 @Service
 @Transactional
 public class RolUserImpl implements RolUserService {
-
+	@Autowired
 	private RolUsuarioRepository rolUsuarioRepository;
 
 	@Autowired
@@ -24,22 +24,27 @@ public class RolUserImpl implements RolUserService {
 
 	@Override
 	public List<RolUser> getAll() {
-		return this.rolUsuarioRepository.findAll();
+		return rolUsuarioRepository.findAll();
 	}
 
 	@Override
 	public List<RolUser> getAllByUsuario(Long codUsuario) {
-		return this.rolUsuarioRepository.findByCodUsuario(codUsuario);
+		return rolUsuarioRepository.findByCodUsuario(codUsuario);
 	}
 
 	@Override
 	public List<RolUser> getAllByRol(Long codRol) {
-		return this.rolUsuarioRepository.findByCodRol(codRol);
+		return rolUsuarioRepository.findByCodRol(codRol);
+	}
+
+	@Override
+	public RolUser getByRolAndUsuario(Long codRol, Long codUsuario) {
+		return rolUsuarioRepository.findByCodRolAndCodUsuario(codRol, codUsuario);
 	}
 
 	@Override
 	public RolUser save(RolUser obj) throws DataException {
-		return this.rolUsuarioRepository.save(obj);
+		return rolUsuarioRepository.save(obj);
 	}
 
 	@Override
@@ -51,26 +56,26 @@ public class RolUserImpl implements RolUserService {
 	public void delete(RolUser rolUsuario) throws DataException {
 		Optional<RolUser> ru = this.rolUsuarioRepository.findById(rolUsuario.getRolUserId());
 		if (ru.isPresent()) {
-			this.rolUsuarioRepository.delete(ru.get());
+			rolUsuarioRepository.delete(ru.get());
 		}
 
 	}
 
 	@Override
 	public void deleteAllByRolUserId_codUsuario(Long codUsuario) {
-		this.rolUsuarioRepository.deleteAllByRolUserId_IdUser(codUsuario);
+		rolUsuarioRepository.deleteAllByRolUserId_IdUser(codUsuario);
 
 	}
 
 	@Override
 	public List<RolUser> saveAll(Iterable<RolUser> entities) {
-		return this.rolUsuarioRepository.saveAll(entities);
+		return rolUsuarioRepository.saveAll(entities);
 	}
 
 	@Override
 	public void deleteAndSave(Iterable<RolUser> entities, Long codUsuario) {
 
-		// si hay elementos en la lista, eliminar todas las entidades asociadas al
+		// sí hay elementos en la lista, eliminar todas las entidades asociadas al
 		// usuario
 		if (entities != null && entities.iterator().hasNext()) {
 			RolUser mr = entities.iterator().next();

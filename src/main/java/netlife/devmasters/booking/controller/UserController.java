@@ -3,6 +3,9 @@
 package netlife.devmasters.booking.controller;
 
 import jakarta.mail.MessagingException;
+import netlife.devmasters.booking.domain.RolUser;
+import netlife.devmasters.booking.domain.dto.UserLoginDto;
+import netlife.devmasters.booking.service.RolUserService;
 import netlife.devmasters.booking.util.HttpResponse;
 import netlife.devmasters.booking.domain.User;
 import netlife.devmasters.booking.domain.dto.UserPrincipal;
@@ -44,23 +47,30 @@ public class UserController extends ExcepcionsManagment {
 
     private AuthenticationManager authenticationManager;
     private UserService service;
+    private RolUserService rolUserService;
     private JWTTokenProvider jwtTokenProvider;
 
     @Autowired
     public UserController(
             AuthenticationManager authenticationManager,
             UserService userService,
-            JWTTokenProvider jwtTokenProvider) {
+            JWTTokenProvider jwtTokenProvider,
+            RolUserService rolUserService) {
         this.authenticationManager = authenticationManager;
         this.service = userService;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.rolUserService = rolUserService;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody User user) {
+    public ResponseEntity<User> login(@RequestBody UserLoginDto user) {
         authenticate(user.getUsername(), user.getPassword());
 
         User loginUser = service.findUserByUsername(user.getUsername());
+        RolUser rolUser = rolUserService.getByRolAndUsuario(Long.valueOf(user.getIdRol()), Long.valueOf(loginUser.getIdUser()));
+        if (rolUser == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         UserPrincipal userPrincipal = new UserPrincipal(loginUser);
         HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
         return new ResponseEntity<>(loginUser, jwtHeader, OK);
