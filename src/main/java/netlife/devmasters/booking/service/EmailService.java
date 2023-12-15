@@ -182,11 +182,12 @@ public class EmailService {
     public void sendLinkRegister(RegisterRequest registerRequest) {
         Date fechaExpiracion = new Date();
         fechaExpiracion.setDate(fechaExpiracion.getDate() + 1);
-        String enlace = host + "?id_solicitud=" + registerRequest.getIdRegisterRequest();
+        String enlace = host + "/auth/register?id_solicitud=" + registerRequest.getIdRegisterRequest();
         enlace += "&exp=" + fechaExpiracion.getTime();
 
         String mensaje = "Hola, tu proceso de registro en la plataforma de reservas de Netlife ha sido aprovado.\n\t" +
-                "Para continuar con el proceso de registro, por favor ingresa al siguiente link:\n\t" + enlace +
+                "Para continuar con el proceso de registro, por favor ingresa al siguiente link:\n\t" +
+                "<a href=\""+enlace+"\">REGISTRO</a>"+
                 "\n\tRecuerda que tienes 24 horas para completar el proceso de registro, de lo contrario deberás iniciar nuevamente el proceso.\n\t";
         sendMensajeTextGenerico(registerRequest.getPersonalData().getEmail(), EMAIL_REGISTER_LINK, mensaje);
     }
