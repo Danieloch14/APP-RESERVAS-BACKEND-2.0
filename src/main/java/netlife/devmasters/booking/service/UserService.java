@@ -40,6 +40,9 @@ public interface UserService {
     void resetPassword(String email, String password)
             throws MessagingException, EmailNotFoundExcepcion, UserNotFoundException, IOException;
 
+    void changePassword(String email, String lastPassword, String newPassword)
+            throws MessagingException, UserNotFoundException, IOException;
+
     public List<User> findUsersByFullyName(String nombre, String apellido);
 
     public List<User> findUsersByLastname(String apellido);

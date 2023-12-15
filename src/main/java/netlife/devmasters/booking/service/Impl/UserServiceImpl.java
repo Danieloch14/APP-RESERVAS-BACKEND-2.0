@@ -183,13 +183,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             throw new UserNotFoundException(USER_DONT_EXIST + userName);
         }
         usuario.setPassword(encodePassword(password));
-        userRepository.save(usuario);
-
-        // datos personales
-        PersonalData data = usuario.getPersonalData();
-
-        // asocia datos personales con usuario
-        usuario.setPersonalData(data);
 
         userRepository.save(usuario);
 
@@ -200,6 +193,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 usuario.getPersonalData().getEmail());
 
 
+    }
+
+    @Override
+    public void changePassword(String email, String lastPassword, String newPassword) throws MessagingException, UserNotFoundException, IOException {
+
+        User usuario = userRepository.findUserByUsername(email);
+        if (usuario == null) {
+            throw new UserNotFoundException(USER_DONT_EXIST + email);
+        }
+        if (!passwordEncoder.matches(lastPassword, usuario.getPassword())) {
+            throw new UserNotFoundException("La contraseña actual no coincide con la registrada");
+        }
+        usuario.setPassword(encodePassword(newPassword));
+        userRepository.save(usuario);
+        userRepository.flush();
     }
 
 

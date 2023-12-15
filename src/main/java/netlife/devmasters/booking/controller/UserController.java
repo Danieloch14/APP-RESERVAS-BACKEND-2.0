@@ -181,11 +181,18 @@ public class UserController extends ExcepcionsManagment {
         return new ResponseEntity<>(users, OK);
     }
 
-    @PostMapping("/resetPassword")
+    @PostMapping("/reset-password")
     public ResponseEntity<HttpResponse> resetPassword(@RequestParam("username") String username, @RequestParam("password") String password)
             throws MessagingException, EmailNotFoundExcepcion, UserNotFoundException, IOException {
         service.resetPassword(username, password);
         return response(OK, EMAIL_SEND + " la dirección de email registrada para el usuario " + username);
+    }
+
+    @PutMapping("/password-changed")
+    public ResponseEntity<HttpResponse> changePassword(@RequestParam("username") String username,@RequestParam("lastPassword") String lastPassword,@RequestParam("password") String password)
+            throws MessagingException, EmailNotFoundExcepcion, UserNotFoundException, IOException {
+        service.changePassword(username, lastPassword, password);
+        return response(OK, "Contraseña cambiada correctamente");
     }
 
     @DeleteMapping("/{username}")
