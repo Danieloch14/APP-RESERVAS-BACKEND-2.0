@@ -8,10 +8,7 @@ public class ResourceCreate {
     private LocationCreate idLocation;
     private Integer idTypeResource;
     private Integer idDadResource;
-    /*
-    @Column(name = "description")
     private String description;
-     */
     private Integer capacity;
     private String codNumber;
     private String content;
