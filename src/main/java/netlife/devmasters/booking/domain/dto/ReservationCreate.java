@@ -13,6 +13,7 @@ public class ReservationCreate {
     private Timestamp startDate;
     private Timestamp endDate= new Timestamp(0);
     private String status;
+    private String description;
     private Integer hours;
     private Integer minutes;
 }

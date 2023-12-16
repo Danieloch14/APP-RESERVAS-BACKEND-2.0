@@ -5,15 +5,16 @@ import lombok.Data;
 @Data
 public class ResourceCreate {
     private Integer idResource;
-    private LocationCreate idLocation;
     private Integer idTypeResource;
-    private Integer idDadResource;
+    private LocationCreate idLocation;
+    private Integer idParentResource;
     private String description;
-    private Integer capacity;
     private String codNumber;
-    private String content;
+    private Integer capacity;
     private Double price;
     private Boolean isParking;
     private String pathImages;
     private String name;
+    private String content;
+
 }
