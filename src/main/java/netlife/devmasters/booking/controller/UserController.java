@@ -104,7 +104,7 @@ public class UserController extends ExcepcionsManagment {
         }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/actualizarActive")
+    @PutMapping("/active")
     public ResponseEntity<Void> updateActive(@RequestParam("valide") Boolean valide,
                                              @RequestParam("username") String username)
             throws UserNotFoundException, UsernameExistExcepcion, EmailExistExcepcion, IOException,
@@ -117,7 +117,7 @@ public class UserController extends ExcepcionsManagment {
         }
     }
 
-    @PutMapping("/actualizarNotLocked")
+    @PutMapping("/not-locked")
     public ResponseEntity<Void> updateNotLocked(@RequestParam("valide") Boolean notLocked,
                                                 @RequestParam("username") String username)
             throws UserNotFoundException, UsernameExistExcepcion, EmailExistExcepcion, IOException,

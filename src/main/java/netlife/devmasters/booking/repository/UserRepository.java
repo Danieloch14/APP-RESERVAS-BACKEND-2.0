@@ -17,6 +17,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Integer> {
 
     User findUserByUsername(String username);
+	Optional<User> findByUsername(String username);
 
 	//relationships should be fetched eagerly.
 	@EntityGraph(attributePaths = "personalData")
@@ -41,7 +42,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	int actualizarIsActive(Boolean active, String username);
 
 	@Modifying
-	@Query("UPDATE User u SET u.isActive = ?1 WHERE u.username = ?2")
+	@Query("UPDATE User u SET u.isNotLocked = ?1 WHERE u.username = ?2")
 	int actualizarNotLocked(Boolean noLock, String username);
 	@Modifying
 	@Query("UPDATE User u SET u.username = ?1,u.password = ?2, u.dateEntry=?3, u.dateLastLogin=?4, u.isActive=?5, u.isNotLocked=?6 WHERE u.idUser = ?7")

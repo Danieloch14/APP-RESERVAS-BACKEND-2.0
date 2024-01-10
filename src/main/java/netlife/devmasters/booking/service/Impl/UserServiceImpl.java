@@ -242,17 +242,24 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public void deleteUser(String username) throws Exception {
-        User user = userRepository.findUserByUsername(username);
-        /*
-         * try { Path userFolder = Paths.get(CARPETA_USUARIO +
-         * user.getNombreUsuario()).toAbsolutePath().normalize();
-         * FileUtils.deleteDirectory(new File(userFolder.toString())); } catch
-         * (IOException e1) { LOGGER.
-         * error("Se ha producido un error al eliminar los archivos del usuario: " +
-         * user.getNombreUsuario()); e1.printStackTrace(); }
-         */
-
-        userRepository.deleteById(user.getIdUser());
+        Optional<User> objGuardado = userRepository.findByUsername(username);
+        if (objGuardado.isEmpty()) {
+            throw new Exception("No se encontro el objeto a eliminar");
+        }
+        try {
+            userRepository.deleteById(objGuardado.get().getIdUser());
+        } catch (Exception e) {
+            // Revisa si el mensaje de la excepción es nulo
+            if (e.getMessage() != null && e.getMessage().contains("constraint")) {
+                throw new Exception("Existen datos relacionados");
+            } else if (e.getCause() != null && e.getCause().getMessage().contains("constraint")) {
+                // También puedes verificar el mensaje de la causa de la excepción
+                throw new Exception("Existen datos relacionados debido a una restricción de la base de datos.");
+            } else {
+                // Lanza una excepción general si el mensaje es nulo o si no contiene 'constraint'
+                throw new Exception("Error al eliminar el usuario: " + e.getMessage());
+            }
+        }
 
     }
 
