@@ -196,9 +196,8 @@ public class UserController extends ExcepcionsManagment {
     }
 
     @DeleteMapping("/{username}")
-    public ResponseEntity<HttpResponse> deleteUser(@PathVariable("username") String username) throws Exception {
+    public void deleteUser(@PathVariable("username") String username) throws Exception {
         service.deleteUser(username);
-        return response(OK, USER_DELETED);
     }
 
     @GetMapping(path = "/image/{username}/{fileName}", produces = IMAGE_JPEG_VALUE)

@@ -42,6 +42,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static netlife.devmasters.booking.constant.MessagesConst.REGISTER_ALREADY_EXIST;
+import static netlife.devmasters.booking.constant.MessagesConst.RELATED_DATA;
 import static org.springframework.http.HttpStatus.*;
 
 // indicate that this class is responsible for handling exceptions in the whole rest application
@@ -206,8 +207,12 @@ public class ExcepcionsManagment implements ErrorController {
 		String constraintName = ((ConstraintViolationException)exception.getCause()).getConstraintName();
 		
 		if (cause != null && cause instanceof ConstraintViolationException) {
+			if(constraintName == null) {
+				return createHttpResponse(BAD_REQUEST, RELATED_DATA);
+			}
 			if (constraintName.contains("_un")) {
-				return createHttpResponse(BAD_REQUEST, REGISTER_ALREADY_EXIST);
+				return createHttpResponse(BAD_REQUEST,
+						REGISTER_ALREADY_EXIST);
 			}
 			
 			if (constraintName.contains("_fk")) {
