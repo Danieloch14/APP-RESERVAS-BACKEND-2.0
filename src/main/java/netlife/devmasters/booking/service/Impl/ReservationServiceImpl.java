@@ -1,11 +1,15 @@
 package netlife.devmasters.booking.service.Impl;
 
 import netlife.devmasters.booking.domain.Reservation;
+import netlife.devmasters.booking.domain.Resource;
+import netlife.devmasters.booking.domain.TypeResource;
 import netlife.devmasters.booking.domain.dto.ReservationCreate;
 import netlife.devmasters.booking.exception.domain.DataException;
 import netlife.devmasters.booking.exception.domain.ReservationException;
 import netlife.devmasters.booking.repository.ReservationRepository;
 import netlife.devmasters.booking.service.ReservationService;
+import netlife.devmasters.booking.service.ResourceService;
+import netlife.devmasters.booking.service.TypeResourceService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,20 +27,26 @@ public class ReservationServiceImpl implements ReservationService {
     @Autowired
     private ReservationRepository repo;
     @Autowired
+    private TypeResourceService typeResourceService;
+    @Autowired
+    private ResourceService resourceService;
+    @Autowired
     private ModelMapper modelMapper;
 
     @Override
     public Reservation reserve(ReservationCreate reservationSave) throws DataException, ReservationException {
 
-        Time time = new Time(reservationSave.getHours(),reservationSave.getMinutes(),0);
-        Timestamp endDate = new Timestamp(reservationSave.getStartDate().getTime() + time.getTime()- 18000000);
+        Time time = new Time(reservationSave.getHours(), reservationSave.getMinutes(), 0);
+        Timestamp endDate = new Timestamp(reservationSave.getStartDate().getTime() + time.getTime() - 18000000);
         reservationSave.setEndDate(endDate);
         Reservation resource = modelMapper.map(reservationSave, Reservation.class);
 
-        if (this.isAvailable(reservationSave)) {
+        if (this.isAvailable(reservationSave) && isInRangeAnticipation(reservationSave)) {
             return repo.save(resource);
+        } else if (!isInRangeAnticipation(reservationSave)) {
+            throw new ReservationException("Reserva en conflicto debido a que no se encuentra en el rango de anticipacion");
         } else {
-            throw new ReservationException("Reserva en conflicto para el horario especificado");
+            throw new ReservationException("Reserva en conflicto con el recurso para el horario especificado");
         }
     }
 
@@ -45,11 +55,35 @@ public class ReservationServiceImpl implements ReservationService {
             throw new ReservationException("La fecha de fin debe ser posterior a la fecha de inicio");
         }
     }
+
     @Override
     public Boolean isAvailable(ReservationCreate reservationSave) throws DataException {
         List<Reservation> objSave = repo.findByIdResource_IdResourceAndStartDateBetween(reservationSave.getIdResource(), reservationSave.getStartDate());
 
         return objSave.isEmpty() ? true : false;
+    }
+
+    @Override
+    public Boolean isInRangeAnticipation(ReservationCreate obj) throws DataException {
+        Optional<Resource> resource = resourceService.getById(obj.getIdResource());
+        if (resource.isEmpty())
+            throw new DataException("No se encontro el recurso");
+
+        Optional<TypeResource> typeResource = typeResourceService.getById(resource.get().getIdTypeResource().getIdTypeResource());
+        if (typeResource.isEmpty())
+            throw new DataException("No se encontro el tipo de recurso");
+
+        Timestamp reservationDate = obj.getStartDate();
+        String[] partes = String.valueOf(typeResource.get().getTimeAnticipation()).split("\\.");
+        int parteEntera = Integer.parseInt(partes[0]);
+        int parteDecimal = Integer.parseInt(partes[1]);
+        Time time = new Time(parteEntera, parteDecimal, 0);
+        Timestamp limitDate = new Timestamp(reservationDate.getTime() - time.getTime() + 18000000);
+        Timestamp currentDate = new Timestamp(System.currentTimeMillis());
+        if (currentDate.before(limitDate))
+            return true;
+        else
+            return false;
     }
 
     @Override
@@ -80,8 +114,8 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public Reservation update(Reservation objActualizado, Integer idReservation) throws DataException {
-        Time time = new Time(objActualizado.getHours(),objActualizado.getMinutes(),0);
-        Timestamp endDate = new Timestamp(objActualizado.getStartDate().getTime() + time.getTime()- 18000000);
+        Time time = new Time(objActualizado.getHours(), objActualizado.getMinutes(), 0);
+        Timestamp endDate = new Timestamp(objActualizado.getStartDate().getTime() + time.getTime() - 18000000);
         objActualizado.setEndDate(endDate);
         objActualizado.setIdReservation(idReservation);
         return repo.save(objActualizado);

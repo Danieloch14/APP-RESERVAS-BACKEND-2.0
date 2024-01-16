@@ -17,4 +17,6 @@ public class TypeResource {
     @Column(name = "description")
     private String description;
      */
+    @Column(name = "time_anticipation")
+    private Double timeAnticipation;
 }

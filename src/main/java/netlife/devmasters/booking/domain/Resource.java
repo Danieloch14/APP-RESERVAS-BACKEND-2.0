@@ -19,7 +19,7 @@ public class Resource {
     @JoinColumn(name = "id_location")
     private Location idLocation;
     @ManyToOne
-    @JoinColumn(name="res_id_resource")
+    @JoinColumn(name = "res_id_resource")
     @JsonIgnore
     private Resource parentResource;
 
@@ -36,6 +36,6 @@ public class Resource {
     private Boolean isParking;
     @Column(name = "path_images")
     private String pathImages;
-    @Column(name="name")
+    @Column(name = "name")
     private String name;
 }

@@ -59,4 +59,8 @@ public class ReservationController {
     public void delete(@PathVariable("id") int id) throws Exception {
         reservationSservice.delete(id);
     }
+    @PostMapping("/is-range-anticipation")
+    public Boolean verifyRangeAnticipation(@RequestBody ReservationCreate obj) throws DataException {
+        return reservationSservice.isInRangeAnticipation(obj);
+    }
 }

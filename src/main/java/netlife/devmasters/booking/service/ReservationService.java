@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface ReservationService {
     Reservation reserve(ReservationCreate obj) throws DataException, ReservationException;
     Boolean isAvailable(ReservationCreate obj) throws DataException;
+    Boolean isInRangeAnticipation(ReservationCreate obj) throws DataException;
     List<Reservation> getByYear(Integer year) throws DataException;
     List<Reservation> getByMonthYear(Integer month, Integer year) throws DataException;
     List<Reservation> getByDayMonthYear(Integer day,Integer Month, Integer Year) throws DataException;
