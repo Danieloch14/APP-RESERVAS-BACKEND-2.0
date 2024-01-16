@@ -6,6 +6,7 @@ import netlife.devmasters.booking.exception.domain.*;
 import org.springframework.data.domain.Pageable;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,4 +53,12 @@ public interface UserService {
     public List<User> findUsersByEmail(String correo);
 
     Optional<User> getUsersByCodDatoPersonal(Integer codDatoPersonal);
+
+    int UpdatedLockTime(String username, Integer lockTime)
+            throws UserNotFoundException, UsernameExistExcepcion, EmailExistExcepcion, IOException,
+            NotFileImageExcepcion;
+
+    int UpdatedNotLockTime();
+    List <User> findUserByTimeLock(Timestamp timeLock);
+    List <User> findUserByTimeLockDate(int year, int month, int day);
 }

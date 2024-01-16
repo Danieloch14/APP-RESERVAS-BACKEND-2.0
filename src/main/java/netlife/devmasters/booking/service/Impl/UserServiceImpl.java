@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,6 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -351,6 +355,50 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public Optional<User> getUsersByCodDatoPersonal(Integer codDataPersonal) {
         return userRepository.findByPersonalData_IdPersonalData(codDataPersonal);
+    }
+
+    @Override
+    public int UpdatedLockTime(String username, Integer lockTime) throws UserNotFoundException, UsernameExistExcepcion, EmailExistExcepcion, IOException, NotFileImageExcepcion {
+
+        Instant instantActual = new Date().toInstant();
+
+        long tiempoEnMilisegundos = instantActual.toEpochMilli() + lockTime * 86400000L;
+        return userRepository.putTimeLock(new Timestamp(tiempoEnMilisegundos), username);
+    }
+
+    @Override
+    @Scheduled(cron = "0 * 7 * * ?")
+    public int UpdatedNotLockTime() {
+        Calendar calendar = Calendar.getInstance();
+
+        Date date = calendar.getTime();
+
+        System.out.println(date);
+
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int year = calendar.get(Calendar.YEAR);
+
+        System.out.println(day + "-" + month + "-" + year);
+
+        List<User> users = this.findUserByTimeLockDate(day, month, year);
+        for (User user : users) {
+            user.setNotLocked(true);
+            user.setTimeLock(null);
+            userRepository.save(user);
+        }
+        return 1;
+    }
+
+    @Override
+    public List<User> findUserByTimeLock(Timestamp timeLock) {
+        return null;
+    }
+
+    @Override
+    public List<User> findUserByTimeLockDate(int day, int month, int year) {
+        List<User> users = userRepository.findByTimeLockDate(day, month, year);
+        return users;
     }
 
 }

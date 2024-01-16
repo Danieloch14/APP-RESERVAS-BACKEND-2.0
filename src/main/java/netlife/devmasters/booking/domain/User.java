@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
@@ -30,6 +31,8 @@ public class User implements Serializable {
     private Date dateLastLogin;
     private boolean isActive;
     private boolean isNotLocked;
+    @Column(name = "time_lock")
+    private Timestamp timeLock;
 
     public User() {
     }

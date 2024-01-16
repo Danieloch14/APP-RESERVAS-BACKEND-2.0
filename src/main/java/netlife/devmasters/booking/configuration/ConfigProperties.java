@@ -3,9 +3,11 @@ package netlife.devmasters.booking.configuration;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
+@EnableScheduling
 public class ConfigProperties {
     @Bean
     public ModelMapper modelMapper() {

@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +37,6 @@ import java.util.Optional;
 import static netlife.devmasters.booking.constant.EmailConst.EMAIL_SEND;
 import static netlife.devmasters.booking.constant.FileConst.*;
 import static netlife.devmasters.booking.constant.SecurityConst.HEADER_TOKEN_JWT;
-import static netlife.devmasters.booking.constant.UsersImplConst.USER_DELETED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
@@ -189,7 +189,7 @@ public class UserController extends ExcepcionsManagment {
     }
 
     @PutMapping("/password-changed")
-    public ResponseEntity<HttpResponse> changePassword(@RequestParam("username") String username,@RequestParam("lastPassword") String lastPassword,@RequestParam("password") String password)
+    public ResponseEntity<HttpResponse> changePassword(@RequestParam("username") String username, @RequestParam("lastPassword") String lastPassword, @RequestParam("password") String password)
             throws MessagingException, EmailNotFoundExcepcion, UserNotFoundException, IOException {
         service.changePassword(username, lastPassword, password);
         return response(OK, "Contraseña cambiada correctamente");
@@ -218,6 +218,18 @@ public class UserController extends ExcepcionsManagment {
             }
         }
         return byteArrayOutputStream.toByteArray();
+    }
+
+    @PutMapping("/time-locked")
+    public ResponseEntity<HttpResponse> lockUser(@RequestParam("username") String username, @RequestParam("days") int days)
+            throws UserNotFoundException, IOException, NotFileImageExcepcion, UsernameExistExcepcion, EmailExistExcepcion {
+        service.UpdatedLockTime(username, days);
+        return response(OK, "Usuario bloqueado correctamente");
+    }
+    @GetMapping("/byDate")
+    public ResponseEntity<List<User>> getUser(@RequestParam("year")int year, @RequestParam("month")int month, @RequestParam("day")int day) {
+        List<User> users = service.findUserByTimeLockDate(day, month, year);
+        return new ResponseEntity<>(users, OK);
     }
 
     private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
