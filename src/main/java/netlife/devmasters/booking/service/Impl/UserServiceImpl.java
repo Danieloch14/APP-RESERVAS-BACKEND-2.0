@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     // NombreUsuarioExisteExcepcion, EmailExisteExcepcion, MessagingException {
     public User register(User entryUser) throws UserNotFoundException, UsernameExistExcepcion,
             EmailExistExcepcion, MessagingException, IOException, DataException {
-        validateNewUsernameAndEmail(EMPTY, entryUser.getUsername(), entryUser.getPersonalData().getEmail());
+        // validateNewUsernameAndEmail(EMPTY, entryUser.getUsername(), entryUser.getPersonalData().getEmail());
 
         // datos de usuario
         User user = new User();
@@ -105,13 +105,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
             // datos personales
             PersonalData data = new PersonalData();
-            data.setName(entryUser.getPersonalData().getName());
-            data.setLastname(entryUser.getPersonalData().getLastname());
-            data.setEmail(entryUser.getPersonalData().getEmail());
-            data.setAddress(entryUser.getPersonalData().getAddress());
-            data.setCellphone(entryUser.getPersonalData().getCellphone());
-            data.setCompany(entryUser.getPersonalData().getCompany());
-            data = personalDataService.savePersonalData(data);
+            // data.setName(entryUser.getPersonalData().getName());
+            // data.setLastname(entryUser.getPersonalData().getLastname());
+            // data.setEmail(entryUser.getPersonalData().getEmail());
+            // data.setAddress(entryUser.getPersonalData().getAddress());
+            // data.setCellphone(entryUser.getPersonalData().getCellphone());
+            // data.setCompany(entryUser.getPersonalData().getCompany());
+            data = personalDataService.savePersonalData(entryUser.getPersonalData());
             // asocia datos personales con usuario
             user.setPersonalData(data);
         }
@@ -123,7 +123,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userRepository.flush();
         RolUser rolUser = new RolUser();
         RolUserId rolUserId = new RolUserId();
-        Rol rol = rolService.getByName("USER");
+        Rol rol = rolService.getByName("USUARIO");
         rolUserId.setIdUser(Long.valueOf(user.getIdUser()));
         rolUserId.setIdRol(rol.getIdRol());
         rolUser.setRolUserId(rolUserId);

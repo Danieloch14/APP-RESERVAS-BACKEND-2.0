@@ -8,6 +8,7 @@ import netlife.devmasters.booking.service.ResourceService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/resources")
@@ -34,7 +35,7 @@ public class ResourceController {
     }
 
     @PostMapping("/availables")
-    public Iterable<Resource> getByRegionId(@RequestBody SearchResourceDto searchResourceDto) {
+    public Iterable<Resource> getByRegionId(@RequestBody SearchResourceDto searchResourceDto) throws DataException {
         return service.getAvailables(searchResourceDto);
     }
 
@@ -54,4 +55,8 @@ public class ResourceController {
         service.delete(id);
     }
 
+    @GetMapping("/{id}")
+    public Optional<Resource> getById(@PathVariable("id") int id) {
+        return service.getById(id);
+    }
 }

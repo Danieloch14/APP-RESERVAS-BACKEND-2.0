@@ -1,18 +1,23 @@
 package netlife.devmasters.booking.service.Impl;
 
 import netlife.devmasters.booking.domain.Resource;
+import netlife.devmasters.booking.domain.TypeResource;
+import netlife.devmasters.booking.domain.dto.ReservationCreate;
 import netlife.devmasters.booking.domain.dto.SearchResourceDto;
 import netlife.devmasters.booking.exception.domain.DataException;
 import netlife.devmasters.booking.repository.LocationRepository;
 import netlife.devmasters.booking.repository.ReservationRepository;
 import netlife.devmasters.booking.repository.ResourceRepository;
 import netlife.devmasters.booking.service.ResourceService;
+import netlife.devmasters.booking.service.TypeResourceService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static netlife.devmasters.booking.constant.MessagesConst.EMPTY_REGISTER;
@@ -26,6 +31,8 @@ public class ResourceServiceImpl implements ResourceService {
     private LocationRepository repoLocation;
     @Autowired
     private ReservationRepository repoReservation;
+     @Autowired
+    private TypeResourceService typeResourceService;
 
     @Override
     public Resource save(Resource objSaveII) throws DataException {
@@ -36,12 +43,13 @@ public class ResourceServiceImpl implements ResourceService {
 
             // valida si existe eliminado
             /*
-            Region regionDelete = objGuardado.get();
-            if (regionDelete.getEstado().compareToIgnoreCase(EstadosConst.ELIMINADO) == 0) {
-                regionDelete.setEstado(EstadosConst.ACTIVO);
-                return repo.save(regionDelete);
-            } else {
-            */
+             * Region regionDelete = objGuardado.get();
+             * if (regionDelete.getEstado().compareToIgnoreCase(EstadosConst.ELIMINADO) ==
+             * 0) {
+             * regionDelete.setEstado(EstadosConst.ACTIVO);
+             * return repo.save(regionDelete);
+             * } else {
+             */
             throw new DataException(REGISTER_ALREADY_EXIST);
         }
         repoLocation.save(objSaveII.getIdLocation());
@@ -70,12 +78,34 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public List<Resource> getAvailables(SearchResourceDto searchResourceDto) {
-        Time time = new Time(searchResourceDto.getHours(),searchResourceDto.getMinutes(),0);
-        Timestamp endDate = new Timestamp(searchResourceDto.getDate().getTime() + time.getTime()- 18000000);
-        Timestamp startDate = new Timestamp(searchResourceDto.getDate().getTime() - 18000000);
-        List<Resource> lista= repo.findByIdLocation_IdRegion(searchResourceDto.getIdRegion(), searchResourceDto.getCapacity(), startDate, endDate);
+    public List<Resource> getAvailables(SearchResourceDto searchResourceDto) throws DataException {
+        Time time = new Time(searchResourceDto.getHours(), searchResourceDto.getMinutes(), 0);
+        Timestamp endDate = new Timestamp(searchResourceDto.getDate().getTime() + time.getTime() - 18000000);
+        java.sql.Timestamp startDate = searchResourceDto.getDate();
+        List<Resource> lista = repo.findByIdLocation_IdRegion(searchResourceDto.getIdRegion(),
+                searchResourceDto.getCapacity(), startDate, endDate);
+        lista.forEach(resource -> {
+            Optional<TypeResource> typeResource = typeResourceService
+                    .getById(resource.getIdTypeResource().getIdTypeResource());
 
+            if (typeResource.isEmpty()) {
+                try {
+                    throw new DataException(
+                            "No se encontró el tipo de recurso");
+                } catch (DataException e) {
+                    e.printStackTrace();
+                }
+            }
+            TypeResource t = typeResource.get();
+            java.sql.Timestamp actualDate = new java.sql.Timestamp(System.currentTimeMillis());
+            Objects.requireNonNull(startDate, "La fecha de inicio de la reserva no puede ser nula");
+            long hours = (startDate.getTime() - actualDate.getTime()) / (1000 * 60 * 60);
+            System.out.println(hours);
+            if (hours < 0 || hours > t.getTimeAnticipation()) {
+                lista.remove(resource);
+                System.out.println("removido");
+            }
+        });
         return lista;
     }
 
@@ -83,7 +113,8 @@ public class ResourceServiceImpl implements ResourceService {
     public Resource update(Resource objActualizado, Integer idResource) throws DataException {
         if (objActualizado.getCodNumber() != null) {
             Optional<Resource> objUpdated = repo.findByCodNumberIgnoreCase(objActualizado.getCodNumber());
-            if (objUpdated.isPresent() && !objUpdated.get().getIdTypeResource().equals(objActualizado.getIdTypeResource())) {
+            if (objUpdated.isPresent()
+                    && !objUpdated.get().getIdTypeResource().equals(objActualizado.getIdTypeResource())) {
                 throw new DataException(REGISTER_ALREADY_EXIST);
             }
         }

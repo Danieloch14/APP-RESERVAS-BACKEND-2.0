@@ -1,5 +1,7 @@
 package netlife.devmasters.booking.domain;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -18,5 +20,5 @@ public class TypeResource {
     private String description;
      */
     @Column(name = "time_anticipation")
-    private Double timeAnticipation;
+    private Long timeAnticipation;
 }

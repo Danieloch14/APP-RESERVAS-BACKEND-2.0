@@ -25,14 +25,32 @@ public class PersonalDataServiceImpl implements PersonalDataService {
 
     @Override
     public PersonalData savePersonalData(PersonalData obj) throws DataException, MessagingException, IOException {
+        PersonalData personalDataSave = new PersonalData();
         if (obj.getName() == null || obj.getEmail() == null || obj.getName().isEmpty()
                 || obj.getEmail().isEmpty())
             throw new DataException(EMPTY_REGISTER);
         Optional<PersonalData> objGuardado = repo.findOneByEmail(obj.getEmail());
         if (objGuardado.isPresent()) {
-            throw new DataException(ID_ALREADY_EXIST);
+            PersonalData personalDataAux = new PersonalData();
+            personalDataAux.setEmail(obj.getEmail());
+            personalDataAux.setName(obj.getName());
+            personalDataAux.setLastname(obj.getLastname());
+            personalDataAux.setCellphone(obj.getCellphone());
+            personalDataAux.setAddress(obj.getAddress());
+            personalDataAux.setCompany(obj.getCompany());
+            personalDataAux.setPosition(obj.getPosition());
+            personalDataAux.setIdPersonalData(objGuardado.get().getIdPersonalData());   
+            try {
+                repo.save(personalDataAux);
+            }catch (Exception e){
+                throw new DataException(REGISTER_ALREADY_EXIST);
+            }
+            personalDataSave = personalDataAux;
+        }else {
+            personalDataSave = repo.save(obj);
         }
-        return repo.save(obj);
+
+        return personalDataSave;
     }
 
     @Override

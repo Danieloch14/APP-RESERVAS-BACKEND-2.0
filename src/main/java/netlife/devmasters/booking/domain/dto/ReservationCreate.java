@@ -2,7 +2,6 @@ package netlife.devmasters.booking.domain.dto;
 
 import lombok.Data;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 
 @Data

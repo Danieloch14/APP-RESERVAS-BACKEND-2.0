@@ -3,8 +3,10 @@
 package netlife.devmasters.booking.controller;
 
 import jakarta.mail.MessagingException;
+import netlife.devmasters.booking.domain.Rol;
 import netlife.devmasters.booking.domain.RolUser;
 import netlife.devmasters.booking.domain.dto.UserLoginDto;
+import netlife.devmasters.booking.service.RolService;
 import netlife.devmasters.booking.service.RolUserService;
 import netlife.devmasters.booking.util.HttpResponse;
 import netlife.devmasters.booking.domain.User;
@@ -22,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,6 +51,7 @@ public class UserController extends ExcepcionsManagment {
     private AuthenticationManager authenticationManager;
     private UserService service;
     private RolUserService rolUserService;
+    private RolService rolService;
     private JWTTokenProvider jwtTokenProvider;
 
     @Autowired
@@ -55,25 +59,35 @@ public class UserController extends ExcepcionsManagment {
             AuthenticationManager authenticationManager,
             UserService userService,
             JWTTokenProvider jwtTokenProvider,
-            RolUserService rolUserService) {
+            RolUserService rolUserService, RolService rolService) {
         this.authenticationManager = authenticationManager;
         this.service = userService;
         this.jwtTokenProvider = jwtTokenProvider;
         this.rolUserService = rolUserService;
+        this.rolService = rolService;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody UserLoginDto user) {
-        authenticate(user.getUsername(), user.getPassword());
-
+    public ResponseEntity<User> login(@RequestBody UserLoginDto user) throws DataException {
+        ResponseEntity<User> response = null;
         User loginUser = service.findUserByUsername(user.getUsername());
-        RolUser rolUser = rolUserService.getByRolAndUsuario(Long.valueOf(user.getIdRol()), Long.valueOf(loginUser.getIdUser()));
-        if (rolUser == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        List<RolUser> rolUser = rolUserService.getAllByUsuario(Long.valueOf(loginUser.getIdUser()));
+        for (RolUser rolUser1 : rolUser) {
+            Optional<Rol> rolName = rolService.getById(rolUser1.getRolUserId().getIdRol());
+            if (user.getRol().equals(rolName.get().getNombre())) {
+
+                authenticate(user.getUsername(), user.getPassword());
+                
+                UserPrincipal userPrincipal = new UserPrincipal(loginUser);
+                HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
+                response = new ResponseEntity<>(loginUser, jwtHeader, OK);
+            } else {
+                throw new DataException("El usuario no tiene el rol indicado");
+            }
         }
-        UserPrincipal userPrincipal = new UserPrincipal(loginUser);
-        HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
-        return new ResponseEntity<>(loginUser, jwtHeader, OK);
+
+        return response;
+
     }
 
     @PostMapping("/register")
@@ -85,8 +99,8 @@ public class UserController extends ExcepcionsManagment {
 
     @PutMapping("activeLock/{id}")
     public ResponseEntity<User> actualizarDatos(@PathVariable("id") Integer code,
-                                                @RequestParam(name = "isActive", required = false) Boolean active,
-                                                @RequestParam(name = "isNotLocked", required = false) Boolean isNotLocked) throws DataException {
+            @RequestParam(name = "isActive", required = false) Boolean active,
+            @RequestParam(name = "isNotLocked", required = false) Boolean isNotLocked) throws DataException {
         return service.getById(code).map(SavedData -> {
             Optional.ofNullable(isNotLocked).ifPresent(SavedData::setNotLocked);
             Optional.ofNullable(active).ifPresent(SavedData::setActive);
@@ -95,7 +109,7 @@ public class UserController extends ExcepcionsManagment {
             try {
                 datasUpdated = service.updatedUser(SavedData);
             } catch (UserNotFoundException | UsernameExistExcepcion | EmailExistExcepcion | IOException
-                     | NotFileImageExcepcion e) {
+                    | NotFileImageExcepcion e) {
                 e.printStackTrace();
             } catch (DataException e) {
                 throw new RuntimeException(e);
@@ -106,7 +120,7 @@ public class UserController extends ExcepcionsManagment {
 
     @PutMapping("/active")
     public ResponseEntity<Void> updateActive(@RequestParam("valide") Boolean valide,
-                                             @RequestParam("username") String username)
+            @RequestParam("username") String username)
             throws UserNotFoundException, UsernameExistExcepcion, EmailExistExcepcion, IOException,
             NotFileImageExcepcion {
         int updatedRegisters = service.UpdatedActive(valide, username);
@@ -119,7 +133,7 @@ public class UserController extends ExcepcionsManagment {
 
     @PutMapping("/not-locked")
     public ResponseEntity<Void> updateNotLocked(@RequestParam("valide") Boolean notLocked,
-                                                @RequestParam("username") String username)
+            @RequestParam("username") String username)
             throws UserNotFoundException, UsernameExistExcepcion, EmailExistExcepcion, IOException,
             NotFileImageExcepcion {
         int registrosActualizados = service.UpdatedNotLock(notLocked, username);
@@ -143,7 +157,6 @@ public class UserController extends ExcepcionsManagment {
         User user = service.findUserByUsername(username);
         return new ResponseEntity<>(user, OK);
     }
-
 
     // por query params
     @PostMapping("/buscarNombresApellidos")
@@ -182,14 +195,16 @@ public class UserController extends ExcepcionsManagment {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<HttpResponse> resetPassword(@RequestParam("username") String username, @RequestParam("password") String password)
+    public ResponseEntity<HttpResponse> resetPassword(@RequestParam("username") String username,
+            @RequestParam("password") String password)
             throws MessagingException, EmailNotFoundExcepcion, UserNotFoundException, IOException {
         service.resetPassword(username, password);
         return response(OK, EMAIL_SEND + " la dirección de email registrada para el usuario " + username);
     }
 
     @PutMapping("/password-changed")
-    public ResponseEntity<HttpResponse> changePassword(@RequestParam("username") String username, @RequestParam("lastPassword") String lastPassword, @RequestParam("password") String password)
+    public ResponseEntity<HttpResponse> changePassword(@RequestParam("username") String username,
+            @RequestParam("lastPassword") String lastPassword, @RequestParam("password") String password)
             throws MessagingException, EmailNotFoundExcepcion, UserNotFoundException, IOException {
         service.changePassword(username, lastPassword, password);
         return response(OK, "Contraseña cambiada correctamente");
@@ -221,13 +236,17 @@ public class UserController extends ExcepcionsManagment {
     }
 
     @PutMapping("/time-locked")
-    public ResponseEntity<HttpResponse> lockUser(@RequestParam("username") String username, @RequestParam("days") int days)
-            throws UserNotFoundException, IOException, NotFileImageExcepcion, UsernameExistExcepcion, EmailExistExcepcion {
+    public ResponseEntity<HttpResponse> lockUser(@RequestParam("username") String username,
+            @RequestParam("days") int days)
+            throws UserNotFoundException, IOException, NotFileImageExcepcion, UsernameExistExcepcion,
+            EmailExistExcepcion {
         service.UpdatedLockTime(username, days);
         return response(OK, "Usuario bloqueado correctamente");
     }
+
     @GetMapping("/byDate")
-    public ResponseEntity<List<User>> getUser(@RequestParam("year")int year, @RequestParam("month")int month, @RequestParam("day")int day) {
+    public ResponseEntity<List<User>> getUser(@RequestParam("year") int year, @RequestParam("month") int month,
+            @RequestParam("day") int day) {
         List<User> users = service.findUserByTimeLockDate(day, month, year);
         return new ResponseEntity<>(users, OK);
     }

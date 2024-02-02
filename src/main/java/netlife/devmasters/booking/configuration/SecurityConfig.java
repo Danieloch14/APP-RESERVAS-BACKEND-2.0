@@ -68,11 +68,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //Disable CSRF that its not necesary in api rest staeless and enable CORS from other sites. Since we are using JWT, CSRF is not needed.
-        http.csrf().disable().cors()
+        http.cors().and().csrf().disable().cors()
                 //Set stateless configuration for the session, don't use http session
                 .and().sessionManagement().sessionCreationPolicy(STATELESS)
                 //filter authorization
-                .and().authorizeRequests().requestMatchers(URLS_PUBLICS).permitAll()
+                .and().authorizeHttpRequests().requestMatchers(URLS_PUBLICS).permitAll()
                 .anyRequest().authenticated()
                 .and().exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler)
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
@@ -81,6 +81,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+    
 
 
 }

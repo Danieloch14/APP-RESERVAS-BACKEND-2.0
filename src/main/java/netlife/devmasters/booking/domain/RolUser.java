@@ -11,7 +11,7 @@ import lombok.Data;
 public class RolUser {
 
 	@EmbeddedId
-	protected RolUserId rolUserId;
+	private RolUserId rolUserId;
 
 	public RolUser(RolUserId rolUserId) {
 		this.rolUserId = rolUserId;

@@ -26,5 +26,10 @@ public class SecurityConst {
 			"/swagger-ui/**",
 			"/api-docs/**", 
 			"/api/v1/registers-requests",
+			"/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/v2/api-docs/**",
+            "/swagger-resources/**",
+			"/doc/swagger-ui/**",
 	};
 }

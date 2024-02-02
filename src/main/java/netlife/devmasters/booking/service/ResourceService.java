@@ -16,7 +16,7 @@ public interface ResourceService {
     Optional<Resource> getById(int id);
     List<Resource> getByIdRegion(int idRegion);
     List<Resource> getByNameRegion(String nameRegion);
-    List<Resource> getAvailables(SearchResourceDto searchResourceDto);
+    List<Resource> getAvailables(SearchResourceDto searchResourceDto) throws DataException;
 
     Resource update(Resource objActualizado, Integer idResource) throws DataException;
 
