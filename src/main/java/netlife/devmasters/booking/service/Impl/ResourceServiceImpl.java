@@ -1,5 +1,6 @@
 package netlife.devmasters.booking.service.Impl;
 
+import netlife.devmasters.booking.domain.Location;
 import netlife.devmasters.booking.domain.Resource;
 import netlife.devmasters.booking.domain.TypeResource;
 import netlife.devmasters.booking.domain.dto.ReservationCreate;
@@ -38,8 +39,8 @@ public class ResourceServiceImpl implements ResourceService {
     public Resource save(Resource objSaveII) throws DataException {
         if (objSaveII.getCodNumber().trim().isEmpty())
             throw new DataException(EMPTY_REGISTER);
-        Optional<Resource> objSave = repo.findByCodNumberIgnoreCase(objSaveII.getCodNumber());
-        if (objSave.isPresent()) {
+        List<Resource> objSave = repo.findByCodNumberIgnoreCase(objSaveII.getCodNumber());
+        if (objSave != null && !objSave.isEmpty()) {
 
             // valida si existe eliminado
             /*
@@ -112,13 +113,20 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public Resource update(Resource objActualizado, Integer idResource) throws DataException {
         if (objActualizado.getCodNumber() != null) {
-            Optional<Resource> objUpdated = repo.findByCodNumberIgnoreCase(objActualizado.getCodNumber());
-            if (objUpdated.isPresent()
-                    && !objUpdated.get().getIdTypeResource().equals(objActualizado.getIdTypeResource())) {
+            List<Resource> objUpdated = repo.findByCodNumberIgnoreCase(objActualizado.getCodNumber());
+            if (objUpdated.size() > 1) {
                 throw new DataException(REGISTER_ALREADY_EXIST);
             }
         }
-        objActualizado.setIdResource(idResource);
+        
+        Location location = new Location();
+        location.setIdLocation(objActualizado.getIdLocation().getIdLocation());
+        location.setIdRegion(objActualizado.getIdLocation().getIdRegion());
+        location.setPlace(objActualizado.getIdLocation().getPlace());
+        location.setFloor(objActualizado.getIdLocation().getFloor());
+        location.setAddress(objActualizado.getIdLocation().getAddress());
+        repoLocation.save(location);
+        objActualizado.setIdTypeResource(objActualizado.getIdTypeResource());
         return repo.save(objActualizado);
     }
 

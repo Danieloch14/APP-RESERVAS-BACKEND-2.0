@@ -12,12 +12,15 @@ import netlife.devmasters.booking.service.ResourceService;
 import netlife.devmasters.booking.service.TypeResourceService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -37,9 +40,10 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public Reservation reserve(ReservationCreate reservationSave) throws DataException, ReservationException {
         System.out.println(reservationSave);
-        Time time = new Time(reservationSave.getHours(), reservationSave.getMinutes(), 0);
-        Timestamp endDate = new Timestamp(reservationSave.getStartDate().getTime() + time.getTime() - 18000000);
-        reservationSave.setEndDate(endDate);
+        LocalDateTime startDate = reservationSave.getStartDate().toLocalDateTime();
+        LocalDateTime endDate = startDate.plusHours(reservationSave.getHours()).plusMinutes(reservationSave.getMinutes());
+        Timestamp endDateTimestamp = Timestamp.valueOf(endDate);
+        reservationSave.setEndDate(endDateTimestamp);
         Reservation resource = modelMapper.map(reservationSave, Reservation.class);
 
         if (this.isAvailable(reservationSave)) {

@@ -52,118 +52,127 @@ public class EmailService {
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.debug", "true");
         props.put("mail.smtp.ehlo", "true");
+        props.put("mail.smtp.socketFactory.port", "465");
+        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        props.put("mail.smtp.socketFactory.fallback", "false");
 
         return mailSender;
     }
 
-    public void sendNewPasswordEmail(String firstName, String password, String email) throws MessagingException, IOException {
-        String destinatarios[] = {email};
+    public void sendNewPasswordEmail(String firstName, String password, String email)
+            throws MessagingException, IOException {
+        String destinatarios[] = { email };
         InputStream sourceFile = this.getClass().getResourceAsStream("/template.html");
         String htmlTemplate = null;
-                /*sourceFile.toString();
-                "<!DOCTYPE html>\n" +
-                        "<html>\n" +
-                        "\n" +
-                        "<head>\n" +
-                        "    <title>Plataforma de reservas - NETLIFE</title>\n" +
-                        "    <style>\n" +
-                        "        body {\n" +
-                        "            font-family: Arial, sans-serif;\n" +
-                        "            background-color: #f4f4f4;\n" +
-                        "            margin: 0;\n" +
-                        "            padding: 0;\n" +
-                        "        }\n" +
-                        "\n" +
-                        "        .container {\n" +
-                        "            max-width: 600px;\n" +
-                        "            margin: 0 auto;\n" +
-                        "            padding: 20px;\n" +
-                        "        }\n" +
-                        "\n" +
-                        "        header {\n" +
-                        "            text-align: center;\n" +
-                        "            margin-bottom: 20px;\n" +
-                        "        }\n" +
-                        "\n" +
-                        "        header img {\n" +
-                        "            max-width: 80%;\n" +
-                        "            height: auto;\n" +
-                        "        }\n" +
-                        "\n" +
-                        "        .container-content {\n" +
-                        "            background-color: #ffffff;\n" +
-                        "            padding: 20px;\n" +
-                        "            border-radius: 5px;\n" +
-                        "            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);\n" +
-                        "        }\n" +
-                        "\n" +
-                        "        .container-content h2 {\n" +
-                        "            margin-top: 0;\n" +
-                        "            color: #333;\n" +
-                        "        }\n" +
-                        "\n" +
-                        "        .container-content p {\n" +
-                        "            margin-bottom: 20px;\n" +
-                        "            color: #666;\n" +
-                        "        }\n" +
-                        "\n" +
-                        "        .text-info {\n" +
-                        "            color: #007bff;\n" +
-                        "        }\n" +
-                        "\n" +
-                        "        .text-danger {\n" +
-                        "            color: #ff4136;\n" +
-                        "        }\n" +
-                        "\n" +
-                        "        .text-center {\n" +
-                        "            text-align: center;\n" +
-                        "        }\n" +
-                        "\n" +
-                        "        footer {\n" +
-                        "            margin-top: 40px;\n" +
-                        "            background-color: #f9f9f9;\n" +
-                        "            padding: 20px;\n" +
-                        "            border-radius: 5px;\n" +
-                        "            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);\n" +
-                        "            text-align: center;\n" +
-                        "        }\n" +
-                        "\n" +
-                        "        hr {\n" +
-                        "            background-color: rgba(0, 0, 0, .1);\n" +
-                        "            border: 0;\n" +
-                        "            height: 1px;\n" +
-                        "        }\n" +
-                        "    </style>\n" +
-                        "</head>\n" +
-                        "\n" +
-                        "<body>\n" +
-                        "    <div class=\"container\">\n" +
-                        "        <header>\n" +
-                        "            <img src=\"https://www.google.com/url?sa=i&url=https%3A%2F%2Fes.m.wikipedia.org%2Fwiki%2FArchivo%3ANetlife.png&psig=AOvVaw2qhNO8bkp6ghqRkYIt9z9S&ust=1701984300661000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCIjQreHf-4IDFQAAAAAdAAAAABAD\" alt=\"logo\">\n" +
-                        "        </header>\n" +
-                        "        <div class=\"container-content\">\n" +
-                        "            <h3>Plataforma de reservas - NETLIFE</h3>\n" +
-                        "            <hr>\n" +
-                        "\n" +
-                        "        </div>\n" +
-                        "        <div class=\"message\">\n" +
-                        "            <h2>Recuperación de contraseña</h2>\n" +
-                        "            <p>Estimado(a) ${usuario}</p>\n" +
-                        "            <p>Hemos recibido una solicitud para generar la contraseña de tu cuenta.</p>\n" +
-                        "            <p>Tu nueva contraseña es: ${password}</p>\n" +
-                        "        </div>\n" +
-                        "        <footer class=\"footer\">\n" +
-                        "            <p class=\"text-info\"> ✉\uFE0F Este correo electrónico fue generado automáticamente. Por favor, no respondas a\n" +
-                        "                este\n" +
-                        "                mensaje.</p>\n" +
-                        "            <br>\n" +
-                        "            <p class=\"text-center text-danger\">© Todos los derechos reservados | <span>Netlife</span></p>\n" +
-                        "        </footer>\n" +
-                        "    </div>\n" +
-                        "</body>\n" +
-                        "\n" +
-                        "</html>";
-                 */
+        /*
+         * sourceFile.toString();
+         * "<!DOCTYPE html>\n" +
+         * "<html>\n" +
+         * "\n" +
+         * "<head>\n" +
+         * "    <title>Plataforma de reservas - NETLIFE</title>\n" +
+         * "    <style>\n" +
+         * "        body {\n" +
+         * "            font-family: Arial, sans-serif;\n" +
+         * "            background-color: #f4f4f4;\n" +
+         * "            margin: 0;\n" +
+         * "            padding: 0;\n" +
+         * "        }\n" +
+         * "\n" +
+         * "        .container {\n" +
+         * "            max-width: 600px;\n" +
+         * "            margin: 0 auto;\n" +
+         * "            padding: 20px;\n" +
+         * "        }\n" +
+         * "\n" +
+         * "        header {\n" +
+         * "            text-align: center;\n" +
+         * "            margin-bottom: 20px;\n" +
+         * "        }\n" +
+         * "\n" +
+         * "        header img {\n" +
+         * "            max-width: 80%;\n" +
+         * "            height: auto;\n" +
+         * "        }\n" +
+         * "\n" +
+         * "        .container-content {\n" +
+         * "            background-color: #ffffff;\n" +
+         * "            padding: 20px;\n" +
+         * "            border-radius: 5px;\n" +
+         * "            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);\n" +
+         * "        }\n" +
+         * "\n" +
+         * "        .container-content h2 {\n" +
+         * "            margin-top: 0;\n" +
+         * "            color: #333;\n" +
+         * "        }\n" +
+         * "\n" +
+         * "        .container-content p {\n" +
+         * "            margin-bottom: 20px;\n" +
+         * "            color: #666;\n" +
+         * "        }\n" +
+         * "\n" +
+         * "        .text-info {\n" +
+         * "            color: #007bff;\n" +
+         * "        }\n" +
+         * "\n" +
+         * "        .text-danger {\n" +
+         * "            color: #ff4136;\n" +
+         * "        }\n" +
+         * "\n" +
+         * "        .text-center {\n" +
+         * "            text-align: center;\n" +
+         * "        }\n" +
+         * "\n" +
+         * "        footer {\n" +
+         * "            margin-top: 40px;\n" +
+         * "            background-color: #f9f9f9;\n" +
+         * "            padding: 20px;\n" +
+         * "            border-radius: 5px;\n" +
+         * "            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);\n" +
+         * "            text-align: center;\n" +
+         * "        }\n" +
+         * "\n" +
+         * "        hr {\n" +
+         * "            background-color: rgba(0, 0, 0, .1);\n" +
+         * "            border: 0;\n" +
+         * "            height: 1px;\n" +
+         * "        }\n" +
+         * "    </style>\n" +
+         * "</head>\n" +
+         * "\n" +
+         * "<body>\n" +
+         * "    <div class=\"container\">\n" +
+         * "        <header>\n" +
+         * "            <img src=\"https://www.google.com/url?sa=i&url=https%3A%2F%2Fes.m.wikipedia.org%2Fwiki%2FArchivo%3ANetlife.png&psig=AOvVaw2qhNO8bkp6ghqRkYIt9z9S&ust=1701984300661000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCIjQreHf-4IDFQAAAAAdAAAAABAD\" alt=\"logo\">\n"
+         * +
+         * "        </header>\n" +
+         * "        <div class=\"container-content\">\n" +
+         * "            <h3>Plataforma de reservas - NETLIFE</h3>\n" +
+         * "            <hr>\n" +
+         * "\n" +
+         * "        </div>\n" +
+         * "        <div class=\"message\">\n" +
+         * "            <h2>Recuperación de contraseña</h2>\n" +
+         * "            <p>Estimado(a) ${usuario}</p>\n" +
+         * "            <p>Hemos recibido una solicitud para generar la contraseña de tu cuenta.</p>\n"
+         * +
+         * "            <p>Tu nueva contraseña es: ${password}</p>\n" +
+         * "        </div>\n" +
+         * "        <footer class=\"footer\">\n" +
+         * "            <p class=\"text-info\"> ✉\uFE0F Este correo electrónico fue generado automáticamente. Por favor, no respondas a\n"
+         * +
+         * "                este\n" +
+         * "                mensaje.</p>\n" +
+         * "            <br>\n" +
+         * "            <p class=\"text-center text-danger\">© Todos los derechos reservados | <span>Netlife</span></p>\n"
+         * +
+         * "        </footer>\n" +
+         * "    </div>\n" +
+         * "</body>\n" +
+         * "\n" +
+         * "</html>";
+         */
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(sourceFile, StandardCharsets.UTF_8))) {
             htmlTemplate = reader.lines().collect(Collectors.joining("\n"));
         } catch (Exception e) {
@@ -185,22 +194,23 @@ public class EmailService {
         String enlace = host + "/auth/register?id_solicitud=" + registerRequest.getIdRegisterRequest();
         enlace += "&exp=" + fechaExpiracion.getTime();
 
-        String mensaje = "Hola, tu proceso de registro en la plataforma de reservas de Netlife ha sido aprovado.\n\t" +
+        String mensaje = "Hola, tu proceso de registro en la plataforma de reservas de Netlife ha sido aprobado.\n\t" +
                 "Para continuar con el proceso de registro, por favor ingresa al siguiente link:\n\t" +
-                "<a href=\""+enlace+"\">REGISTRO</a>"+
+                "<a href=\"" + enlace + "\">REGISTRO</a>" +
                 "\n\tRecuerda que tienes 24 horas para completar el proceso de registro, de lo contrario deberás iniciar nuevamente el proceso.\n\t";
         sendMensajeTextGenerico(registerRequest.getPersonalData().getEmail(), EMAIL_REGISTER_LINK, mensaje);
     }
 
     public void sendMensajeTextGenerico(String email, String subject, String mensaje) {
         try {
-            String[] emails = {email};
+            String[] emails = { email };
             if (email.contains(",") || email.contains(";")) {
                 emails = email.split("[,;]");
             }
             InputStream sourceFile = this.getClass().getResourceAsStream("/templateGeneral.html");
             String htmlTemplate = null;
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(sourceFile, StandardCharsets.UTF_8))) {
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(sourceFile, StandardCharsets.UTF_8))) {
                 htmlTemplate = reader.lines().collect(Collectors.joining("\n"));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -215,7 +225,6 @@ public class EmailService {
             throw new RuntimeException(ex);
         }
     }
-
 
     private MimeMessage createEmailHtml(String[] destinatarios, String subject, String textoHtml)
             throws MessagingException {
@@ -242,4 +251,3 @@ public class EmailService {
         return new String(bytes, StandardCharsets.UTF_8);
     }
 }
-

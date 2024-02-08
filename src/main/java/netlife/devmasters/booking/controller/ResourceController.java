@@ -7,6 +7,7 @@ import netlife.devmasters.booking.exception.domain.DataException;
 import netlife.devmasters.booking.service.ResourceService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
@@ -40,14 +41,15 @@ public class ResourceController {
     }
 
     @PostMapping("")
-    public Resource save(@RequestBody ResourceCreate obj) throws DataException {
+    public Resource save(@RequestBody Resource obj) throws DataException {
         Resource resource = modelMapper.map(obj, Resource.class);
         return service.save(resource);
     }
 
-    @PostMapping("/{id}")
-    public Resource update(@PathVariable("id") Integer id, @RequestBody Resource obj) throws DataException {
-        return service.update(obj, id);
+    @PutMapping("/{id}")
+    public ResponseEntity<Resource> update(@PathVariable("id") Integer id, @RequestBody Resource obj) throws DataException {
+        Resource resourceUpdated = service.update(obj, id);
+        return ResponseEntity.ok(resourceUpdated);
     }
 
     @DeleteMapping("/{id}")
