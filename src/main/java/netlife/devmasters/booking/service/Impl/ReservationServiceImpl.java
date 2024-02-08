@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -39,18 +40,17 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public Reservation reserve(ReservationCreate reservationSave) throws DataException, ReservationException {
-        System.out.println(reservationSave);
-        LocalDateTime startDate = reservationSave.getStartDate().toLocalDateTime();
-        LocalDateTime endDate = startDate.plusHours(reservationSave.getHours()).plusMinutes(reservationSave.getMinutes());
-        Timestamp endDateTimestamp = Timestamp.valueOf(endDate);
-        reservationSave.setEndDate(endDateTimestamp);
+        Time time = new Time(reservationSave.getHours(), reservationSave.getMinutes(), 0);
+        Timestamp endDate = new Timestamp(reservationSave.getStartDate().getTime() + time.getTime() - 18000000);
+        Timestamp startDate = new Timestamp(reservationSave.getStartDate().getTime() - 18000000);
+        reservationSave.setStartDate(startDate);
+        reservationSave.setEndDate(endDate);
         Reservation resource = modelMapper.map(reservationSave, Reservation.class);
 
-        if (this.isAvailable(reservationSave)) {
+        if (this.isAvailable(reservationSave) && isInRangeAnticipation(reservationSave)) {
             return repo.save(resource);
         } else if (!isInRangeAnticipation(reservationSave)) {
-            throw new ReservationException(
-                    "Reserva en conflicto debido a que no se encuentra en el rango de anticipacion");
+            throw new ReservationException("Reserva en conflicto debido a que no se encuentra en el rango de anticipacion");
         } else {
             throw new ReservationException("Reserva en conflicto con el recurso para el horario especificado");
         }
@@ -71,7 +71,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public Boolean  isInRangeAnticipation(ReservationCreate obj) throws DataException {
+    public Boolean isInRangeAnticipation(ReservationCreate obj) throws DataException {
         Objects.requireNonNull(obj, "La reserva no puede ser nula");
 
         java.sql.Timestamp actualDate = new java.sql.Timestamp(System.currentTimeMillis());
@@ -90,7 +90,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         if (typeResource.isEmpty()) {
             throw new DataException(
-                    "No se encontró el tipo de recurso") ;
+                    "No se encontró el tipo de recurso");
         }
 
         TypeResource t = typeResource.get();
